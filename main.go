@@ -21,6 +21,7 @@ func makeRequest(channel chan string, method string, url string, header_containe
 	if err != nil {
 		channel <- ""
 	} else {
+		req.Header.Set("User-Agent", "FetchTTP")
 		for i := 0; i < len(header_container.Objects); i++ {
 			header_border := header_container.Objects[i].(*fyne.Container)
 			header_grid := header_border.Objects[0].(*fyne.Container)
