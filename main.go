@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -16,11 +17,11 @@ import (
 	"fyne.io/fyne/v2/widget"
 )
 
-func makeRequest(channel chan string, method string, url string, header_container *fyne.Container, body string) {
+func makeRequest(method string, url string, header_container *fyne.Container, body string) (int, http.Header, string) {
 	data := []byte(body)
 	req, err := http.NewRequest(method, url, bytes.NewReader(data))
 	if err != nil {
-		channel <- ""
+		return 0, http.Header{}, ""
 	} else {
 		req.Header.Set("User-Agent", "FetchTTP")
 		for i := 0; i < len(header_container.Objects); i++ {
@@ -38,7 +39,7 @@ func makeRequest(channel chan string, method string, url string, header_containe
 		res, _ := c.Do(req)
 		bytes, _ := io.ReadAll(res.Body)
 		resbody := string(bytes)
-		channel <- resbody
+		return res.StatusCode, res.Header, resbody
 	}
 }
 
@@ -110,16 +111,26 @@ func main() {
 	})
 	reqbody := widget.NewMultiLineEntry()
 	options := container.NewAppTabs(container.NewTabItem("Headers", container.NewScroll(container.NewVBox(header_box, plus, minus))), container.NewTabItem("Body", reqbody))
+	response_headers := container.NewVBox()
 	scroll_response := container.NewScroll(response)
+	response_options := container.NewAppTabs(container.NewTabItem("Headers", container.NewScroll(response_headers)), container.NewTabItem("Response", scroll_response))
+	response_status := widget.NewLabel("")
 	send.OnTapped = func() {
-		channel := make(chan string)
-		var body string
+		response_headers.RemoveAll()
+		response_options.SelectIndex(1)
 		if len(url.Text) == 0 {
 			urlWithHTTPS := fmt.Sprintf("https://%s", url.PlaceHolder)
 			_, err := u.ParseRequestURI(urlWithHTTPS)
 			if err == nil {
-				go makeRequest(channel, method.Selected, urlWithHTTPS, header_box, reqbody.Text)
-				body = <-channel
+				status, headers, body := makeRequest(method.Selected, urlWithHTTPS, header_box, reqbody.Text)
+				response_status.SetText(fmt.Sprintf("Response Status: %d", status))
+				response_status.Refresh()
+				for k, v := range headers {
+					str, _ := json.Marshal(v)
+					response_header := widget.NewLabel(fmt.Sprintf("%s: %s", k, str))
+					response_header.Wrapping = fyne.TextWrapWord
+					response_headers.Add(response_header)
+				}
 				response.SetText(body)
 			}
 		} else {
@@ -130,7 +141,20 @@ func main() {
 			URL, err := u.ParseRequestURI(urlWithHTTPS)
 			if err == nil {
 				if URL.Hostname() != "" {
-					if strings.HasSuffix(strings.ToLower(urlWithHTTPS), ".png") || strings.HasSuffix(strings.ToLower(urlWithHTTPS), ".jpg") || strings.HasSuffix(strings.ToLower(urlWithHTTPS), ".jpeg") {
+					status, headers, body := makeRequest(method.Selected, urlWithHTTPS, header_box, reqbody.Text)
+					response_status.SetText(fmt.Sprintf("Response Status: %d", status))
+					response_status.Refresh()
+					isImage := false
+					for k, v := range headers {
+						str, _ := json.Marshal(v)
+						if (strings.ToLower(k) == "content-type" && strings.Contains(strings.ToLower(string(str)), "image/png") || strings.Contains(strings.ToLower(string(str)), "image/jpeg")) {
+							isImage = true
+						}
+						response_header := widget.NewLabel(fmt.Sprintf("%s: %s", k, str))
+						response_header.Wrapping = fyne.TextWrapWord
+						response_headers.Add(response_header)
+					}
+					if isImage {
 						response.Hide()
 						img, _ := fyne.LoadResourceFromURLString(urlWithHTTPS)
 						img_box := canvas.NewImageFromResource(img)
@@ -138,8 +162,6 @@ func main() {
 						scroll_response.Content = img_box
 						scroll_response.Refresh()
 					} else {
-						go makeRequest(channel, method.Selected, urlWithHTTPS, header_box, reqbody.Text)
-						body = <-channel
 						response.SetText(body)
 					}
 				}
@@ -147,6 +169,6 @@ func main() {
 		}
 		response.Refresh()
 	}
-	program.SetContent(container.NewBorder(container.NewBorder(nil, nil, method, send, container.NewBorder(nil, nil, nil, nil, url)), nil, nil, nil, container.NewHSplit(options, scroll_response)))
+	program.SetContent(container.NewBorder(container.NewBorder(nil, nil, method, send, container.NewBorder(nil, nil, nil, nil, url)), nil, nil, nil, container.NewHSplit(options, container.NewBorder(nil, nil, nil, response_status, response_options))))
 	program.ShowAndRun()
 }
