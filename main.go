@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"fmt"
 	"io"
 	"net/http"
 	u "net/url"
@@ -49,7 +50,7 @@ func main() {
 	method := widget.NewSelect([]string{"GET", "HEAD", "POST", "PUT", "DELETE", "CONNECT", "OPTIONS", "TRACE", "PATCH"}, nil)
 	method.Selected = "GET"
 	url := widget.NewEntry()
-	url.SetPlaceHolder("https://echo.zuplo.io/")
+	url.SetPlaceHolder("echo.zuplo.io/")
 	send := widget.NewButton("Send", nil)
 	response := widget.NewLabel("")
 	response.Wrapping = fyne.TextWrapWord
@@ -114,25 +115,30 @@ func main() {
 		channel := make(chan string)
 		var body string
 		if len(url.Text) == 0 {
-			_, err := u.ParseRequestURI(url.PlaceHolder)
+			urlWithHTTPS := fmt.Sprintf("https://%s", url.PlaceHolder)
+			_, err := u.ParseRequestURI(urlWithHTTPS)
 			if err == nil {
-				go makeRequest(channel, method.Selected, url.PlaceHolder, header_box, reqbody.Text)
+				go makeRequest(channel, method.Selected, urlWithHTTPS, header_box, reqbody.Text)
 				body = <-channel
 				response.SetText(body)
 			}
 		} else {
-			URL, err := u.ParseRequestURI(url.Text)
+			urlWithHTTPS := url.Text
+			if !strings.HasPrefix(strings.ToLower(urlWithHTTPS), "http") || !strings.HasPrefix(strings.ToLower(urlWithHTTPS), "https") {
+				urlWithHTTPS = fmt.Sprintf("https://%s", url.Text)
+			}
+			URL, err := u.ParseRequestURI(urlWithHTTPS)
 			if err == nil {
 				if URL.Hostname() != "" {
-					if strings.HasSuffix(strings.ToLower(url.Text), ".png") || strings.HasSuffix(strings.ToLower(url.Text), ".jpg") || strings.HasSuffix(strings.ToLower(url.Text), ".jpeg") {
+					if strings.HasSuffix(strings.ToLower(urlWithHTTPS), ".png") || strings.HasSuffix(strings.ToLower(urlWithHTTPS), ".jpg") || strings.HasSuffix(strings.ToLower(urlWithHTTPS), ".jpeg") {
 						response.Hide()
-						img, _ := fyne.LoadResourceFromURLString(url.Text)
+						img, _ := fyne.LoadResourceFromURLString(urlWithHTTPS)
 						img_box := canvas.NewImageFromResource(img)
 						img_box.FillMode = canvas.ImageFillContain
 						scroll_response.Content = img_box
 						scroll_response.Refresh()
 					} else {
-						go makeRequest(channel, method.Selected, url.Text, header_box, reqbody.Text)
+						go makeRequest(channel, method.Selected, urlWithHTTPS, header_box, reqbody.Text)
 						body = <-channel
 						response.SetText(body)
 					}
