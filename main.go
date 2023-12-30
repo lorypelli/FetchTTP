@@ -45,7 +45,7 @@ func main() {
 	program := a.NewWindow("FetchTTP")
 	program.Resize(fyne.NewSize(1280, 720))
 	program.CenterOnScreen()
-	method := widget.NewSelect([]string{"GET", "POST", "PUT", "PATCH", "DELETE"}, nil)
+	method := widget.NewSelect([]string{"GET", "HEAD", "POST", "PUT", "DELETE", "CONNECT", "OPTIONS", "TRACE", "PATCH"}, nil)
 	method.Selected = "GET"
 	url := widget.NewEntry()
 	url.SetPlaceHolder("https://echo.zuplo.io/")
