@@ -106,7 +106,7 @@ func main() {
 	minus := widget.NewButton("-", func() {
 		if len(header_box.Objects)-1 > tap {
 			tap += 1
-			header_box.Remove(header_box.Objects[-tap])
+			header_box.Remove(header_box.Objects[-tap+1])
 		}
 	})
 	reqbody := widget.NewMultiLineEntry()
@@ -147,7 +147,7 @@ func main() {
 					isImage := false
 					for k, v := range headers {
 						str, _ := json.Marshal(v)
-						if (strings.ToLower(k) == "content-type" && strings.Contains(strings.ToLower(string(str)), "image/png") || strings.Contains(strings.ToLower(string(str)), "image/jpeg")) {
+						if strings.ToLower(k) == "content-type" && strings.Contains(strings.ToLower(string(str)), "image/png") || strings.Contains(strings.ToLower(string(str)), "image/jpeg") {
 							isImage = true
 						}
 						response_header := widget.NewLabel(fmt.Sprintf("%s: %s", k, str))
