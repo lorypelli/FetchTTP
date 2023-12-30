@@ -17,30 +17,32 @@ import (
 	"fyne.io/fyne/v2/widget"
 )
 
-func makeRequest(method string, url string, header_container *fyne.Container, body string) (int, http.Header, string) {
+func makeRequest(method string, url string, header_container *fyne.Container, body string) (string, http.Header, string) {
 	data := []byte(body)
 	req, err := http.NewRequest(method, url, bytes.NewReader(data))
 	if err != nil {
-		return 0, http.Header{}, ""
-	} else {
-		req.Header.Set("User-Agent", "FetchTTP")
-		for i := 0; i < len(header_container.Objects); i++ {
-			header_border := header_container.Objects[i].(*fyne.Container)
-			header_grid := header_border.Objects[0].(*fyne.Container)
-			enabled := header_border.Objects[1].(*widget.Check)
-			name := header_grid.Objects[0].(*widget.Entry).Text
-			value := header_grid.Objects[1].(*widget.Entry).Text
-			regexp, _ := regexp.Compile(`^[A-Za-z[\]{}()<>\/@?=:";,-]*$`)
-			if enabled.Checked && name != "" && regexp.MatchString(name) && value != "" {
-				req.Header.Add(name, value)
-			}
-		}
-		c := &http.Client{}
-		res, _ := c.Do(req)
-		bytes, _ := io.ReadAll(res.Body)
-		resbody := string(bytes)
-		return res.StatusCode, res.Header, resbody
+		return "", http.Header{}, ""
 	}
+	req.Header.Set("User-Agent", "FetchTTP")
+	for i := 0; i < len(header_container.Objects); i++ {
+		header_border := header_container.Objects[i].(*fyne.Container)
+		header_grid := header_border.Objects[0].(*fyne.Container)
+		enabled := header_border.Objects[1].(*widget.Check)
+		name := header_grid.Objects[0].(*widget.Entry).Text
+		value := header_grid.Objects[1].(*widget.Entry).Text
+		regexp, _ := regexp.Compile(`^[A-Za-z[\]{}()<>\/@?=:";,-]*$`)
+		if enabled.Checked && name != "" && regexp.MatchString(name) && value != "" {
+			req.Header.Add(name, value)
+		}
+	}
+	c := &http.Client{}
+	res, err := c.Do(req)
+	if err != nil {
+		return "", http.Header{}, ""
+	}
+	bytes, _ := io.ReadAll(res.Body)
+	resbody := string(bytes)
+	return res.Status, res.Header, resbody
 }
 
 func main() {
@@ -123,7 +125,7 @@ func main() {
 			_, err := u.ParseRequestURI(urlWithHTTPS)
 			if err == nil {
 				status, headers, body := makeRequest(method.Selected, urlWithHTTPS, header_box, reqbody.Text)
-				response_status.SetText(fmt.Sprintf("Response Status: %d", status))
+				response_status.SetText(fmt.Sprint(status))
 				response_status.Refresh()
 				for k, v := range headers {
 					str, _ := json.Marshal(v)
@@ -138,32 +140,30 @@ func main() {
 			if !strings.HasPrefix(strings.ToLower(urlWithHTTPS), "http") || !strings.HasPrefix(strings.ToLower(urlWithHTTPS), "https") {
 				urlWithHTTPS = fmt.Sprintf("https://%s", url.Text)
 			}
-			URL, err := u.ParseRequestURI(urlWithHTTPS)
+			_, err := u.ParseRequestURI(urlWithHTTPS)
 			if err == nil {
-				if URL.Hostname() != "" {
-					status, headers, body := makeRequest(method.Selected, urlWithHTTPS, header_box, reqbody.Text)
-					response_status.SetText(fmt.Sprintf("Response Status: %d", status))
-					response_status.Refresh()
-					isImage := false
-					for k, v := range headers {
-						str, _ := json.Marshal(v)
-						if strings.ToLower(k) == "content-type" && strings.Contains(strings.ToLower(string(str)), "image/png") || strings.Contains(strings.ToLower(string(str)), "image/jpeg") {
-							isImage = true
-						}
-						response_header := widget.NewLabel(fmt.Sprintf("%s: %s", k, str))
-						response_header.Wrapping = fyne.TextWrapWord
-						response_headers.Add(response_header)
+				status, headers, body := makeRequest(method.Selected, urlWithHTTPS, header_box, reqbody.Text)
+				response_status.SetText(fmt.Sprint(status))
+				response_status.Refresh()
+				isImage := false
+				for k, v := range headers {
+					str, _ := json.Marshal(v)
+					if strings.ToLower(k) == "content-type" && strings.Contains(strings.ToLower(string(str)), "image/png") || strings.Contains(strings.ToLower(string(str)), "image/jpeg") {
+						isImage = true
 					}
-					if isImage {
-						response.Hide()
-						img, _ := fyne.LoadResourceFromURLString(urlWithHTTPS)
-						img_box := canvas.NewImageFromResource(img)
-						img_box.FillMode = canvas.ImageFillContain
-						scroll_response.Content = img_box
-						scroll_response.Refresh()
-					} else {
-						response.SetText(body)
-					}
+					response_header := widget.NewLabel(fmt.Sprintf("%s: %s", k, str))
+					response_header.Wrapping = fyne.TextWrapWord
+					response_headers.Add(response_header)
+				}
+				if isImage {
+					response.Hide()
+					img, _ := fyne.LoadResourceFromURLString(urlWithHTTPS)
+					img_box := canvas.NewImageFromResource(img)
+					img_box.FillMode = canvas.ImageFillContain
+					scroll_response.Content = img_box
+					scroll_response.Refresh()
+				} else {
+					response.SetText(body)
 				}
 			}
 		}
