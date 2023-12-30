@@ -30,7 +30,7 @@ func makeRequest(method string, url string, header_container *fyne.Container, bo
 		enabled := header_border.Objects[1].(*widget.Check)
 		name := header_grid.Objects[0].(*widget.Entry).Text
 		value := header_grid.Objects[1].(*widget.Entry).Text
-		regexp, _ := regexp.Compile(`^[A-Za-z[\]{}()<>\/@?=:";,-]*$`)
+		regexp, _ := regexp.Compile(`^[A-Za-z\d[\]{}()<>\/@?=:";,-]*$`)
 		if enabled.Checked && name != "" && regexp.MatchString(name) && value != "" {
 			req.Header.Add(name, value)
 		}
@@ -53,7 +53,7 @@ func main() {
 	method := widget.NewSelect([]string{"GET", "HEAD", "POST", "PUT", "DELETE", "CONNECT", "OPTIONS", "TRACE", "PATCH"}, nil)
 	method.Selected = "GET"
 	url := widget.NewEntry()
-	url.SetPlaceHolder("echo.zuplo.io/")
+	url.SetPlaceHolder("echo.zuplo.io")
 	send := widget.NewButton("Send", nil)
 	response := widget.NewLabel("")
 	response.Wrapping = fyne.TextWrapWord
