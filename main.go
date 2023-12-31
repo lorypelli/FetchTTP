@@ -169,6 +169,10 @@ func main() {
 		}
 		response.Refresh()
 	}
-	program.SetContent(container.NewBorder(container.NewBorder(nil, nil, method, send, container.NewBorder(nil, nil, nil, nil, url)), nil, nil, nil, container.NewHSplit(options, container.NewBorder(nil, nil, nil, response_status, response_options))))
+	http := container.NewBorder(container.NewBorder(nil, nil, method, send, container.NewBorder(nil, nil, nil, nil, url)), nil, nil, nil, container.NewHSplit(options, container.NewBorder(nil, nil, nil, response_status, response_options)))
+	ws := widget.NewLabel("Coming Soon!")
+	ws.TextStyle.Bold = true
+	ws.TextStyle.Italic = true
+	program.SetContent(container.NewAppTabs(container.NewTabItem("HTTP", http), container.NewTabItem("WS", container.NewBorder(nil, nil, nil, nil, container.NewCenter(ws)))))
 	program.ShowAndRun()
 }
