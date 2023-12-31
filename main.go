@@ -177,6 +177,58 @@ func main() {
 		}
 		response.Refresh()
 	}
+	url.OnSubmitted = func(_ string) {
+		response_headers.RemoveAll()
+		response_options.SelectIndex(1)
+		if len(url.Text) == 0 {
+			urlWithHTTPS := fmt.Sprintf("https://%s", url.PlaceHolder)
+			_, err := u.ParseRequestURI(urlWithHTTPS)
+			if err == nil {
+				status, headers, body := makeRequest(method.Selected, urlWithHTTPS, header_box, reqbody.Text)
+				response_status.SetText(fmt.Sprint(status))
+				response_status.Refresh()
+				for k, v := range headers {
+					str, _ := j.Marshal(v)
+					response_header := widget.NewLabel(fmt.Sprintf("%s: %s", k, str))
+					response_header.Wrapping = fyne.TextWrapWord
+					response_headers.Add(response_header)
+				}
+				response.SetText(string(body))
+			}
+		} else {
+			urlWithHTTPS := url.Text
+			if !strings.HasPrefix(strings.ToLower(urlWithHTTPS), "http") || !strings.HasPrefix(strings.ToLower(urlWithHTTPS), "https") {
+				urlWithHTTPS = fmt.Sprintf("https://%s", url.Text)
+			}
+			_, err := u.ParseRequestURI(urlWithHTTPS)
+			if err == nil {
+				status, headers, body := makeRequest(method.Selected, urlWithHTTPS, header_box, reqbody.Text)
+				response_status.SetText(fmt.Sprint(status))
+				response_status.Refresh()
+				isImage := false
+				for k, v := range headers {
+					str, _ := j.Marshal(v)
+					if strings.ToLower(k) == "content-type" && strings.Contains(strings.ToLower(string(str)), "image/png") || strings.Contains(strings.ToLower(string(str)), "image/jpeg") {
+						isImage = true
+					}
+					response_header := widget.NewLabel(fmt.Sprintf("%s: %s", k, str))
+					response_header.Wrapping = fyne.TextWrapWord
+					response_headers.Add(response_header)
+				}
+				if isImage {
+					response.Hide()
+					img, _ := fyne.LoadResourceFromURLString(urlWithHTTPS)
+					img_box := canvas.NewImageFromResource(img)
+					img_box.FillMode = canvas.ImageFillContain
+					scroll_response.Content = img_box
+					scroll_response.Refresh()
+				} else {
+					response.SetText(string(body))
+				}
+			}
+		}
+		response.Refresh()
+	}
 	http := container.NewTabItem(method.Selected, container.NewBorder(container.NewBorder(nil, nil, method, send, container.NewBorder(nil, nil, nil, nil, url)), nil, nil, nil, container.NewHSplit(options, container.NewBorder(nil, nil, nil, response_status, response_options))))
 	http_tabs := container.NewAppTabs(http)
 	plus_tabs := widget.NewButton("+", func() {
