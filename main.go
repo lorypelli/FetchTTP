@@ -2,7 +2,7 @@ package main
 
 import (
 	"bytes"
-	"encoding/json"
+	j "encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -17,11 +17,11 @@ import (
 	"fyne.io/fyne/v2/widget"
 )
 
-func makeRequest(method string, url string, header_container *fyne.Container, body string) (string, http.Header, string) {
+func makeRequest(method string, url string, header_container *fyne.Container, body string) (string, http.Header, []byte) {
 	data := []byte(body)
 	req, err := http.NewRequest(method, url, bytes.NewReader(data))
 	if err != nil {
-		return "", http.Header{}, ""
+		return "", http.Header{}, []byte{}
 	}
 	req.Header.Set("User-Agent", "FetchTTP")
 	for i := 0; i < len(header_container.Objects); i++ {
@@ -38,11 +38,19 @@ func makeRequest(method string, url string, header_container *fyne.Container, bo
 	c := &http.Client{}
 	res, err := c.Do(req)
 	if err != nil {
-		return "", http.Header{}, ""
+		return "", http.Header{}, []byte{}
 	}
-	bytes, _ := io.ReadAll(res.Body)
-	resbody := string(bytes)
-	return res.Status, res.Header, resbody
+	var resBody []byte
+	if (res.Header.Get("Content-Type") == "application/json") {
+		var jsonBody map[string]interface{}
+		bytes, _ := io.ReadAll(res.Body)
+		j.Unmarshal(bytes, &jsonBody)
+		resBody, _ = j.MarshalIndent(jsonBody, "", "  ")
+	} else {
+		bytes, _ := io.ReadAll(res.Body)
+		resBody = bytes
+	}
+	return res.Status, res.Header, resBody
 }
 
 func main() {
@@ -128,12 +136,12 @@ func main() {
 				response_status.SetText(fmt.Sprint(status))
 				response_status.Refresh()
 				for k, v := range headers {
-					str, _ := json.Marshal(v)
+					str, _ := j.Marshal(v)
 					response_header := widget.NewLabel(fmt.Sprintf("%s: %s", k, str))
 					response_header.Wrapping = fyne.TextWrapWord
 					response_headers.Add(response_header)
 				}
-				response.SetText(body)
+				response.SetText(string(body))
 			}
 		} else {
 			urlWithHTTPS := url.Text
@@ -147,7 +155,7 @@ func main() {
 				response_status.Refresh()
 				isImage := false
 				for k, v := range headers {
-					str, _ := json.Marshal(v)
+					str, _ := j.Marshal(v)
 					if strings.ToLower(k) == "content-type" && strings.Contains(strings.ToLower(string(str)), "image/png") || strings.Contains(strings.ToLower(string(str)), "image/jpeg") {
 						isImage = true
 					}
@@ -163,7 +171,7 @@ func main() {
 					scroll_response.Content = img_box
 					scroll_response.Refresh()
 				} else {
-					response.SetText(body)
+					response.SetText(string(body))
 				}
 			}
 		}
