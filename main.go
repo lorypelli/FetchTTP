@@ -41,7 +41,7 @@ func makeRequest(method string, url string, header_container *fyne.Container, bo
 		return "", http.Header{}, []byte{}
 	}
 	var resBody []byte
-	if (res.Header.Get("Content-Type") == "application/json") {
+	if res.Header.Get("Content-Type") == "application/json" {
 		var jsonBody map[string]interface{}
 		bytes, _ := io.ReadAll(res.Body)
 		j.Unmarshal(bytes, &jsonBody)
@@ -177,10 +177,30 @@ func main() {
 		}
 		response.Refresh()
 	}
-	http := container.NewBorder(container.NewBorder(nil, nil, method, send, container.NewBorder(nil, nil, nil, nil, url)), nil, nil, nil, container.NewHSplit(options, container.NewBorder(nil, nil, nil, response_status, response_options)))
+	http := container.NewTabItem(method.Selected, container.NewBorder(container.NewBorder(nil, nil, method, send, container.NewBorder(nil, nil, nil, nil, url)), nil, nil, nil, container.NewHSplit(options, container.NewBorder(nil, nil, nil, response_status, response_options))))
+	http_tabs := container.NewAppTabs(http)
+	plus_tabs := widget.NewButton("+", func() {
+		http := container.NewTabItem(method.Selected, container.NewBorder(container.NewBorder(nil, nil, method, send, container.NewBorder(nil, nil, nil, nil, url)), nil, nil, nil, container.NewHSplit(options, container.NewBorder(nil, nil, nil, response_status, response_options))))
+		http_tabs.Append(http)
+		http_tabs.Refresh()
+		http_tabs.SelectIndex(len(http_tabs.Items) - 1)
+	})
+	minus_tabs := widget.NewButton("-", func() {
+		if len(http_tabs.Items) > 1 {
+			http_tabs.Items = http_tabs.Items[:len(http_tabs.Items)-1]
+		}
+		http_tabs.Refresh()
+		http_tabs.SelectIndex(len(http_tabs.Items) - 1)
+	})
+	method.OnChanged = func(s string) {
+		http_tabs.Selected().Text = s
+		http_tabs.Refresh()
+	}
 	ws := widget.NewLabel("Coming Soon!")
 	ws.TextStyle.Bold = true
 	ws.TextStyle.Italic = true
-	program.SetContent(container.NewAppTabs(container.NewTabItem("HTTP", http), container.NewTabItem("WS", container.NewBorder(nil, nil, nil, nil, container.NewCenter(ws)))))
+	tabs := container.NewAppTabs(container.NewTabItem("HTTP", container.NewBorder(nil, nil, minus_tabs, plus_tabs, http_tabs)), container.NewTabItem("WS", container.NewBorder(nil, nil, nil, nil, container.NewCenter(ws))))
+	tabs.SetTabLocation(container.TabLocationLeading)
+	program.SetContent(tabs)
 	program.ShowAndRun()
 }
