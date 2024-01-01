@@ -303,9 +303,13 @@ func main() {
 			connect.SetText("Disconnect")
 		}
 		if len(url_ws.Text) == 0 {
-			_, err := u.ParseRequestURI(url_ws.PlaceHolder)
+			urlWithWSS := url_http.PlaceHolder
+			if !strings.HasPrefix(strings.ToLower(urlWithWSS), "wss") {
+				urlWithWSS = fmt.Sprintf("wss://%s", url_ws.PlaceHolder)
+			}
+			_, err := u.ParseRequestURI(urlWithWSS)
 			if err == nil {
-				go ConnectWS(url_ws.PlaceHolder, ws_header_box, msg.Text, timer, ws_channel, isStopped)
+				go ConnectWS(urlWithWSS, ws_header_box, msg.Text, timer, ws_channel, isStopped)
 				msg_number := 1
 				go func() {
 					for range timer.C {
@@ -324,9 +328,13 @@ func main() {
 				}()
 			}
 		} else {
-			_, err := u.ParseRequestURI(url_ws.Text)
+			urlWithWSS := url_http.Text
+			if !strings.HasPrefix(strings.ToLower(urlWithWSS), "wss") {
+				urlWithWSS = fmt.Sprintf("wss://%s", url_ws.Text)
+			}
+			_, err := u.ParseRequestURI(urlWithWSS)
 			if err == nil {
-				go ConnectWS(url_ws.Text, ws_header_box, msg.Text, timer, ws_channel, isStopped)
+				go ConnectWS(urlWithWSS, ws_header_box, msg.Text, timer, ws_channel, isStopped)
 				msg_number := 1
 				go func() {
 					for range timer.C {
@@ -401,63 +409,69 @@ func main() {
 		send.Enable()
 	}
 	url_ws.OnSubmitted = func(_ string) {
-		connect.OnTapped = func() {
-			url_ws.Disable()
-			ws_response_headers.RemoveAll()
-			ws_response_options.SelectIndex(1)
-			timer := time.NewTicker(time.Second)
-			ws_channel := make(chan Response)
-			message := Response{}
-			isStopped := false
-			if connect.Text == "Disconnect" {
-				isStopped = true
-				url_ws.Enable()
-				connect.SetText("Connect")
-			} else {
-				connect.SetText("Disconnect")
+		url_ws.Disable()
+		ws_response_headers.RemoveAll()
+		ws_response_options.SelectIndex(1)
+		timer := time.NewTicker(time.Second)
+		ws_channel := make(chan Response)
+		message := Response{}
+		isStopped := false
+		if connect.Text == "Disconnect" {
+			isStopped = true
+			url_ws.Enable()
+			connect.SetText("Connect")
+		} else {
+			connect.SetText("Disconnect")
+		}
+		if len(url_ws.Text) == 0 {
+			urlWithWSS := url_http.PlaceHolder
+			if !strings.HasPrefix(strings.ToLower(urlWithWSS), "wss") {
+				urlWithWSS = fmt.Sprintf("wss://%s", url_ws.PlaceHolder)
 			}
-			if len(url_ws.Text) == 0 {
-				_, err := u.ParseRequestURI(url_ws.PlaceHolder)
-				if err == nil {
-					go ConnectWS(url_ws.PlaceHolder, ws_header_box, msg.Text, timer, ws_channel, isStopped)
-					msg_number := 1
-					go func() {
-						for range timer.C {
-							if !isStopped {
-								message = <-ws_channel
-								msg_number += 1
-								ws_response.Length = func() int {
-									return msg_number
-								}
-								ws_response.CreateItem = func() fyne.CanvasObject {
-									return widget.NewLabel(string(message.Msg))
-								}
-								ws_response.Refresh()
+			_, err := u.ParseRequestURI(urlWithWSS)
+			if err == nil {
+				go ConnectWS(urlWithWSS, ws_header_box, msg.Text, timer, ws_channel, isStopped)
+				msg_number := 1
+				go func() {
+					for range timer.C {
+						if !isStopped {
+							message = <-ws_channel
+							msg_number += 1
+							ws_response.Length = func() int {
+								return msg_number
 							}
-						}
-					}()
-				}
-			} else {
-				_, err := u.ParseRequestURI(url_ws.Text)
-				if err == nil {
-					go ConnectWS(url_ws.Text, ws_header_box, msg.Text, timer, ws_channel, isStopped)
-					msg_number := 1
-					go func() {
-						for range timer.C {
-							if !isStopped {
-								message = <-ws_channel
-								msg_number += 1
-								ws_response.Length = func() int {
-									return msg_number
-								}
-								ws_response.CreateItem = func() fyne.CanvasObject {
-									return widget.NewLabel(string(message.Msg))
-								}
-								ws_response.Refresh()
+							ws_response.CreateItem = func() fyne.CanvasObject {
+								return widget.NewLabel(string(message.Msg))
 							}
+							ws_response.Refresh()
 						}
-					}()
-				}
+					}
+				}()
+			}
+		} else {
+			urlWithWSS := url_http.Text
+			if !strings.HasPrefix(strings.ToLower(urlWithWSS), "wss") {
+				urlWithWSS = fmt.Sprintf("wss://%s", url_ws.Text)
+			}
+			_, err := u.ParseRequestURI(urlWithWSS)
+			if err == nil {
+				go ConnectWS(urlWithWSS, ws_header_box, msg.Text, timer, ws_channel, isStopped)
+				msg_number := 1
+				go func() {
+					for range timer.C {
+						if !isStopped {
+							message = <-ws_channel
+							msg_number += 1
+							ws_response.Length = func() int {
+								return msg_number
+							}
+							ws_response.CreateItem = func() fyne.CanvasObject {
+								return widget.NewLabel(string(message.Msg))
+							}
+							ws_response.Refresh()
+						}
+					}
+				}()
 			}
 		}
 	}
