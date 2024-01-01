@@ -65,7 +65,7 @@ type Response struct {
 
 func ConnectWS(url string, header_container *fyne.Container, msg string, timer *time.Ticker, msg_channel chan Response) {
 	for range timer.C {
-		var headers = http.Header{}
+		header := http.Header{}
 		for i := 0; i < len(header_container.Objects); i++ {
 			header_border := header_container.Objects[i].(*fyne.Container)
 			header_grid := header_border.Objects[0].(*fyne.Container)
@@ -74,10 +74,10 @@ func ConnectWS(url string, header_container *fyne.Container, msg string, timer *
 			value := header_grid.Objects[1].(*widget.Entry).Text
 			regexp, _ := regexp.Compile(`^[A-Za-z\d[\]{}()<>\/@?=:";,-]*$`)
 			if enabled.Checked && name != "" && regexp.MatchString(name) && value != "" {
-				headers.Add(name, value)
+				header.Add(name, value)
 			}
 		}
-		ws, res, err := websocket.DefaultDialer.Dial(url, headers)
+		ws, res, err := websocket.DefaultDialer.Dial(url, header)
 		if err != nil {
 			msg_channel <- Response{
 				Headers: http.Header{},
