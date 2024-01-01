@@ -4,18 +4,22 @@ import (
 	"bytes"
 	j "encoding/json"
 	"fmt"
+	"io"
+	"net/http"
+	u "net/url"
+	"os"
+	"path/filepath"
+	"regexp"
+	"strings"
+	"time"
+
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/canvas"
 	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/driver/desktop"
 	"fyne.io/fyne/v2/widget"
 	"github.com/gorilla/websocket"
-	"io"
-	"net/http"
-	u "net/url"
-	"regexp"
-	"strings"
-	"time"
 )
 
 func makeRequest(method string, url string, header_container *fyne.Container, body string) (string, http.Header, []byte) {
@@ -101,6 +105,26 @@ func main() {
 	program := a.NewWindow("FetchTTP")
 	program.Resize(fyne.NewSize(1280, 720))
 	program.CenterOnScreen()
+	req, _ := http.NewRequest("GET", "https://raw.githubusercontent.com/lorypelli/FetchTTP/main/icon.png", nil)
+	c := &http.Client{}
+	res, _ := c.Do(req)
+	_, ok := a.(desktop.App)
+	if ok {
+		homeDirectory, _ := os.UserHomeDir()
+		path := fmt.Sprintf("%s/http_requests/", homeDirectory)
+		os.MkdirAll(path, os.ModePerm)
+		filePath := filepath.Join(path, "icon.png")
+		file, _ := os.Create(filePath)
+		io.Copy(file, res.Body)
+		file, _ = os.Open(filePath)
+		stats, _ := os.Stat(filePath)
+		size := stats.Size()
+		fileBytes := make([]byte, size)
+		fileSlice := fileBytes[:]
+		file.Read(fileSlice)
+		icon := fyne.NewStaticResource("icon.png", fileBytes)
+		program.SetIcon(icon)
+	}
 	method := widget.NewSelect([]string{"GET", "HEAD", "POST", "PUT", "DELETE", "CONNECT", "OPTIONS", "TRACE", "PATCH"}, nil)
 	method.Selected = "GET"
 	url_http := widget.NewEntry()
