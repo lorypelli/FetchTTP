@@ -324,7 +324,7 @@ func main() {
 			connect.SetText("Disconnect")
 		}
 		if len(url_ws.Text) == 0 {
-			urlWithWSS := url_http.PlaceHolder
+			urlWithWSS := url_ws.PlaceHolder
 			if !strings.HasPrefix(strings.ToLower(urlWithWSS), "wss") {
 				urlWithWSS = fmt.Sprintf("wss://%s", url_ws.PlaceHolder)
 			}
@@ -351,12 +351,14 @@ func main() {
 								return widget.NewLabel(string(message.Msg))
 							}
 							ws_response.Refresh()
+						} else {
+							timer.Stop()
 						}
 					}
 				}()
 			}
 		} else {
-			urlWithWSS := url_http.Text
+			urlWithWSS := url_ws.Text
 			if !strings.HasPrefix(strings.ToLower(urlWithWSS), "wss") {
 				urlWithWSS = fmt.Sprintf("wss://%s", url_ws.Text)
 			}
@@ -383,6 +385,8 @@ func main() {
 								return widget.NewLabel(string(message.Msg))
 							}
 							ws_response.Refresh()
+						} else {
+							timer.Stop()
 						}
 					}
 				}()
@@ -458,7 +462,7 @@ func main() {
 			connect.SetText("Disconnect")
 		}
 		if len(url_ws.Text) == 0 {
-			urlWithWSS := url_http.PlaceHolder
+			urlWithWSS := url_ws.PlaceHolder
 			if !strings.HasPrefix(strings.ToLower(urlWithWSS), "wss") {
 				urlWithWSS = fmt.Sprintf("wss://%s", url_ws.PlaceHolder)
 			}
@@ -485,12 +489,14 @@ func main() {
 								return widget.NewLabel(string(message.Msg))
 							}
 							ws_response.Refresh()
+						} else {
+							timer.Stop()
 						}
 					}
 				}()
 			}
 		} else {
-			urlWithWSS := url_http.Text
+			urlWithWSS := url_ws.Text
 			if !strings.HasPrefix(strings.ToLower(urlWithWSS), "wss") {
 				urlWithWSS = fmt.Sprintf("wss://%s", url_ws.Text)
 			}
@@ -517,6 +523,8 @@ func main() {
 								return widget.NewLabel(string(message.Msg))
 							}
 							ws_response.Refresh()
+						} else {
+							timer.Stop()
 						}
 					}
 				}()
