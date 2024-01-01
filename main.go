@@ -130,7 +130,7 @@ func main() {
 	url_http := widget.NewEntry()
 	url_http.SetPlaceHolder("echo.zuplo.io")
 	url_ws := widget.NewEntry()
-	url_ws.SetPlaceHolder("echo.zuplo.io")
+	url_ws.SetPlaceHolder("echo.websocket.org")
 	send := widget.NewButton("Send", nil)
 	connect := widget.NewButton("Connect", nil)
 	http_response := widget.NewLabel("")
