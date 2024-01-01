@@ -60,21 +60,21 @@ type Response struct {
 }
 
 func ConnectWS(url string, header_container *fyne.Container, msg string, timer *time.Ticker, msg_channel chan Response) {
+	var headers = http.Header{}
+	for i := 0; i < len(header_container.Objects); i++ {
+		header_border := header_container.Objects[i].(*fyne.Container)
+		header_grid := header_border.Objects[0].(*fyne.Container)
+		enabled := header_border.Objects[1].(*widget.Check)
+		name := header_grid.Objects[0].(*widget.Entry).Text
+		value := header_grid.Objects[1].(*widget.Entry).Text
+		regexp, _ := regexp.Compile(`^[A-Za-z\d[\]{}()<>\/@?=:";,-]*$`)
+		if enabled.Checked && name != "" && regexp.MatchString(name) && value != "" {
+			headers.Add(name, value)
+		}
+	}
+	ws, res, err := websocket.DefaultDialer.Dial(url, headers)
 	for range timer.C {
 		{
-			var headers = http.Header{}
-			for i := 0; i < len(header_container.Objects); i++ {
-				header_border := header_container.Objects[i].(*fyne.Container)
-				header_grid := header_border.Objects[0].(*fyne.Container)
-				enabled := header_border.Objects[1].(*widget.Check)
-				name := header_grid.Objects[0].(*widget.Entry).Text
-				value := header_grid.Objects[1].(*widget.Entry).Text
-				regexp, _ := regexp.Compile(`^[A-Za-z\d[\]{}()<>\/@?=:";,-]*$`)
-				if enabled.Checked && name != "" && regexp.MatchString(name) && value != "" {
-					headers.Add(name, value)
-				}
-			}
-			ws, res, err := websocket.DefaultDialer.Dial(url, headers)
 			if err != nil {
 				msg_channel <- Response{
 					Headers: http.Header{},
@@ -292,48 +292,26 @@ func main() {
 		url_ws.Disable()
 		ws_response_headers.RemoveAll()
 		ws_response_options.SelectIndex(1)
-		timer := time.NewTicker(1 * time.Second)
+		timer := time.NewTicker(time.Second)
 		ws_channel := make(chan Response)
 		message := Response{}
 		if len(url_ws.Text) == 0 {
 			_, err := u.ParseRequestURI(url_ws.PlaceHolder)
 			if err == nil {
 				go ConnectWS(url_ws.PlaceHolder, ws_header_box, msg.Text, timer, ws_channel)
-				message = <-ws_channel
-				for k, v := range message.Headers {
-					str, _ := j.Marshal(v)
-					response_header := widget.NewLabel(fmt.Sprintf("%s: %s", k, str))
-					response_header.Wrapping = fyne.TextWrapWord
-					ws_response_headers.Add(response_header)
-				}
-				ws_response.Length = func() int {
-					return ws_response.Length() + 1
-				}
-				ws_response.CreateItem = func() fyne.CanvasObject {
-					return widget.NewLabel(string(message.Msg))
+				for range timer.C {
+					message = <-ws_channel
+					fmt.Println(string(message.Msg))
 				}
 			}
 		} else {
 			_, err := u.ParseRequestURI(url_ws.Text)
 			if err == nil {
 				go ConnectWS(url_ws.Text, ws_header_box, msg.Text, timer, ws_channel)
-				go func() {
-					for range timer.C {
-						ws_response.Length = func() int {
-							return ws_response.Length() + 1
-						}
-						message = <-ws_channel
-						for k, v := range message.Headers {
-							str, _ := j.Marshal(v)
-							response_header := widget.NewLabel(fmt.Sprintf("%s: %s", k, str))
-							response_header.Wrapping = fyne.TextWrapWord
-							ws_response_headers.Add(response_header)
-						}
-						ws_response.CreateItem = func() fyne.CanvasObject {
-							return widget.NewLabel(string(message.Msg))
-						}
-					}
-				}()
+				for range timer.C {
+					message = <-ws_channel
+					fmt.Println(string(message.Msg))
+				}
 			}
 		}
 		ws_response.Refresh()
