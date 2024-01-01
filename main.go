@@ -352,7 +352,9 @@ func main() {
 								return msg_number
 							}
 							ws_response.CreateItem = func() fyne.CanvasObject {
-								return widget.NewLabel(string(message.Msg))
+								ws_msg := widget.NewLabel(string(message.Msg))
+								ws_msg.Wrapping = fyne.TextWrapWord
+								return ws_msg
 							}
 							ws_response.Refresh()
 						} else {
@@ -386,7 +388,9 @@ func main() {
 								return msg_number
 							}
 							ws_response.CreateItem = func() fyne.CanvasObject {
-								return widget.NewLabel(string(message.Msg))
+								ws_msg := widget.NewLabel(string(message.Msg))
+								ws_msg.Wrapping = fyne.TextWrapWord
+								return ws_msg
 							}
 							ws_response.Refresh()
 						} else {
@@ -494,7 +498,9 @@ func main() {
 								return msg_number
 							}
 							ws_response.CreateItem = func() fyne.CanvasObject {
-								return widget.NewLabel(string(message.Msg))
+								ws_msg := widget.NewLabel(string(message.Msg))
+								ws_msg.Wrapping = fyne.TextWrapWord
+								return ws_msg
 							}
 							ws_response.Refresh()
 						} else {
@@ -528,7 +534,9 @@ func main() {
 								return msg_number
 							}
 							ws_response.CreateItem = func() fyne.CanvasObject {
-								return widget.NewLabel(string(message.Msg))
+								ws_msg := widget.NewLabel(string(message.Msg))
+								ws_msg.Wrapping = fyne.TextWrapWord
+								return ws_msg
 							}
 							ws_response.Refresh()
 						} else {
