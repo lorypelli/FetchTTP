@@ -400,6 +400,67 @@ func main() {
 		http_response.Refresh()
 		send.Enable()
 	}
+	url_ws.OnSubmitted = func(_ string) {
+		connect.OnTapped = func() {
+			url_ws.Disable()
+			ws_response_headers.RemoveAll()
+			ws_response_options.SelectIndex(1)
+			timer := time.NewTicker(time.Second)
+			ws_channel := make(chan Response)
+			message := Response{}
+			isStopped := false
+			if connect.Text == "Disconnect" {
+				isStopped = true
+				url_ws.Enable()
+				connect.SetText("Connect")
+			} else {
+				connect.SetText("Disconnect")
+			}
+			if len(url_ws.Text) == 0 {
+				_, err := u.ParseRequestURI(url_ws.PlaceHolder)
+				if err == nil {
+					go ConnectWS(url_ws.PlaceHolder, ws_header_box, msg.Text, timer, ws_channel, isStopped)
+					msg_number := 1
+					go func() {
+						for range timer.C {
+							if !isStopped {
+								message = <-ws_channel
+								msg_number += 1
+								ws_response.Length = func() int {
+									return msg_number
+								}
+								ws_response.CreateItem = func() fyne.CanvasObject {
+									return widget.NewLabel(string(message.Msg))
+								}
+								ws_response.Refresh()
+							}
+						}
+					}()
+				}
+			} else {
+				_, err := u.ParseRequestURI(url_ws.Text)
+				if err == nil {
+					go ConnectWS(url_ws.Text, ws_header_box, msg.Text, timer, ws_channel, isStopped)
+					msg_number := 1
+					go func() {
+						for range timer.C {
+							if !isStopped {
+								message = <-ws_channel
+								msg_number += 1
+								ws_response.Length = func() int {
+									return msg_number
+								}
+								ws_response.CreateItem = func() fyne.CanvasObject {
+									return widget.NewLabel(string(message.Msg))
+								}
+								ws_response.Refresh()
+							}
+						}
+					}()
+				}
+			}
+		}
+	}
 	http := container.NewBorder(container.NewBorder(nil, nil, method, send, container.NewBorder(nil, nil, nil, nil, url_http)), nil, nil, nil, container.NewHSplit(http_options, container.NewBorder(nil, nil, nil, http_response_status, http_response_options)))
 	ws := container.NewBorder(container.NewBorder(nil, nil, nil, connect, container.NewBorder(nil, nil, nil, nil, url_ws)), nil, nil, nil, container.NewHSplit(ws_options, container.NewBorder(nil, nil, nil, nil, ws_response_options)))
 	tabs := container.NewAppTabs(container.NewTabItem("HTTP", http), container.NewTabItem("WS", ws))
