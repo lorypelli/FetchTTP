@@ -321,6 +321,10 @@ func main() {
 			connect.SetText("Connect")
 			return
 		} else {
+			ws_response.Length = func() int {
+				return 0
+			}
+			ws_response.Refresh()
 			connect.SetText("Disconnect")
 		}
 		if len(url_ws.Text) == 0 {
@@ -459,6 +463,10 @@ func main() {
 			connect.SetText("Connect")
 			return
 		} else {
+			ws_response.Length = func() int {
+				return 0
+			}
+			ws_response.Refresh()
 			connect.SetText("Disconnect")
 		}
 		if len(url_ws.Text) == 0 {
