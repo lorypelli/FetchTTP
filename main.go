@@ -59,22 +59,22 @@ type Response struct {
 	Msg     []byte
 }
 
-func ConnectWS(url string, header_container *fyne.Container, msg string, timer *time.Ticker, msg_channel chan Response) {
-	var headers = http.Header{}
-	for i := 0; i < len(header_container.Objects); i++ {
-		header_border := header_container.Objects[i].(*fyne.Container)
-		header_grid := header_border.Objects[0].(*fyne.Container)
-		enabled := header_border.Objects[1].(*widget.Check)
-		name := header_grid.Objects[0].(*widget.Entry).Text
-		value := header_grid.Objects[1].(*widget.Entry).Text
-		regexp, _ := regexp.Compile(`^[A-Za-z\d[\]{}()<>\/@?=:";,-]*$`)
-		if enabled.Checked && name != "" && regexp.MatchString(name) && value != "" {
-			headers.Add(name, value)
-		}
-	}
-	ws, res, err := websocket.DefaultDialer.Dial(url, headers)
+func ConnectWS(url string, header_container *fyne.Container, msg string, timer *time.Ticker, msg_channel chan Response, isStopped bool) {
 	for range timer.C {
-		{
+		if !isStopped {
+			var headers = http.Header{}
+			for i := 0; i < len(header_container.Objects); i++ {
+				header_border := header_container.Objects[i].(*fyne.Container)
+				header_grid := header_border.Objects[0].(*fyne.Container)
+				enabled := header_border.Objects[1].(*widget.Check)
+				name := header_grid.Objects[0].(*widget.Entry).Text
+				value := header_grid.Objects[1].(*widget.Entry).Text
+				regexp, _ := regexp.Compile(`^[A-Za-z\d[\]{}()<>\/@?=:";,-]*$`)
+				if enabled.Checked && name != "" && regexp.MatchString(name) && value != "" {
+					headers.Add(name, value)
+				}
+			}
+			ws, res, err := websocket.DefaultDialer.Dial(url, headers)
 			if err != nil {
 				msg_channel <- Response{
 					Headers: http.Header{},
@@ -288,34 +288,63 @@ func main() {
 		send.Enable()
 	}
 	connect.OnTapped = func() {
-		connect.Disable()
 		url_ws.Disable()
 		ws_response_headers.RemoveAll()
 		ws_response_options.SelectIndex(1)
 		timer := time.NewTicker(time.Second)
 		ws_channel := make(chan Response)
 		message := Response{}
+		isStopped := false
+		if connect.Text == "Disconnect" {
+			isStopped = true
+			url_ws.Enable()
+			connect.SetText("Connect")
+		} else {
+			connect.SetText("Disconnect")
+		}
 		if len(url_ws.Text) == 0 {
 			_, err := u.ParseRequestURI(url_ws.PlaceHolder)
 			if err == nil {
-				go ConnectWS(url_ws.PlaceHolder, ws_header_box, msg.Text, timer, ws_channel)
-				for range timer.C {
-					message = <-ws_channel
-					fmt.Println(string(message.Msg))
-				}
+				go ConnectWS(url_ws.PlaceHolder, ws_header_box, msg.Text, timer, ws_channel, isStopped)
+				msg_number := 1
+				go func() {
+					for range timer.C {
+						if !isStopped {
+							message = <-ws_channel
+							msg_number += 1
+							ws_response.Length = func() int {
+								return msg_number
+							}
+							ws_response.CreateItem = func() fyne.CanvasObject {
+								return widget.NewLabel(string(message.Msg))
+							}
+							ws_response.Refresh()
+						}
+					}
+				}()
 			}
 		} else {
 			_, err := u.ParseRequestURI(url_ws.Text)
 			if err == nil {
-				go ConnectWS(url_ws.Text, ws_header_box, msg.Text, timer, ws_channel)
-				for range timer.C {
-					message = <-ws_channel
-					fmt.Println(string(message.Msg))
-				}
+				go ConnectWS(url_ws.Text, ws_header_box, msg.Text, timer, ws_channel, isStopped)
+				msg_number := 1
+				go func() {
+					for range timer.C {
+						if !isStopped {
+							message = <-ws_channel
+							msg_number += 1
+							ws_response.Length = func() int {
+								return msg_number
+							}
+							ws_response.CreateItem = func() fyne.CanvasObject {
+								return widget.NewLabel(string(message.Msg))
+							}
+							ws_response.Refresh()
+						}
+					}
+				}()
 			}
 		}
-		ws_response.Refresh()
-		connect.Enable()
 	}
 	url_http.OnSubmitted = func(_ string) {
 		send.Disable()
