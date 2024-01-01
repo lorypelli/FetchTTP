@@ -60,9 +60,12 @@ func main() {
 	program.CenterOnScreen()
 	method := widget.NewSelect([]string{"GET", "HEAD", "POST", "PUT", "DELETE", "CONNECT", "OPTIONS", "TRACE", "PATCH"}, nil)
 	method.Selected = "GET"
-	url := widget.NewEntry()
-	url.SetPlaceHolder("echo.zuplo.io")
+	url_http := widget.NewEntry()
+	url_http.SetPlaceHolder("echo.zuplo.io")
+	url_ws := widget.NewEntry()
+	url_ws.SetPlaceHolder("echo.zuplo.io")
 	send := widget.NewButton("Send", nil)
+	connect := widget.NewButton("Connect", nil)
 	response := widget.NewLabel("")
 	response.Wrapping = fyne.TextWrapWord
 	enabled := widget.NewCheck("", nil)
@@ -128,8 +131,8 @@ func main() {
 	send.OnTapped = func() {
 		response_headers.RemoveAll()
 		response_options.SelectIndex(1)
-		if len(url.Text) == 0 {
-			urlWithHTTPS := fmt.Sprintf("https://%s", url.PlaceHolder)
+		if len(url_http.Text) == 0 {
+			urlWithHTTPS := fmt.Sprintf("https://%s", url_http.PlaceHolder)
 			_, err := u.ParseRequestURI(urlWithHTTPS)
 			if err == nil {
 				status, headers, body := makeRequest(method.Selected, urlWithHTTPS, header_box, reqbody.Text)
@@ -144,9 +147,9 @@ func main() {
 				response.SetText(string(body))
 			}
 		} else {
-			urlWithHTTPS := url.Text
+			urlWithHTTPS := url_http.Text
 			if !strings.HasPrefix(strings.ToLower(urlWithHTTPS), "http") || !strings.HasPrefix(strings.ToLower(urlWithHTTPS), "https") {
-				urlWithHTTPS = fmt.Sprintf("https://%s", url.Text)
+				urlWithHTTPS = fmt.Sprintf("https://%s", url_http.Text)
 			}
 			_, err := u.ParseRequestURI(urlWithHTTPS)
 			if err == nil {
@@ -177,11 +180,11 @@ func main() {
 		}
 		response.Refresh()
 	}
-	url.OnSubmitted = func(_ string) {
+	url_http.OnSubmitted = func(_ string) {
 		response_headers.RemoveAll()
 		response_options.SelectIndex(1)
-		if len(url.Text) == 0 {
-			urlWithHTTPS := fmt.Sprintf("https://%s", url.PlaceHolder)
+		if len(url_http.Text) == 0 {
+			urlWithHTTPS := fmt.Sprintf("https://%s", url_http.PlaceHolder)
 			_, err := u.ParseRequestURI(urlWithHTTPS)
 			if err == nil {
 				status, headers, body := makeRequest(method.Selected, urlWithHTTPS, header_box, reqbody.Text)
@@ -196,9 +199,9 @@ func main() {
 				response.SetText(string(body))
 			}
 		} else {
-			urlWithHTTPS := url.Text
+			urlWithHTTPS := url_http.Text
 			if !strings.HasPrefix(strings.ToLower(urlWithHTTPS), "http") || !strings.HasPrefix(strings.ToLower(urlWithHTTPS), "https") {
-				urlWithHTTPS = fmt.Sprintf("https://%s", url.Text)
+				urlWithHTTPS = fmt.Sprintf("https://%s", url_http.Text)
 			}
 			_, err := u.ParseRequestURI(urlWithHTTPS)
 			if err == nil {
@@ -229,11 +232,9 @@ func main() {
 		}
 		response.Refresh()
 	}
-	http := container.NewBorder(container.NewBorder(nil, nil, method, send, container.NewBorder(nil, nil, nil, nil, url)), nil, nil, nil, container.NewHSplit(options, container.NewBorder(nil, nil, nil, response_status, response_options)))
-	ws := widget.NewLabel("Coming Soon!")
-	ws.TextStyle.Bold = true
-	ws.TextStyle.Italic = true
-	tabs := container.NewAppTabs(container.NewTabItem("HTTP", http), container.NewTabItem("WS", container.NewBorder(nil, nil, nil, nil, container.NewCenter(ws))))
+	http := container.NewBorder(container.NewBorder(nil, nil, method, send, container.NewBorder(nil, nil, nil, nil, url_http)), nil, nil, nil, container.NewHSplit(options, container.NewBorder(nil, nil, nil, response_status, response_options)))
+	ws := container.NewBorder(container.NewBorder(nil, nil, nil, connect, container.NewBorder(nil, nil, nil, nil, url_ws)), nil, nil, nil, container.NewHSplit(options, container.NewBorder(nil, nil, nil, response_status, response_options)))
+	tabs := container.NewAppTabs(container.NewTabItem("HTTP", http), container.NewTabItem("WS", ws))
 	tabs.SetTabLocation(container.TabLocationLeading)
 	program.SetContent(tabs)
 	program.ShowAndRun()
