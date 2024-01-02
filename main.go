@@ -336,7 +336,7 @@ func main() {
 			if err == nil {
 				go ConnectWS(urlWithWSS, ws_header_box, msg.Text, timer, ws_channel)
 				go func() {
-					msg_number := 1
+					msg_number := 0
 					oldMessage := ""
 					message = <-ws_channel
 					for k, v := range message.Headers {
@@ -378,7 +378,7 @@ func main() {
 			if err == nil {
 				go ConnectWS(urlWithWSS, ws_header_box, msg.Text, timer, ws_channel)
 				go func() {
-					msg_number := 1
+					msg_number := 0
 					oldMessage := ""
 					message = <-ws_channel
 					for k, v := range message.Headers {
@@ -493,7 +493,7 @@ func main() {
 			if err == nil {
 				go ConnectWS(urlWithWSS, ws_header_box, msg.Text, timer, ws_channel)
 				go func() {
-					msg_number := 1
+					msg_number := 0
 					oldMessage := ""
 					message = <-ws_channel
 					for k, v := range message.Headers {
@@ -534,7 +534,7 @@ func main() {
 			if err == nil {
 				go ConnectWS(urlWithWSS, ws_header_box, msg.Text, timer, ws_channel)
 				go func() {
-					msg_number := 1
+					msg_number := 0
 					oldMessage := ""
 					message = <-ws_channel
 					for k, v := range message.Headers {
