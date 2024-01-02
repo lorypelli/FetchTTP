@@ -335,9 +335,9 @@ func main() {
 			_, err := u.ParseRequestURI(urlWithWSS)
 			if err == nil {
 				go ConnectWS(urlWithWSS, ws_header_box, msg.Text, timer, ws_channel)
-				msg_number := 1
-				oldMessage := ""
 				go func() {
+					msg_number := 1
+					oldMessage := ""
 					message = <-ws_channel
 					for k, v := range message.Headers {
 						str, _ := j.Marshal(v)
@@ -377,9 +377,9 @@ func main() {
 			_, err := u.ParseRequestURI(urlWithWSS)
 			if err == nil {
 				go ConnectWS(urlWithWSS, ws_header_box, msg.Text, timer, ws_channel)
-				msg_number := 1
-				oldMessage := ""
 				go func() {
+					msg_number := 1
+					oldMessage := ""
 					message = <-ws_channel
 					for k, v := range message.Headers {
 						str, _ := j.Marshal(v)
@@ -492,9 +492,9 @@ func main() {
 			_, err := u.ParseRequestURI(urlWithWSS)
 			if err == nil {
 				go ConnectWS(urlWithWSS, ws_header_box, msg.Text, timer, ws_channel)
-				msg_number := 1
-				oldMessage := ""
 				go func() {
+					msg_number := 1
+					oldMessage := ""
 					message = <-ws_channel
 					for k, v := range message.Headers {
 						str, _ := j.Marshal(v)
@@ -533,9 +533,9 @@ func main() {
 			_, err := u.ParseRequestURI(urlWithWSS)
 			if err == nil {
 				go ConnectWS(urlWithWSS, ws_header_box, msg.Text, timer, ws_channel)
-				msg_number := 1
-				oldMessage := ""
 				go func() {
+					msg_number := 1
+					oldMessage := ""
 					message = <-ws_channel
 					for k, v := range message.Headers {
 						str, _ := j.Marshal(v)
