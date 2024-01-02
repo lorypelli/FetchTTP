@@ -111,7 +111,7 @@ func main() {
 	_, ok := a.(desktop.App)
 	if ok {
 		homeDirectory, _ := os.UserHomeDir()
-		path := fmt.Sprintf("%s/http_requests/", homeDirectory)
+		path := fmt.Sprintf("%s/FetchTTP/", homeDirectory)
 		os.MkdirAll(path, os.ModePerm)
 		filePath := filepath.Join(path, "icon.png")
 		file, _ := os.Create(filePath)
