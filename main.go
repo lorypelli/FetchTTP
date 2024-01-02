@@ -313,7 +313,7 @@ func main() {
 		url_ws.Disable()
 		ws_response_headers.RemoveAll()
 		ws_response_options.SelectIndex(1)
-		timer := time.NewTicker(time.Second)
+		timer := time.NewTicker(500)
 		ws_channel := make(chan Response)
 		message := Response{}
 		if connect.Text == "Disconnect" {
@@ -336,6 +336,7 @@ func main() {
 			if err == nil {
 				go ConnectWS(urlWithWSS, ws_header_box, msg.Text, timer, ws_channel)
 				msg_number := 1
+				oldMessage := ""
 				go func() {
 					message = <-ws_channel
 					for k, v := range message.Headers {
@@ -346,17 +347,22 @@ func main() {
 					}
 					for range timer.C {
 						message = <-ws_channel
+						newMessage := string(message.Msg)
+						if oldMessage == newMessage {
+							return
+						}
 						if (len(ws_response_headers.Objects) != 0) {
 							msg_number += 1
 							ws_response.Length = func() int {
 								return msg_number
 							}
 							ws_response.CreateItem = func() fyne.CanvasObject {
-								ws_msg := widget.NewLabel(string(message.Msg))
+								ws_msg := widget.NewLabel(newMessage)
 								ws_msg.Wrapping = fyne.TextWrapWord
 								return ws_msg
 							}
 							ws_response.Refresh()
+							oldMessage = string(message.Msg)
 						} else {
 							timer.Stop()
 						}
@@ -372,6 +378,7 @@ func main() {
 			if err == nil {
 				go ConnectWS(urlWithWSS, ws_header_box, msg.Text, timer, ws_channel)
 				msg_number := 1
+				oldMessage := ""
 				go func() {
 					message = <-ws_channel
 					for k, v := range message.Headers {
@@ -382,13 +389,17 @@ func main() {
 					}
 					for range timer.C {
 						message = <-ws_channel
+						newMessage := string(message.Msg)
+						if oldMessage == newMessage {
+							return
+						}
 						if (len(ws_response_headers.Objects) != 0) {
 							msg_number += 1
 							ws_response.Length = func() int {
 								return msg_number
 							}
 							ws_response.CreateItem = func() fyne.CanvasObject {
-								ws_msg := widget.NewLabel(string(message.Msg))
+								ws_msg := widget.NewLabel(newMessage)
 								ws_msg.Wrapping = fyne.TextWrapWord
 								return ws_msg
 							}
@@ -482,6 +493,7 @@ func main() {
 			if err == nil {
 				go ConnectWS(urlWithWSS, ws_header_box, msg.Text, timer, ws_channel)
 				msg_number := 1
+				oldMessage := ""
 				go func() {
 					message = <-ws_channel
 					for k, v := range message.Headers {
@@ -492,13 +504,17 @@ func main() {
 					}
 					for range timer.C {
 						message = <-ws_channel
+						newMessage := string(message.Msg)
+						if oldMessage == newMessage {
+							return
+						}
 						if (len(ws_response_headers.Objects) != 0) {
 							msg_number += 1
 							ws_response.Length = func() int {
 								return msg_number
 							}
 							ws_response.CreateItem = func() fyne.CanvasObject {
-								ws_msg := widget.NewLabel(string(message.Msg))
+								ws_msg := widget.NewLabel(newMessage)
 								ws_msg.Wrapping = fyne.TextWrapWord
 								return ws_msg
 							}
@@ -518,6 +534,7 @@ func main() {
 			if err == nil {
 				go ConnectWS(urlWithWSS, ws_header_box, msg.Text, timer, ws_channel)
 				msg_number := 1
+				oldMessage := ""
 				go func() {
 					message = <-ws_channel
 					for k, v := range message.Headers {
@@ -528,13 +545,17 @@ func main() {
 					}
 					for range timer.C {
 						message = <-ws_channel
+						newMessage := string(message.Msg)
+						if oldMessage == newMessage {
+							return
+						}
 						if (len(ws_response_headers.Objects) != 0) {
 							msg_number += 1
 							ws_response.Length = func() int {
 								return msg_number
 							}
 							ws_response.CreateItem = func() fyne.CanvasObject {
-								ws_msg := widget.NewLabel(string(message.Msg))
+								ws_msg := widget.NewLabel(newMessage)
 								ws_msg.Wrapping = fyne.TextWrapWord
 								return ws_msg
 							}
