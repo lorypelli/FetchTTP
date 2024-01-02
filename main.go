@@ -60,6 +60,7 @@ func makeRequest(method string, url string, header_container *fyne.Container, bo
 
 type Response struct {
 	Headers http.Header
+	Status string
 	Msg     []byte
 }
 
@@ -81,6 +82,7 @@ func ConnectWS(url string, header_container *fyne.Container, msg string, timer *
 		if err != nil {
 			msg_channel <- Response{
 				Headers: http.Header{},
+				Status: "",
 				Msg:     []byte{},
 			}
 		} else {
@@ -88,11 +90,13 @@ func ConnectWS(url string, header_container *fyne.Container, msg string, timer *
 			if err != nil {
 				msg_channel <- Response{
 					Headers: res.Header,
+					Status: res.Status,
 					Msg:     []byte{},
 				}
 			} else {
 				msg_channel <- Response{
 					Headers: res.Header,
+					Status: res.Status,
 					Msg:     msg,
 				}
 			}
@@ -255,6 +259,7 @@ func main() {
 	ws_response_headers := container.NewVBox()
 	scroll_ws_response := container.NewScroll(ws_response)
 	ws_response_options := container.NewAppTabs(container.NewTabItem("Headers", container.NewScroll(ws_response_headers)), container.NewTabItem("Response", scroll_ws_response))
+	ws_response_status := widget.NewLabel("")
 	send.OnTapped = func() {
 		send.Disable()
 		http_response_headers.RemoveAll()
@@ -264,7 +269,7 @@ func main() {
 			_, err := u.ParseRequestURI(urlWithHTTPS)
 			if err == nil {
 				status, headers, body := makeRequest(method.Selected, urlWithHTTPS, http_header_box, reqbody.Text)
-				http_response_status.SetText(fmt.Sprint(status))
+				http_response_status.SetText(status)
 				http_response_status.Refresh()
 				for k, v := range headers {
 					str, _ := j.Marshal(v)
@@ -282,7 +287,7 @@ func main() {
 			_, err := u.ParseRequestURI(urlWithHTTPS)
 			if err == nil {
 				status, headers, body := makeRequest(method.Selected, urlWithHTTPS, http_header_box, reqbody.Text)
-				http_response_status.SetText(fmt.Sprint(status))
+				http_response_status.SetText(status)
 				http_response_status.Refresh()
 				isImage := false
 				for k, v := range headers {
@@ -318,6 +323,7 @@ func main() {
 		message := Response{}
 		if connect.Text == "Disconnect" {
 			url_ws.Enable()
+			ws_response_status.SetText("")
 			connect.SetText("Connect")
 			return
 		} else {
@@ -340,6 +346,13 @@ func main() {
 					msg_number := 0
 					oldMessage := ""
 					message = <-ws_channel
+					if message.Status == "" {
+						url_ws.Enable()
+						connect.SetText("Connect")
+						return
+					}
+					ws_response_status.SetText(message.Status)
+					ws_response_status.Refresh()
 					for k, v := range message.Headers {
 						str, _ := j.Marshal(v)
 						response_header := widget.NewLabel(fmt.Sprintf("%s: %s", k, str))
@@ -355,6 +368,9 @@ func main() {
 						}
 						if (len(ws_response_headers.Objects) != 0) {
 							msg_number += 1
+							ws_response.Length = func() int {
+								return msg_number
+							}
 							ws_response.CreateItem = func() fyne.CanvasObject {
 								ws_msg := widget.NewLabel("")
 								ws_msg.Wrapping = fyne.TextWrapWord
@@ -384,6 +400,13 @@ func main() {
 					msg_number := 0
 					oldMessage := ""
 					message = <-ws_channel
+					if message.Status == "" {
+						url_ws.Enable()
+						connect.SetText("Connect")
+						return
+					}
+					ws_response_status.SetText(message.Status)
+					ws_response_status.Refresh()
 					for k, v := range message.Headers {
 						str, _ := j.Marshal(v)
 						response_header := widget.NewLabel(fmt.Sprintf("%s: %s", k, str))
@@ -429,7 +452,7 @@ func main() {
 			_, err := u.ParseRequestURI(urlWithHTTPS)
 			if err == nil {
 				status, headers, body := makeRequest(method.Selected, urlWithHTTPS, http_header_box, reqbody.Text)
-				http_response_status.SetText(fmt.Sprint(status))
+				http_response_status.SetText(status)
 				http_response_status.Refresh()
 				for k, v := range headers {
 					str, _ := j.Marshal(v)
@@ -447,7 +470,7 @@ func main() {
 			_, err := u.ParseRequestURI(urlWithHTTPS)
 			if err == nil {
 				status, headers, body := makeRequest(method.Selected, urlWithHTTPS, http_header_box, reqbody.Text)
-				http_response_status.SetText(fmt.Sprint(status))
+				http_response_status.SetText(status)
 				http_response_status.Refresh()
 				isImage := false
 				for k, v := range headers {
@@ -481,17 +504,7 @@ func main() {
 		timer := time.NewTicker(time.Second)
 		ws_channel := make(chan Response)
 		message := Response{}
-		if connect.Text == "Disconnect" {
-			url_ws.Enable()
-			connect.SetText("Connect")
-			return
-		} else {
-			ws_response.Length = func() int {
-				return 0
-			}
-			ws_response.Refresh()
-			connect.SetText("Disconnect")
-		}
+		connect.SetText("Disconnect")
 		if len(url_ws.Text) == 0 {
 			urlWithWSS := url_ws.PlaceHolder
 			if !strings.HasPrefix(strings.ToLower(urlWithWSS), "wss") {
@@ -505,6 +518,13 @@ func main() {
 					msg_number := 0
 					oldMessage := ""
 					message = <-ws_channel
+					if message.Status == "" {
+						url_ws.Enable()
+						connect.SetText("Connect")
+						return
+					}
+					ws_response_status.SetText(message.Status)
+					ws_response_status.Refresh()
 					for k, v := range message.Headers {
 						str, _ := j.Marshal(v)
 						response_header := widget.NewLabel(fmt.Sprintf("%s: %s", k, str))
@@ -520,6 +540,9 @@ func main() {
 						}
 						if (len(ws_response_headers.Objects) != 0) {
 							msg_number += 1
+							ws_response.Length = func() int {
+								return msg_number
+							}
 							ws_response.CreateItem = func() fyne.CanvasObject {
 								ws_msg := widget.NewLabel("")
 								ws_msg.Wrapping = fyne.TextWrapWord
@@ -549,6 +572,13 @@ func main() {
 					msg_number := 0
 					oldMessage := ""
 					message = <-ws_channel
+					if message.Status == "" {
+						url_ws.Enable()
+						connect.SetText("Connect")
+						return
+					}
+					ws_response_status.SetText(message.Status)
+					ws_response_status.Refresh()
 					for k, v := range message.Headers {
 						str, _ := j.Marshal(v)
 						response_header := widget.NewLabel(fmt.Sprintf("%s: %s", k, str))
@@ -583,7 +613,7 @@ func main() {
 		}
 	}
 	http := container.NewBorder(container.NewBorder(nil, nil, method, send, container.NewBorder(nil, nil, nil, nil, url_http)), nil, nil, nil, container.NewHSplit(http_options, container.NewBorder(nil, nil, nil, http_response_status, http_response_options)))
-	ws := container.NewBorder(container.NewBorder(nil, nil, nil, connect, container.NewBorder(nil, nil, nil, nil, url_ws)), nil, nil, nil, container.NewHSplit(ws_options, container.NewBorder(nil, nil, nil, nil, ws_response_options)))
+	ws := container.NewBorder(container.NewBorder(nil, nil, nil, connect, container.NewBorder(nil, nil, nil, nil, url_ws)), nil, nil, nil, container.NewHSplit(ws_options, container.NewBorder(nil, nil, nil, ws_response_status, ws_response_options)))
 	tabs := container.NewAppTabs(container.NewTabItem("HTTP", http), container.NewTabItem("WS", ws))
 	tabs.SetTabLocation(container.TabLocationLeading)
 	program.SetContent(tabs)
