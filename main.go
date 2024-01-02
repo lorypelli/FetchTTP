@@ -334,6 +334,7 @@ func main() {
 			}
 			_, err := u.ParseRequestURI(urlWithWSS)
 			if err == nil {
+				var messages []string
 				go ConnectWS(urlWithWSS, ws_header_box, msg.Text, timer, ws_channel)
 				go func() {
 					msg_number := 0
@@ -348,18 +349,19 @@ func main() {
 					for range timer.C {
 						message = <-ws_channel
 						newMessage := string(message.Msg)
+						messages = append(messages, newMessage)
 						if oldMessage == newMessage {
 							return
 						}
 						if (len(ws_response_headers.Objects) != 0) {
 							msg_number += 1
-							ws_response.Length = func() int {
-								return msg_number
-							}
 							ws_response.CreateItem = func() fyne.CanvasObject {
-								ws_msg := widget.NewLabel(newMessage)
+								ws_msg := widget.NewLabel("")
 								ws_msg.Wrapping = fyne.TextWrapWord
 								return ws_msg
+							}
+							ws_response.UpdateItem = func(id widget.ListItemID, item fyne.CanvasObject) {
+								item.(*widget.Label).SetText(messages[id])
 							}
 							ws_response.Refresh()
 							oldMessage = string(message.Msg)
@@ -376,6 +378,7 @@ func main() {
 			}
 			_, err := u.ParseRequestURI(urlWithWSS)
 			if err == nil {
+				var messages []string
 				go ConnectWS(urlWithWSS, ws_header_box, msg.Text, timer, ws_channel)
 				go func() {
 					msg_number := 0
@@ -390,6 +393,7 @@ func main() {
 					for range timer.C {
 						message = <-ws_channel
 						newMessage := string(message.Msg)
+						messages = append(messages, newMessage)
 						if oldMessage == newMessage {
 							return
 						}
@@ -399,11 +403,15 @@ func main() {
 								return msg_number
 							}
 							ws_response.CreateItem = func() fyne.CanvasObject {
-								ws_msg := widget.NewLabel(newMessage)
+								ws_msg := widget.NewLabel("")
 								ws_msg.Wrapping = fyne.TextWrapWord
 								return ws_msg
 							}
+							ws_response.UpdateItem = func(id widget.ListItemID, item fyne.CanvasObject) {
+								item.(*widget.Label).SetText(messages[id])
+							}
 							ws_response.Refresh()
+							oldMessage = string(message.Msg)
 						} else {
 							timer.Stop()
 						}
@@ -491,6 +499,7 @@ func main() {
 			}
 			_, err := u.ParseRequestURI(urlWithWSS)
 			if err == nil {
+				var messages []string
 				go ConnectWS(urlWithWSS, ws_header_box, msg.Text, timer, ws_channel)
 				go func() {
 					msg_number := 0
@@ -505,20 +514,22 @@ func main() {
 					for range timer.C {
 						message = <-ws_channel
 						newMessage := string(message.Msg)
+						messages = append(messages, newMessage)
 						if oldMessage == newMessage {
 							return
 						}
 						if (len(ws_response_headers.Objects) != 0) {
 							msg_number += 1
-							ws_response.Length = func() int {
-								return msg_number
-							}
 							ws_response.CreateItem = func() fyne.CanvasObject {
-								ws_msg := widget.NewLabel(newMessage)
+								ws_msg := widget.NewLabel("")
 								ws_msg.Wrapping = fyne.TextWrapWord
 								return ws_msg
 							}
+							ws_response.UpdateItem = func(id widget.ListItemID, item fyne.CanvasObject) {
+								item.(*widget.Label).SetText(messages[id])
+							}
 							ws_response.Refresh()
+							oldMessage = string(message.Msg)
 						} else {
 							timer.Stop()
 						}
@@ -532,6 +543,7 @@ func main() {
 			}
 			_, err := u.ParseRequestURI(urlWithWSS)
 			if err == nil {
+				var messages []string
 				go ConnectWS(urlWithWSS, ws_header_box, msg.Text, timer, ws_channel)
 				go func() {
 					msg_number := 0
@@ -546,20 +558,22 @@ func main() {
 					for range timer.C {
 						message = <-ws_channel
 						newMessage := string(message.Msg)
+						messages = append(messages, newMessage)
 						if oldMessage == newMessage {
 							return
 						}
 						if (len(ws_response_headers.Objects) != 0) {
 							msg_number += 1
-							ws_response.Length = func() int {
-								return msg_number
-							}
 							ws_response.CreateItem = func() fyne.CanvasObject {
-								ws_msg := widget.NewLabel(newMessage)
+								ws_msg := widget.NewLabel("")
 								ws_msg.Wrapping = fyne.TextWrapWord
 								return ws_msg
 							}
+							ws_response.UpdateItem = func(id widget.ListItemID, item fyne.CanvasObject) {
+								item.(*widget.Label).SetText(messages[id])
+							}
 							ws_response.Refresh()
+							oldMessage = string(message.Msg)
 						} else {
 							timer.Stop()
 						}
