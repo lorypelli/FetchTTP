@@ -324,13 +324,13 @@ func main() {
 		if connect.Text == "Disconnect" {
 			url_ws.Enable()
 			ws_response_status.SetText("")
-			connect.SetText("Connect")
-			return
-		} else {
 			ws_response.Length = func() int {
 				return 0
 			}
 			ws_response.Refresh()
+			connect.SetText("Connect")
+			return
+		} else {
 			connect.SetText("Disconnect")
 		}
 		if len(url_ws.Text) == 0 {
