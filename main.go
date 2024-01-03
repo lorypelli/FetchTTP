@@ -168,14 +168,14 @@ func main() {
 		}
 	}
 	ws_header_name.OnChanged = func(s string) {
-		if len(s) == 0 || len(http_header_value.Text) == 0 {
+		if len(s) == 0 || len(ws_header_value.Text) == 0 {
 			ws_enabled.SetChecked(false)
 		} else {
 			ws_enabled.SetChecked(true)
 		}
 	}
 	ws_header_value.OnChanged = func(s string) {
-		if len(s) == 0 || len(http_header_name.Text) == 0 {
+		if len(s) == 0 || len(ws_header_name.Text) == 0 {
 			ws_enabled.SetChecked(false)
 		} else {
 			ws_enabled.SetChecked(true)
@@ -190,27 +190,27 @@ func main() {
 	tap_http := 0
 	tap_ws := 0
 	plus_http := widget.NewButton("+", func() {
-		newEnabled := widget.NewCheck("", nil)
-		newHeader_name := widget.NewEntry()
-		newHeader_name.SetPlaceHolder("name")
-		newHeader_value := widget.NewEntry()
-		newHeader_value.SetPlaceHolder("value")
-		newHeader_name.OnChanged = func(s string) {
-			if len(s) == 0 || len(newHeader_value.Text) == 0 {
-				newEnabled.SetChecked(false)
+		http_newEnabled := widget.NewCheck("", nil)
+		http_newHeader_name := widget.NewEntry()
+		http_newHeader_name.SetPlaceHolder("name")
+		http_newHeader_value := widget.NewEntry()
+		http_newHeader_value.SetPlaceHolder("value")
+		http_newHeader_name.OnChanged = func(s string) {
+			if len(s) == 0 || len(http_newHeader_value.Text) == 0 {
+				http_newEnabled.SetChecked(false)
 			} else {
-				newEnabled.SetChecked(true)
+				http_newEnabled.SetChecked(true)
 			}
 		}
-		newHeader_value.OnChanged = func(s string) {
-			if len(s) == 0 || len(newHeader_value.Text) == 0 {
-				newEnabled.SetChecked(false)
+		http_newHeader_value.OnChanged = func(s string) {
+			if len(s) == 0 || len(http_newHeader_value.Text) == 0 {
+				http_newEnabled.SetChecked(false)
 			} else {
-				newEnabled.SetChecked(true)
+				http_newEnabled.SetChecked(true)
 			}
 		}
-		http_header_grid = container.NewGridWithColumns(2, newHeader_name, newHeader_value)
-		http_header_border = container.NewBorder(nil, nil, newEnabled, nil, http_header_grid)
+		http_header_grid = container.NewGridWithColumns(2, http_newHeader_name, http_newHeader_value)
+		http_header_border = container.NewBorder(nil, nil, http_newEnabled, nil, http_header_grid)
 		http_header_box.Add(http_header_border)
 		tap_http -= 1
 	})
@@ -221,27 +221,27 @@ func main() {
 		}
 	})
 	plus_ws := widget.NewButton("+", func() {
-		newEnabled := widget.NewCheck("", nil)
-		newHeader_name := widget.NewEntry()
-		newHeader_name.SetPlaceHolder("name")
-		newHeader_value := widget.NewEntry()
-		newHeader_value.SetPlaceHolder("value")
-		newHeader_name.OnChanged = func(s string) {
-			if len(s) == 0 || len(newHeader_value.Text) == 0 {
-				newEnabled.SetChecked(false)
+		ws_newEnabled := widget.NewCheck("", nil)
+		ws_newHeader_name := widget.NewEntry()
+		ws_newHeader_name.SetPlaceHolder("name")
+		ws_newHeader_value := widget.NewEntry()
+		ws_newHeader_value.SetPlaceHolder("value")
+		ws_newHeader_name.OnChanged = func(s string) {
+			if len(s) == 0 || len(ws_newHeader_value.Text) == 0 {
+				ws_newEnabled.SetChecked(false)
 			} else {
-				newEnabled.SetChecked(true)
+				ws_newEnabled.SetChecked(true)
 			}
 		}
-		newHeader_value.OnChanged = func(s string) {
-			if len(s) == 0 || len(newHeader_value.Text) == 0 {
-				newEnabled.SetChecked(false)
+		ws_newHeader_value.OnChanged = func(s string) {
+			if len(s) == 0 || len(ws_newHeader_value.Text) == 0 {
+				ws_newEnabled.SetChecked(false)
 			} else {
-				newEnabled.SetChecked(true)
+				ws_newEnabled.SetChecked(true)
 			}
 		}
-		ws_header_grid = container.NewGridWithColumns(2, newHeader_name, newHeader_value)
-		ws_header_border = container.NewBorder(nil, nil, newEnabled, nil, http_header_grid)
+		ws_header_grid = container.NewGridWithColumns(2, ws_newHeader_name, ws_newHeader_value)
+		ws_header_border = container.NewBorder(nil, nil, ws_newEnabled, nil, http_header_grid)
 		ws_header_box.Add(ws_header_border)
 		tap_ws -= 1
 	})
