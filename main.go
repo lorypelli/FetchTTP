@@ -261,6 +261,8 @@ func main() {
 	ws_response_options := container.NewAppTabs(container.NewTabItem("Headers", container.NewScroll(ws_response_headers)), container.NewTabItem("Response", scroll_ws_response))
 	ws_response_status := widget.NewLabel("")
 	send.OnTapped = func() {
+		method.Disable()
+		url_http.Disable()
 		send.Disable()
 		http_response_headers.RemoveAll()
 		http_response_options.SelectIndex(1)
@@ -312,6 +314,8 @@ func main() {
 			}
 		}
 		http_response.Refresh()
+		method.Enable()
+		url_http.Enable()
 		send.Enable()
 	}
 	connect.OnTapped = func() {
@@ -444,6 +448,8 @@ func main() {
 		}
 	}
 	url_http.OnSubmitted = func(_ string) {
+		method.Disable()
+		url_http.Disable()
 		send.Disable()
 		http_response_headers.RemoveAll()
 		http_response_options.SelectIndex(1)
@@ -495,6 +501,8 @@ func main() {
 			}
 		}
 		http_response.Refresh()
+		method.Enable()
+		url_http.Enable()
 		send.Enable()
 	}
 	url_ws.OnSubmitted = func(_ string) {
