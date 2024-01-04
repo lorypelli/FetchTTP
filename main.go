@@ -10,7 +10,6 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
-	"strconv"
 	"strings"
 	"time"
 
@@ -65,7 +64,7 @@ type Response struct {
 	Msg     []byte
 }
 
-func ConnectWS(url string, header_container *fyne.Container, msg_type string, msg string, timer *time.Ticker, msg_channel chan Response) {
+func ConnectWS(url string, header_container *fyne.Container, msg string, timer *time.Ticker, msg_channel chan Response) {
 	for range timer.C {
 		header := http.Header{}
 		for i := 0; i < len(header_container.Objects); i++ {
@@ -87,8 +86,7 @@ func ConnectWS(url string, header_container *fyne.Container, msg_type string, ms
 				Msg:     []byte{},
 			}
 		} else {
-			msg_type_int, _ := strconv.Atoi(msg_type)
-			ws.WriteMessage(msg_type_int, []byte(msg))
+			ws.WriteMessage(websocket.TextMessage, []byte(msg))
 			_, msg, err := ws.ReadMessage()
 			if err != nil {
 				msg_channel <- Response{
@@ -252,13 +250,11 @@ func main() {
 		}
 	})
 	reqbody := widget.NewMultiLineEntry()
-	ws_type := widget.NewEntry()
-	ws_type.SetPlaceHolder("Message Type")
 	msg := widget.NewMultiLineEntry()
 	msg.SetPlaceHolder("Message Content")
 	ws_send := widget.NewButton("Send", nil)
 	http_options := container.NewAppTabs(container.NewTabItem("Headers", container.NewScroll(container.NewVBox(http_header_box, plus_http, minus_http))), container.NewTabItem("Body", reqbody))
-	ws_options := container.NewAppTabs(container.NewTabItem("Headers", container.NewScroll(container.NewVBox(ws_header_box, plus_ws, minus_ws))), container.NewTabItem("Message", container.NewBorder(ws_type, ws_send, nil, nil, msg)))
+	ws_options := container.NewAppTabs(container.NewTabItem("Headers", container.NewScroll(container.NewVBox(ws_header_box, plus_ws, minus_ws))), container.NewTabItem("Message", container.NewBorder(nil, ws_send, nil, nil, msg)))
 	http_response_headers := container.NewVBox()
 	scroll_http_response := container.NewScroll(http_response)
 	http_response_options := container.NewAppTabs(container.NewTabItem("Headers", container.NewScroll(http_response_headers)), container.NewTabItem("Response", scroll_http_response))
@@ -352,7 +348,7 @@ func main() {
 			_, err := u.ParseRequestURI(urlWithWSS)
 			if err == nil {
 				var messages []string
-				go ConnectWS(urlWithWSS, ws_header_box, ws_type.Text, msg.Text, timer, ws_channel)
+				go ConnectWS(urlWithWSS, ws_header_box, msg.Text, timer, ws_channel)
 				go func() {
 					msg_number := 0
 					oldMessage := ""
@@ -406,7 +402,7 @@ func main() {
 			_, err := u.ParseRequestURI(urlWithWSS)
 			if err == nil {
 				var messages []string
-				go ConnectWS(urlWithWSS, ws_header_box, ws_type.Text, msg.Text, timer, ws_channel)
+				go ConnectWS(urlWithWSS, ws_header_box, msg.Text, timer, ws_channel)
 				go func() {
 					msg_number := 0
 					oldMessage := ""
@@ -528,7 +524,7 @@ func main() {
 			_, err := u.ParseRequestURI(urlWithWSS)
 			if err == nil {
 				var messages []string
-				go ConnectWS(urlWithWSS, ws_header_box, ws_type.Text, msg.Text, timer, ws_channel)
+				go ConnectWS(urlWithWSS, ws_header_box, msg.Text, timer, ws_channel)
 				go func() {
 					msg_number := 0
 					oldMessage := ""
@@ -582,7 +578,7 @@ func main() {
 			_, err := u.ParseRequestURI(urlWithWSS)
 			if err == nil {
 				var messages []string
-				go ConnectWS(urlWithWSS, ws_header_box, ws_type.Text, msg.Text, timer, ws_channel)
+				go ConnectWS(urlWithWSS, ws_header_box, msg.Text, timer, ws_channel)
 				go func() {
 					msg_number := 0
 					oldMessage := ""
