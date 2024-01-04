@@ -22,7 +22,7 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-func makeRequest(method string, url string, header_container *fyne.Container, body string) (string, http.Header, []byte) {
+func SendRequest(method string, url string, header_container *fyne.Container, body string) (string, http.Header, []byte) {
 	data := []byte(body)
 	req, err := http.NewRequest(method, url, bytes.NewReader(data))
 	if err != nil {
@@ -273,7 +273,7 @@ func main() {
 			urlWithHTTPS := fmt.Sprintf("https://%s", url_http.PlaceHolder)
 			_, err := u.ParseRequestURI(urlWithHTTPS)
 			if err == nil {
-				status, headers, body := makeRequest(method.Selected, urlWithHTTPS, http_header_box, reqbody.Text)
+				status, headers, body := SendRequest(method.Selected, urlWithHTTPS, http_header_box, reqbody.Text)
 				http_response_status.SetText(status)
 				http_response_status.Refresh()
 				for k, v := range headers {
@@ -291,7 +291,7 @@ func main() {
 			}
 			_, err := u.ParseRequestURI(urlWithHTTPS)
 			if err == nil {
-				status, headers, body := makeRequest(method.Selected, urlWithHTTPS, http_header_box, reqbody.Text)
+				status, headers, body := SendRequest(method.Selected, urlWithHTTPS, http_header_box, reqbody.Text)
 				http_response_status.SetText(status)
 				http_response_status.Refresh()
 				isImage := false
@@ -460,7 +460,7 @@ func main() {
 			urlWithHTTPS := fmt.Sprintf("https://%s", url_http.PlaceHolder)
 			_, err := u.ParseRequestURI(urlWithHTTPS)
 			if err == nil {
-				status, headers, body := makeRequest(method.Selected, urlWithHTTPS, http_header_box, reqbody.Text)
+				status, headers, body := SendRequest(method.Selected, urlWithHTTPS, http_header_box, reqbody.Text)
 				http_response_status.SetText(status)
 				http_response_status.Refresh()
 				for k, v := range headers {
@@ -478,7 +478,7 @@ func main() {
 			}
 			_, err := u.ParseRequestURI(urlWithHTTPS)
 			if err == nil {
-				status, headers, body := makeRequest(method.Selected, urlWithHTTPS, http_header_box, reqbody.Text)
+				status, headers, body := SendRequest(method.Selected, urlWithHTTPS, http_header_box, reqbody.Text)
 				http_response_status.SetText(status)
 				http_response_status.Refresh()
 				isImage := false
