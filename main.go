@@ -108,8 +108,14 @@ func ConnectWS(url string, header_container *fyne.Container, msg string, timer *
 func main() {
 	a := app.New()
 	program := a.NewWindow("FetchTTP")
+	cookies := a.NewWindow("Cookies")
 	program.Resize(fyne.NewSize(1280, 720))
+	cookies.Resize(fyne.NewSize(1280, 720))
 	program.CenterOnScreen()
+	cookies.CenterOnScreen()
+	cookies.SetCloseIntercept(func() {
+		cookies.Hide()
+	})
 	req, _ := http.NewRequest("GET", "https://raw.githubusercontent.com/lorypelli/FetchTTP/main/icon.png", nil)
 	c := &http.Client{}
 	res, _ := c.Do(req)
@@ -129,6 +135,7 @@ func main() {
 		file.Read(fileSlice)
 		icon := fyne.NewStaticResource("icon.png", fileBytes)
 		program.SetIcon(icon)
+		cookies.SetIcon(icon)
 	}
 	method := widget.NewSelect([]string{"GET", "HEAD", "POST", "PUT", "DELETE", "CONNECT", "OPTIONS", "TRACE", "PATCH"}, nil)
 	method.Selected = "GET"
@@ -254,7 +261,10 @@ func main() {
 	msg := widget.NewMultiLineEntry()
 	msg.SetPlaceHolder("Message Content")
 	ws_send := widget.NewButton("Send", nil)
-	http_options := container.NewAppTabs(container.NewTabItem("Headers", container.NewScroll(container.NewVBox(http_header_box, plus_http, minus_http))), container.NewTabItem("Body", reqbody))
+	cookie_box := container.NewVBox(widget.NewButton("Add Cookie", func() {
+		cookies.Show()
+	}))
+	http_options := container.NewAppTabs(container.NewTabItem("Headers", container.NewScroll(container.NewVBox(http_header_box, plus_http, minus_http))), container.NewTabItem("Cookies", cookie_box), container.NewTabItem("Body", reqbody))
 	ws_options := container.NewAppTabs(container.NewTabItem("Headers", container.NewScroll(container.NewVBox(ws_header_box, plus_ws, minus_ws))), container.NewTabItem("Message", container.NewBorder(nil, ws_send, nil, nil, msg)))
 	http_response_headers := container.NewVBox()
 	scroll_http_response := container.NewScroll(http_response)
@@ -629,5 +639,6 @@ func main() {
 	tabs := container.NewAppTabs(container.NewTabItem("HTTP", http), container.NewTabItem("WS", ws))
 	tabs.SetTabLocation(container.TabLocationLeading)
 	program.SetContent(tabs)
-	program.ShowAndRun()
+	program.Show()
+	a.Run()
 }
