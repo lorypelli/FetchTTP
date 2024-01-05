@@ -250,6 +250,7 @@ func main() {
 		}
 	})
 	reqbody := widget.NewMultiLineEntry()
+	reqbody.SetPlaceHolder("Request Body")
 	msg := widget.NewMultiLineEntry()
 	msg.SetPlaceHolder("Message Content")
 	ws_send := widget.NewButton("Send", nil)
