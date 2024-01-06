@@ -60,7 +60,7 @@ func SendRequest(method string, url string, header_container *fyne.Container, bo
 
 type Response struct {
 	Headers http.Header
-	Status string
+	Status  string
 	Msg     []byte
 }
 
@@ -82,7 +82,7 @@ func ConnectWS(url string, header_container *fyne.Container, msg string, timer *
 		if err != nil {
 			msg_channel <- Response{
 				Headers: http.Header{},
-				Status: "",
+				Status:  "",
 				Msg:     []byte{},
 			}
 		} else {
@@ -91,13 +91,13 @@ func ConnectWS(url string, header_container *fyne.Container, msg string, timer *
 			if err != nil {
 				msg_channel <- Response{
 					Headers: res.Header,
-					Status: res.Status,
+					Status:  res.Status,
 					Msg:     []byte{},
 				}
 			} else {
 				msg_channel <- Response{
 					Headers: res.Header,
-					Status: res.Status,
+					Status:  res.Status,
 					Msg:     msg,
 				}
 			}
@@ -261,11 +261,36 @@ func main() {
 	msg := widget.NewMultiLineEntry()
 	msg.SetPlaceHolder("Message Content")
 	ws_send := widget.NewButton("Send", nil)
-	cookie_box := container.NewVBox(widget.NewButton("Add Cookie", func() {
+	http_cookie_box := container.NewVBox(widget.NewButton("Add Cookie", func() {
+		key := widget.NewEntry()
+		key.SetPlaceHolder("Key")
+		value := widget.NewEntry()
+		value.SetPlaceHolder("Value")
+		domain := widget.NewEntry()
+		domain.SetPlaceHolder("Domain")
+		path := widget.NewEntry()
+		path.SetPlaceHolder("Path")
+		calendar := widget.NewEntry()
+		calendar.SetPlaceHolder("Expires")
+		cookies.SetContent(container.NewVBox(container.NewBorder(nil, nil, nil, nil, container.NewGridWithRows(3, container.NewGridWithColumns(2, key, value), container.NewGridWithColumns(2, domain, path), calendar))))
 		cookies.Show()
 	}))
-	http_options := container.NewAppTabs(container.NewTabItem("Headers", container.NewScroll(container.NewVBox(http_header_box, plus_http, minus_http))), container.NewTabItem("Cookies", cookie_box), container.NewTabItem("Body", reqbody))
-	ws_options := container.NewAppTabs(container.NewTabItem("Headers", container.NewScroll(container.NewVBox(ws_header_box, plus_ws, minus_ws))), container.NewTabItem("Message", container.NewBorder(nil, ws_send, nil, nil, msg)))
+	ws_cookie_box := container.NewVBox(widget.NewButton("Add Cookie", func() {
+		key := widget.NewEntry()
+		key.SetPlaceHolder("Key")
+		value := widget.NewEntry()
+		value.SetPlaceHolder("Value")
+		domain := widget.NewEntry()
+		domain.SetPlaceHolder("Domain")
+		path := widget.NewEntry()
+		path.SetPlaceHolder("Path")
+		calendar := widget.NewEntry()
+		calendar.SetPlaceHolder("Expires")
+		cookies.SetContent(container.NewVBox(container.NewBorder(nil, nil, nil, nil, container.NewGridWithRows(3, container.NewGridWithColumns(2, key, value), container.NewGridWithColumns(2, domain, path), calendar))))
+		cookies.Show()
+	}))
+	http_options := container.NewAppTabs(container.NewTabItem("Headers", container.NewScroll(container.NewVBox(http_header_box, plus_http, minus_http))), container.NewTabItem("Cookies", http_cookie_box), container.NewTabItem("Body", reqbody))
+	ws_options := container.NewAppTabs(container.NewTabItem("Headers", container.NewScroll(container.NewVBox(ws_header_box, plus_ws, minus_ws))), container.NewTabItem("Cookies", ws_cookie_box), container.NewTabItem("Message", container.NewBorder(nil, ws_send, nil, nil, msg)))
 	http_response_headers := container.NewVBox()
 	scroll_http_response := container.NewScroll(http_response)
 	http_response_options := container.NewAppTabs(container.NewTabItem("Headers", container.NewScroll(http_response_headers)), container.NewTabItem("Response", scroll_http_response))
@@ -384,7 +409,7 @@ func main() {
 						if oldMessage == newMessage {
 							return
 						}
-						if (len(ws_response_headers.Objects) != 0) {
+						if len(ws_response_headers.Objects) != 0 {
 							msg_number += 1
 							ws_response.Length = func() int {
 								return msg_number
@@ -438,7 +463,7 @@ func main() {
 						if oldMessage == newMessage {
 							return
 						}
-						if (len(ws_response_headers.Objects) != 0) {
+						if len(ws_response_headers.Objects) != 0 {
 							msg_number += 1
 							ws_response.Length = func() int {
 								return msg_number
@@ -560,7 +585,7 @@ func main() {
 						if oldMessage == newMessage {
 							return
 						}
-						if (len(ws_response_headers.Objects) != 0) {
+						if len(ws_response_headers.Objects) != 0 {
 							msg_number += 1
 							ws_response.Length = func() int {
 								return msg_number
@@ -614,7 +639,7 @@ func main() {
 						if oldMessage == newMessage {
 							return
 						}
-						if (len(ws_response_headers.Objects) != 0) {
+						if len(ws_response_headers.Objects) != 0 {
 							msg_number += 1
 							ws_response.CreateItem = func() fyne.CanvasObject {
 								ws_msg := widget.NewLabel("")
