@@ -150,8 +150,8 @@ func main() {
 	http_response := widget.NewLabel("")
 	http_response.Wrapping = fyne.TextWrapWord
 	ws_response := widget.NewList(nil, nil, nil)
-	http_enabled := widget.NewCheck("", nil)
-	ws_enabled := widget.NewCheck("", nil)
+	http_header_enabled := widget.NewCheck("", nil)
+	ws_header_enabled := widget.NewCheck("", nil)
 	http_header_name := widget.NewEntry()
 	http_header_name.SetPlaceHolder("name")
 	http_header_value := widget.NewEntry()
@@ -162,41 +162,41 @@ func main() {
 	ws_header_value.SetPlaceHolder("value")
 	http_header_name.OnChanged = func(s string) {
 		if len(s) == 0 || len(http_header_value.Text) == 0 {
-			http_enabled.SetChecked(false)
+			http_header_enabled.SetChecked(false)
 		} else {
-			http_enabled.SetChecked(true)
+			http_header_enabled.SetChecked(true)
 		}
 	}
 	http_header_value.OnChanged = func(s string) {
 		if len(s) == 0 || len(http_header_name.Text) == 0 {
-			http_enabled.SetChecked(false)
+			http_header_enabled.SetChecked(false)
 		} else {
-			http_enabled.SetChecked(true)
+			http_header_enabled.SetChecked(true)
 		}
 	}
 	ws_header_name.OnChanged = func(s string) {
 		if len(s) == 0 || len(ws_header_value.Text) == 0 {
-			ws_enabled.SetChecked(false)
+			ws_header_enabled.SetChecked(false)
 		} else {
-			ws_enabled.SetChecked(true)
+			ws_header_enabled.SetChecked(true)
 		}
 	}
 	ws_header_value.OnChanged = func(s string) {
 		if len(s) == 0 || len(ws_header_name.Text) == 0 {
-			ws_enabled.SetChecked(false)
+			ws_header_enabled.SetChecked(false)
 		} else {
-			ws_enabled.SetChecked(true)
+			ws_header_enabled.SetChecked(true)
 		}
 	}
 	http_header_grid := container.NewGridWithColumns(2, http_header_name, http_header_value)
-	http_header_border := container.NewBorder(nil, nil, http_enabled, nil, http_header_grid)
+	http_header_border := container.NewBorder(nil, nil, http_header_enabled, nil, http_header_grid)
 	http_header_box := container.NewVBox(http_header_border)
 	ws_header_grid := container.NewGridWithColumns(2, ws_header_name, ws_header_value)
-	ws_header_border := container.NewBorder(nil, nil, ws_enabled, nil, ws_header_grid)
+	ws_header_border := container.NewBorder(nil, nil, ws_header_enabled, nil, ws_header_grid)
 	ws_header_box := container.NewVBox(ws_header_border)
-	tap_http := 0
-	tap_ws := 0
-	plus_http := widget.NewButton("+", func() {
+	tap_header_http := 0
+	tap_header_ws := 0
+	plus_header_http := widget.NewButton("+", func() {
 		http_newEnabled := widget.NewCheck("", nil)
 		http_newHeader_name := widget.NewEntry()
 		http_newHeader_name.SetPlaceHolder("name")
@@ -219,15 +219,15 @@ func main() {
 		http_header_grid = container.NewGridWithColumns(2, http_newHeader_name, http_newHeader_value)
 		http_header_border = container.NewBorder(nil, nil, http_newEnabled, nil, http_header_grid)
 		http_header_box.Add(http_header_border)
-		tap_http -= 1
+		tap_header_http -= 1
 	})
-	minus_http := widget.NewButton("-", func() {
-		if len(http_header_box.Objects)-1 > tap_http {
-			tap_http += 1
-			http_header_box.Remove(http_header_box.Objects[-tap_http+1])
+	minus_header_http := widget.NewButton("-", func() {
+		if len(http_header_box.Objects)-1 > tap_header_http {
+			tap_header_http += 1
+			http_header_box.Remove(http_header_box.Objects[-tap_header_http+1])
 		}
 	})
-	plus_ws := widget.NewButton("+", func() {
+	plus_header_ws := widget.NewButton("+", func() {
 		ws_newEnabled := widget.NewCheck("", nil)
 		ws_newHeader_name := widget.NewEntry()
 		ws_newHeader_name.SetPlaceHolder("name")
@@ -248,14 +248,122 @@ func main() {
 			}
 		}
 		ws_header_grid = container.NewGridWithColumns(2, ws_newHeader_name, ws_newHeader_value)
-		ws_header_border = container.NewBorder(nil, nil, ws_newEnabled, nil, http_header_grid)
+		ws_header_border = container.NewBorder(nil, nil, ws_newEnabled, nil, ws_header_grid)
 		ws_header_box.Add(ws_header_border)
-		tap_ws -= 1
+		tap_header_ws -= 1
 	})
-	minus_ws := widget.NewButton("-", func() {
-		if len(ws_header_box.Objects)-1 > tap_ws {
-			tap_ws += 1
-			ws_header_box.Remove(ws_header_box.Objects[-tap_ws+1])
+	minus_header_ws := widget.NewButton("-", func() {
+		if len(ws_header_box.Objects)-1 > tap_header_ws {
+			tap_header_ws += 1
+			ws_header_box.Remove(ws_header_box.Objects[-tap_header_ws+1])
+		}
+	})
+	http_query_enabled := widget.NewCheck("", nil)
+	ws_query_enabled := widget.NewCheck("", nil)
+	http_query_name := widget.NewEntry()
+	http_query_name.SetPlaceHolder("name")
+	http_query_value := widget.NewEntry()
+	http_query_value.SetPlaceHolder("value")
+	ws_query_name := widget.NewEntry()
+	ws_query_name.SetPlaceHolder("name")
+	ws_query_value := widget.NewEntry()
+	ws_query_value.SetPlaceHolder("value")
+	http_query_name.OnChanged = func(s string) {
+		if len(s) == 0 || len(http_query_value.Text) == 0 {
+			http_query_enabled.SetChecked(false)
+		} else {
+			http_query_enabled.SetChecked(true)
+		}
+	}
+	http_query_value.OnChanged = func(s string) {
+		if len(s) == 0 || len(http_query_name.Text) == 0 {
+			http_query_enabled.SetChecked(false)
+		} else {
+			http_query_enabled.SetChecked(true)
+		}
+	}
+	ws_query_name.OnChanged = func(s string) {
+		if len(s) == 0 || len(ws_query_value.Text) == 0 {
+			ws_query_enabled.SetChecked(false)
+		} else {
+			ws_query_enabled.SetChecked(true)
+		}
+	}
+	ws_query_value.OnChanged = func(s string) {
+		if len(s) == 0 || len(ws_query_name.Text) == 0 {
+			ws_query_enabled.SetChecked(false)
+		} else {
+			ws_query_enabled.SetChecked(true)
+		}
+	}
+	http_query_grid := container.NewGridWithColumns(2, http_query_name, http_query_value)
+	http_query_border := container.NewBorder(nil, nil, http_query_enabled, nil, http_query_grid)
+	http_query_box := container.NewVBox(http_query_border)
+	ws_query_grid := container.NewGridWithColumns(2, ws_query_name, ws_query_value)
+	ws_query_border := container.NewBorder(nil, nil, ws_query_enabled, nil, ws_query_grid)
+	ws_query_box := container.NewVBox(ws_query_border)
+	tap_query_http := 0
+	tap_query_ws := 0
+	plus_query_http := widget.NewButton("+", func() {
+		http_newEnabled := widget.NewCheck("", nil)
+		http_newQuery_name := widget.NewEntry()
+		http_newQuery_name.SetPlaceHolder("name")
+		http_newQuery_value := widget.NewEntry()
+		http_newQuery_value.SetPlaceHolder("value")
+		http_newQuery_name.OnChanged = func(s string) {
+			if len(s) == 0 || len(http_newQuery_value.Text) == 0 {
+				http_newEnabled.SetChecked(false)
+			} else {
+				http_newEnabled.SetChecked(true)
+			}
+		}
+		http_newQuery_value.OnChanged = func(s string) {
+			if len(s) == 0 || len(http_newQuery_value.Text) == 0 {
+				http_newEnabled.SetChecked(false)
+			} else {
+				http_newEnabled.SetChecked(true)
+			}
+		}
+		http_query_grid = container.NewGridWithColumns(2, http_newQuery_name, http_newQuery_value)
+		http_query_border = container.NewBorder(nil, nil, http_newEnabled, nil, http_query_grid)
+		http_query_box.Add(http_query_border)
+		tap_query_http -= 1
+	})
+	minus_query_http := widget.NewButton("-", func() {
+		if len(http_query_box.Objects)-1 > tap_query_http {
+			tap_query_http += 1
+			http_query_box.Remove(http_query_box.Objects[-tap_query_http+1])
+		}
+	})
+	plus_query_ws := widget.NewButton("+", func() {
+		ws_newEnabled := widget.NewCheck("", nil)
+		ws_newQuery_name := widget.NewEntry()
+		ws_newQuery_name.SetPlaceHolder("name")
+		ws_newQuery_value := widget.NewEntry()
+		ws_newQuery_value.SetPlaceHolder("value")
+		ws_newQuery_name.OnChanged = func(s string) {
+			if len(s) == 0 || len(ws_newQuery_value.Text) == 0 {
+				ws_newEnabled.SetChecked(false)
+			} else {
+				ws_newEnabled.SetChecked(true)
+			}
+		}
+		ws_newQuery_value.OnChanged = func(s string) {
+			if len(s) == 0 || len(ws_newQuery_value.Text) == 0 {
+				ws_newEnabled.SetChecked(false)
+			} else {
+				ws_newEnabled.SetChecked(true)
+			}
+		}
+		ws_query_grid = container.NewGridWithColumns(2, ws_newQuery_name, ws_newQuery_value)
+		ws_query_border = container.NewBorder(nil, nil, ws_newEnabled, nil, ws_query_grid)
+		ws_query_box.Add(ws_query_border)
+		tap_query_ws -= 1
+	})
+	minus_query_ws := widget.NewButton("-", func() {
+		if len(ws_query_box.Objects)-1 > tap_query_ws {
+			tap_query_ws += 1
+			ws_query_box.Remove(ws_query_box.Objects[-tap_query_ws+1])
 		}
 	})
 	reqbody := widget.NewMultiLineEntry()
@@ -375,8 +483,8 @@ func main() {
 		})))))
 		cookies.Show()
 	}))
-	http_options := container.NewAppTabs(container.NewTabItem("Headers", container.NewScroll(container.NewVBox(http_header_box, plus_http, minus_http))), container.NewTabItem("Cookies", http_cookie_box), container.NewTabItem("Body", reqbody))
-	ws_options := container.NewAppTabs(container.NewTabItem("Headers", container.NewScroll(container.NewVBox(ws_header_box, plus_ws, minus_ws))), container.NewTabItem("Cookies", ws_cookie_box), container.NewTabItem("Message", container.NewBorder(nil, ws_send, nil, nil, msg)))
+	http_options := container.NewAppTabs(container.NewTabItem("Headers", container.NewScroll(container.NewVBox(http_header_box, plus_header_http, minus_header_http))), container.NewTabItem("Query", container.NewScroll(container.NewVBox(http_query_box, plus_query_http, minus_query_http))), container.NewTabItem("Cookies", http_cookie_box), container.NewTabItem("Body", reqbody))
+	ws_options := container.NewAppTabs(container.NewTabItem("Headers", container.NewScroll(container.NewVBox(ws_header_box, plus_header_ws, minus_header_ws))), container.NewTabItem("Query", container.NewScroll(container.NewVBox(ws_query_box, plus_query_ws, minus_query_ws))), container.NewTabItem("Cookies", ws_cookie_box), container.NewTabItem("Message", container.NewBorder(nil, ws_send, nil, nil, msg)))
 	http_response_headers := container.NewVBox()
 	scroll_http_response := container.NewScroll(http_response)
 	http_response_options := container.NewAppTabs(container.NewTabItem("Headers", container.NewScroll(http_response_headers)), container.NewTabItem("Response", scroll_http_response))
