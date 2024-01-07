@@ -23,8 +23,22 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-func SendRequest(method string, url string, header_container *fyne.Container, body string) (string, http.Header, []byte) {
+func SendRequest(method string, url string, header_container *fyne.Container, query_container *fyne.Container, body string) (string, http.Header, []byte) {
 	data := []byte(body)
+	for i := 0; i < len(query_container.Objects); i++ {
+		query_border := query_container.Objects[i].(*fyne.Container)
+		query_grid := query_border.Objects[0].(*fyne.Container)
+		enabled := query_border.Objects[1].(*widget.Check)
+		name := query_grid.Objects[0].(*widget.Entry).Text
+		value := query_grid.Objects[1].(*widget.Entry).Text
+		if enabled.Checked && name != "" && value != "" {
+			if (strings.Contains(url, "?")) {
+				url += fmt.Sprintf("&%s=%s", name, value)
+			} else {
+				url += fmt.Sprintf("?%s=%s", name, value)
+			}
+		}
+	}
 	req, err := http.NewRequest(method, url, bytes.NewReader(data))
 	if err != nil {
 		return "", http.Header{}, []byte{}
@@ -65,8 +79,22 @@ type Response struct {
 	Msg     []byte
 }
 
-func ConnectWS(url string, header_container *fyne.Container, msg string, timer *time.Ticker, msg_channel chan Response) {
+func ConnectWS(url string, header_container *fyne.Container, query_container *fyne.Container, msg string, timer *time.Ticker, msg_channel chan Response) {
 	for range timer.C {
+		for i := 0; i < len(query_container.Objects); i++ {
+			query_border := query_container.Objects[i].(*fyne.Container)
+			query_grid := query_border.Objects[0].(*fyne.Container)
+			enabled := query_border.Objects[1].(*widget.Check)
+			name := query_grid.Objects[0].(*widget.Entry).Text
+			value := query_grid.Objects[1].(*widget.Entry).Text
+			if enabled.Checked && name != "" && value != "" {
+				if (strings.Contains(url, "?")) {
+					url += fmt.Sprintf("&%s=%s", name, value)
+				} else {
+					url += fmt.Sprintf("?%s=%s", name, value)
+				}
+			}
+		}
 		header := http.Header{}
 		for i := 0; i < len(header_container.Objects); i++ {
 			header_border := header_container.Objects[i].(*fyne.Container)
@@ -403,7 +431,7 @@ func main() {
 			c_enabled.SetChecked(true)
 			c_name := widget.NewEntry()
 			c_name.SetPlaceHolder("Name")
-			c_name.SetText("Set-Cookie")
+			c_name.SetText("Cookie")
 			c_name.OnChanged = func(s string) {
 				if len(s) == 0 || len(c_name.Text) == 0 {
 					c_enabled.SetChecked(false)
@@ -459,7 +487,7 @@ func main() {
 			c_enabled.SetChecked(true)
 			c_name := widget.NewEntry()
 			c_name.SetPlaceHolder("Name")
-			c_name.SetText("Set-Cookie")
+			c_name.SetText("Cookie")
 			c_name.OnChanged = func(s string) {
 				if len(s) == 0 || len(c_name.Text) == 0 {
 					c_enabled.SetChecked(false)
@@ -503,7 +531,7 @@ func main() {
 			urlWithHTTPS := fmt.Sprintf("https://%s", url_http.PlaceHolder)
 			_, err := u.ParseRequestURI(urlWithHTTPS)
 			if err == nil {
-				status, headers, body := SendRequest(method.Selected, urlWithHTTPS, http_header_box, reqbody.Text)
+				status, headers, body := SendRequest(method.Selected, urlWithHTTPS, http_header_box, http_query_box, reqbody.Text)
 				http_response_status.SetText(status)
 				http_response_status.Refresh()
 				for k, v := range headers {
@@ -521,7 +549,7 @@ func main() {
 			}
 			_, err := u.ParseRequestURI(urlWithHTTPS)
 			if err == nil {
-				status, headers, body := SendRequest(method.Selected, urlWithHTTPS, http_header_box, reqbody.Text)
+				status, headers, body := SendRequest(method.Selected, urlWithHTTPS, http_header_box, http_query_box, reqbody.Text)
 				http_response_status.SetText(status)
 				http_response_status.Refresh()
 				isImage := false
@@ -578,7 +606,7 @@ func main() {
 			_, err := u.ParseRequestURI(urlWithWSS)
 			if err == nil {
 				var messages []string
-				go ConnectWS(urlWithWSS, ws_header_box, msg.Text, timer, ws_channel)
+				go ConnectWS(urlWithWSS, ws_header_box, ws_query_box, msg.Text, timer, ws_channel)
 				go func() {
 					msg_number := 0
 					oldMessage := ""
@@ -632,7 +660,7 @@ func main() {
 			_, err := u.ParseRequestURI(urlWithWSS)
 			if err == nil {
 				var messages []string
-				go ConnectWS(urlWithWSS, ws_header_box, msg.Text, timer, ws_channel)
+				go ConnectWS(urlWithWSS, ws_header_box, ws_query_box, msg.Text, timer, ws_channel)
 				go func() {
 					msg_number := 0
 					oldMessage := ""
@@ -690,7 +718,7 @@ func main() {
 			urlWithHTTPS := fmt.Sprintf("https://%s", url_http.PlaceHolder)
 			_, err := u.ParseRequestURI(urlWithHTTPS)
 			if err == nil {
-				status, headers, body := SendRequest(method.Selected, urlWithHTTPS, http_header_box, reqbody.Text)
+				status, headers, body := SendRequest(method.Selected, urlWithHTTPS, http_header_box, http_query_box, reqbody.Text)
 				http_response_status.SetText(status)
 				http_response_status.Refresh()
 				for k, v := range headers {
@@ -708,7 +736,7 @@ func main() {
 			}
 			_, err := u.ParseRequestURI(urlWithHTTPS)
 			if err == nil {
-				status, headers, body := SendRequest(method.Selected, urlWithHTTPS, http_header_box, reqbody.Text)
+				status, headers, body := SendRequest(method.Selected, urlWithHTTPS, http_header_box, http_query_box, reqbody.Text)
 				http_response_status.SetText(status)
 				http_response_status.Refresh()
 				isImage := false
@@ -754,7 +782,7 @@ func main() {
 			_, err := u.ParseRequestURI(urlWithWSS)
 			if err == nil {
 				var messages []string
-				go ConnectWS(urlWithWSS, ws_header_box, msg.Text, timer, ws_channel)
+				go ConnectWS(urlWithWSS, ws_header_box, ws_query_box, msg.Text, timer, ws_channel)
 				go func() {
 					msg_number := 0
 					oldMessage := ""
@@ -808,7 +836,7 @@ func main() {
 			_, err := u.ParseRequestURI(urlWithWSS)
 			if err == nil {
 				var messages []string
-				go ConnectWS(urlWithWSS, ws_header_box, msg.Text, timer, ws_channel)
+				go ConnectWS(urlWithWSS, ws_header_box, ws_query_box, msg.Text, timer, ws_channel)
 				go func() {
 					msg_number := 0
 					oldMessage := ""
