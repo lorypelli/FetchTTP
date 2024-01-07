@@ -17,6 +17,7 @@ import (
 	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/canvas"
 	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/dialog"
 	"fyne.io/fyne/v2/driver/desktop"
 	"fyne.io/fyne/v2/widget"
 	"github.com/gorilla/websocket"
@@ -275,7 +276,47 @@ func main() {
 		calendar.SetPlaceHolder("Expires")
 		secure := widget.NewCheck("Secure", nil)
 		http_only := widget.NewCheck("HTTPOnly", nil)
-		cookies.SetContent(container.NewVBox(container.NewBorder(nil, nil, nil, nil, container.NewGridWithRows(5, container.NewGridWithColumns(2, key, value), container.NewGridWithColumns(2, domain, path), calendar, container.NewGridWithColumns(2, secure, http_only), widget.NewButton("Save", nil)))))
+		cookies.SetContent(container.NewVBox(container.NewBorder(nil, nil, nil, nil, container.NewGridWithRows(5, container.NewGridWithColumns(2, key, value), container.NewGridWithColumns(2, domain, path), calendar, container.NewGridWithColumns(2, secure, http_only), widget.NewButton("Save", func() {
+			c := &http.Cookie{
+				Name:    key.Text,
+				Value:   value.Text,
+				Domain:  domain.Text,
+				Path:    path.Text,
+				Secure: secure.Checked,
+				HttpOnly: http_only.Checked,
+			}
+			err := c.Valid()
+			if err != nil {
+				dialog.ShowError(err, cookies)
+				return
+			}
+			c_str := c.String()
+			c_enabled := widget.NewCheck("", nil)
+			c_enabled.SetChecked(true)
+			c_name := widget.NewEntry()
+			c_name.SetPlaceHolder("Name")
+			c_name.SetText("Set-Cookie")
+			c_name.OnChanged = func(s string) {
+				if len(s) == 0 || len(c_name.Text) == 0 {
+					c_enabled.SetChecked(false)
+				} else {
+					c_enabled.SetChecked(true)
+				}
+			}
+			c_value := widget.NewEntry()
+			c_value.SetPlaceHolder("Value")
+			c_value.SetText(c_str)
+			c_value.OnChanged = func(s string) {
+				if len(s) == 0 || len(c_value.Text) == 0 {
+					c_enabled.SetChecked(false)
+				} else {
+					c_enabled.SetChecked(true)
+				}
+			}
+			http_header_box.Objects = append(http_header_box.Objects, container.NewBorder(nil, nil, c_enabled, nil, container.NewGridWithColumns(2, c_name, c_value)))
+			http_header_box.Refresh()
+			cookies.Hide()
+		})))))
 		cookies.Show()
 	}))
 	ws_cookie_box := container.NewVBox(widget.NewButton("Add Cookie", func() {
@@ -291,7 +332,47 @@ func main() {
 		calendar.SetPlaceHolder("Expires")
 		secure := widget.NewCheck("Secure", nil)
 		http_only := widget.NewCheck("HTTPOnly", nil)
-		cookies.SetContent(container.NewVBox(container.NewBorder(nil, nil, nil, nil, container.NewGridWithRows(5, container.NewGridWithColumns(2, key, value), container.NewGridWithColumns(2, domain, path), calendar, container.NewGridWithColumns(2, secure, http_only), widget.NewButton("Save", nil)))))
+		cookies.SetContent(container.NewVBox(container.NewBorder(nil, nil, nil, nil, container.NewGridWithRows(5, container.NewGridWithColumns(2, key, value), container.NewGridWithColumns(2, domain, path), calendar, container.NewGridWithColumns(2, secure, http_only), widget.NewButton("Save", func() {
+			c := &http.Cookie{
+				Name:    key.Text,
+				Value:   value.Text,
+				Domain:  domain.Text,
+				Path:    path.Text,
+				Secure: secure.Checked,
+				HttpOnly: http_only.Checked,
+			}
+			err := c.Valid()
+			if err != nil {
+				dialog.ShowError(err, cookies)
+				return
+			}
+			c_str := c.String()
+			c_enabled := widget.NewCheck("", nil)
+			c_enabled.SetChecked(true)
+			c_name := widget.NewEntry()
+			c_name.SetPlaceHolder("Name")
+			c_name.SetText("Set-Cookie")
+			c_name.OnChanged = func(s string) {
+				if len(s) == 0 || len(c_name.Text) == 0 {
+					c_enabled.SetChecked(false)
+				} else {
+					c_enabled.SetChecked(true)
+				}
+			}
+			c_value := widget.NewEntry()
+			c_value.SetPlaceHolder("Value")
+			c_value.SetText(c_str)
+			c_value.OnChanged = func(s string) {
+				if len(s) == 0 || len(c_value.Text) == 0 {
+					c_enabled.SetChecked(false)
+				} else {
+					c_enabled.SetChecked(true)
+				}
+			}
+			ws_header_box.Objects = append(ws_header_box.Objects, container.NewBorder(nil, nil, c_enabled, nil, container.NewGridWithColumns(2, c_name, c_value)))
+			ws_header_box.Refresh()
+			cookies.Hide()
+		})))))
 		cookies.Show()
 	}))
 	http_options := container.NewAppTabs(container.NewTabItem("Headers", container.NewScroll(container.NewVBox(http_header_box, plus_http, minus_http))), container.NewTabItem("Cookies", http_cookie_box), container.NewTabItem("Body", reqbody))
