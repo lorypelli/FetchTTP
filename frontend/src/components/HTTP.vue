@@ -1,6 +1,7 @@
 <script lang="ts">
 import { ElButton, ElInput, ElOption, ElSelect } from 'element-plus';
 import 'element-plus/dist/index.css';
+import { MakeRequest } from '../../wailsjs/go/main/App.js';
 export default {
     name: 'HTTP',
     components: {
@@ -25,7 +26,12 @@ export default {
             <ElOption value="PATCH" />
         </ElSelect>
         <ElInput v-model="input" placeholder="echo.zuplo.io"></ElInput>
-        <ElButton>Send</ElButton>
+        <ElButton v-on:click="() => {
+            MakeRequest(select, 'https://' + (input.replace(/https?:\/\//g, '') || 'echo.zuplo.io')).then((res) => {
+                console.log(res)
+                return
+            })
+        }">Send</ElButton>
     </div>
 </template>
 <script setup lang="ts">
