@@ -18,8 +18,9 @@ func main() {
 	// Create application with options
 	err := wails.Run(&options.App{
 		Title:  "FetchTTP",
-		Width:  1280,
-		Height: 720,
+		MinWidth:  1280,
+		MinHeight: 720,
+		EnableDefaultContextMenu: false,
 		AssetServer: &assetserver.Options{
 			Assets: assets,
 		},
