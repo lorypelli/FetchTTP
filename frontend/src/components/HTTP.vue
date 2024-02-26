@@ -26,8 +26,8 @@ export default {
             <ElOption value="PATCH" />
         </ElSelect>
         <ElInput v-model="input" placeholder="echo.zuplo.io"></ElInput>
-        <ElButton v-on:click="() => {
-            MakeRequest(select, 'https://' + (input.replace(/https?:\/\//g, '') || 'echo.zuplo.io')).then((res) => {
+        <ElButton class="w-20" v-on:click="() => {
+            MakeRequest(select, input ? (input.startsWith('https://') ? input : (input.startsWith('http://') ? input : 'https' + input)) : 'https://echo.zuplo.io').then((res) => {
                 console.log(res)
                 return
             })

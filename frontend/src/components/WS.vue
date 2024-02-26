@@ -12,7 +12,7 @@ export default {
 <template>
     <div class="flex p-1 space-x-1">
         <ElInput v-model="input" placeholder="echo.websocket.org"></ElInput>
-        <ElButton>Connect</ElButton>
+        <ElButton class="w-28">Connect</ElButton>
     </div>
 </template>
 <script setup lang="ts">

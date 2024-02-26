@@ -5,7 +5,11 @@
 * {
     overflow: hidden;
     font-family: 'Martian Mono', monospace;
-  }
+}
+
+:root {
+    color: white;
+}
   
 :focus {
     outline: none;
@@ -13,4 +17,9 @@
 
 body {
     background-color: #171717;
+}
+
+.el-select__placeholder {
+    position: relative;
+    transform: none;
 }
