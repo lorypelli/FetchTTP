@@ -1,3 +1,16 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+* {
+    overflow: hidden;
+    font-family: 'Martian Mono', monospace;
+  }
+  
+:focus {
+    outline: none;
+}
+
+body {
+    background-color: #171717;
+}
