@@ -1,6 +1,5 @@
 <script lang="ts">
 import { ElButton, ElInput, ElOption, ElSelect } from 'element-plus';
-import 'element-plus/dist/index.css';
 import { MakeRequest } from '../../wailsjs/go/main/App.js';
 export default {
     name: 'HTTP',
@@ -32,6 +31,7 @@ export default {
                 return
             })
         }">Send</ElButton>
+        <Split type='http'></Split>
     </div>
 </template>
 <script setup lang="ts">

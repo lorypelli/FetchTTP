@@ -14,10 +14,12 @@ export default {
 };
 </script>
 <template>
-    <div class="px-1">
-        <ElTabs>
-            <ElTabPane label="http"><HTTP /></ElTabPane>
-            <ElTabPane label="ws"><WS /></ElTabPane>
-        </ElTabs>
-    </div>
+    <ElTabs>
+        <ElTabPane label="http">
+            <HTTP />
+        </ElTabPane>
+        <ElTabPane label="ws">
+            <WS />
+        </ElTabPane>
+    </ElTabs>
 </template>
