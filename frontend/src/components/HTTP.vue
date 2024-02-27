@@ -2,13 +2,15 @@
 import { ElButton, ElInput, ElOption, ElSelect } from 'element-plus';
 import { MakeRequest } from '../../wailsjs/go/main/App.js';
 import { ref } from 'vue';
+import Split from './Split.vue';
 defineOptions({
     name: 'HTTP',
     components: {
         ElButton,
         ElInput,
         ElOption,
-        ElSelect
+        ElSelect,
+        Split
     }
 });
 const select = ref('GET');
@@ -34,6 +36,6 @@ const input = ref('');
                 return
             })
         }">Send</ElButton>
-        <Split type='http'></Split>
     </div>
+    <Split type='http' />
 </template>

@@ -7,9 +7,6 @@
     font-family: 'Martian Mono', monospace;
 }
 
-:root {
-    color: white;
-}
   
 :focus {
     outline: none;
@@ -22,4 +19,13 @@ body {
 .el-select__placeholder {
     position: relative;
     transform: none;
+}
+
+.p-splitter {
+    height: 100vh;
+    background-color: #171717;
+}
+
+.p-splitter-gutter, .p-splitter-gutter-handle {
+    background-color: #232323;
 }

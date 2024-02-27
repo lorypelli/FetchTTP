@@ -11,6 +11,7 @@
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.1",
     "element-plus": "^2.5.6",
+    "primevue": "^3.49.1",
     "vue": "^3.4.20"
   },
   "devDependencies": {
