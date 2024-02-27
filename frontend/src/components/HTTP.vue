@@ -1,7 +1,8 @@
-<script lang="ts">
+<script setup lang="ts">
 import { ElButton, ElInput, ElOption, ElSelect } from 'element-plus';
 import { MakeRequest } from '../../wailsjs/go/main/App.js';
-export default {
+import { ref } from 'vue';
+defineOptions({
     name: 'HTTP',
     components: {
         ElButton,
@@ -9,7 +10,9 @@ export default {
         ElOption,
         ElSelect
     }
-};
+});
+const select = ref('GET');
+const input = ref('');
 </script>
 <template>
     <div class="flex p-1 space-x-1">
@@ -34,8 +37,3 @@ export default {
         <Split type='http'></Split>
     </div>
 </template>
-<script setup lang="ts">
-import { ref } from 'vue';
-const select = ref('GET');
-const input = ref('');
-</script>

@@ -1,9 +1,9 @@
-<script lang="ts">
+<script setup lang="ts">
 import { ElTabPane, ElTabs } from 'element-plus';
 import HTTP from './components/HTTP.vue';
 import WS from './components/WS.vue';
 import 'element-plus/dist/index.css';
-export default {
+defineOptions({
     name: 'App',
     components: {
         ElTabPane,
@@ -11,7 +11,7 @@ export default {
         HTTP,
         WS
     }
-};
+});
 </script>
 <template>
     <ElTabs>
