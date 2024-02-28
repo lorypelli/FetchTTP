@@ -12,10 +12,10 @@
     "@element-plus/icons-vue": "^2.3.1",
     "element-plus": "^2.5.6",
     "primevue": "^3.49.1",
-    "vue": "^3.4.20"
+    "vue": "^3.4.21"
   },
   "devDependencies": {
-    "@babel/types": "^7.23.9",
+    "@babel/types": "^7.24.0",
     "@typescript-eslint/eslint-plugin": "^7.1.0",
     "@typescript-eslint/parser": "^7.1.0",
     "@vitejs/plugin-vue": "^5.0.4",
