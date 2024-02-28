@@ -28,17 +28,29 @@ const queryValue = ref('');
 export default {
     data() {
         return {
-            headers: [{ [headerName.value]: headerValue }],
-            query: [{ [queryName.value]: queryValue }]
+            headers: [{ [headerName.value]: headerValue.value }],
+            query: [{ [queryName.value]: queryValue.value }]
         };
     },
     methods: {
         addHeader() {
             this.headers.push({});
         },
+        removeHeader() {
+            if (this.headers.length == 1) {
+                return;
+            }
+            this.headers.pop();
+        },
         addQuery() {
             this.query.push({});
-        }
+        },
+        removeQuery() {
+            if (this.query.length == 1) {
+                return;
+            }
+            this.query.pop();
+        },
     }
 };
 </script>
@@ -49,23 +61,23 @@ export default {
                 <ElTabPane label="Headers">
                     <div class="flex space-x-2 pr-2 pt-2" v-for="(item, index) in headers" :key="index">
                         <ElCheckbox />
-                        <ElInput v-model="item.headerName.value"></ElInput>
-                        <ElInput v-model="item.headerValue.value"></ElInput>
+                        <ElInput />
+                        <ElInput />
                     </div>
                     <div class="flex pt-2">
                         <ElButton v-on:click="addHeader">+</ElButton>
-                        <ElButton>-</ElButton>
+                        <ElButton v-on:click="removeHeader">-</ElButton>
                     </div>
                 </ElTabPane>
                 <ElTabPane label="Query">
                     <div class="flex space-x-2 pr-2 pt-2" v-for="(item, index) in query" :key="index">
                         <ElCheckbox />
-                        <ElInput v-model="item.queryName.value"></ElInput>
-                        <ElInput v-model="item.queryValue.value"></ElInput>
+                        <ElInput />
+                        <ElInput />
                     </div>
                     <div class="flex pt-2">
                         <ElButton v-on:click="addQuery">+</ElButton>
-                        <ElButton>-</ElButton>
+                        <ElButton v-on:click="removeQuery">-</ElButton>
                     </div>
                 </ElTabPane>
                 <ElTabPane label="Cookies"></ElTabPane>
