@@ -19,34 +19,52 @@ defineOptions({
 const props = defineProps<{
     type: 'http' | 'ws'
 }>();
+</script>
+<script lang="ts">
 const headerName = ref('');
 const headerValue = ref('');
 const queryName = ref('');
 const queryValue = ref('');
+export default {
+    data() {
+        return {
+            headers: [{ [headerName.value]: headerValue }],
+            query: [{ [queryName.value]: queryValue }]
+        };
+    },
+    methods: {
+        addHeader() {
+            this.headers.push({});
+        },
+        addQuery() {
+            this.query.push({});
+        }
+    }
+};
 </script>
 <template>
     <Splitter>
         <SplitterPanel :min-size="20">
             <ElTabs class="pr-2">
                 <ElTabPane label="Headers">
-                    <div class="flex space-x-2 pr-2">
+                    <div class="flex space-x-2 pr-2 pt-2" v-for="(item, index) in headers" :key="index">
                         <ElCheckbox />
-                        <ElInput v-model="headerName"></ElInput>
-                        <ElInput v-model="headerValue"></ElInput>
+                        <ElInput v-model="item.headerName.value"></ElInput>
+                        <ElInput v-model="item.headerValue.value"></ElInput>
                     </div>
                     <div class="flex pt-2">
-                        <ElButton>+</ElButton>
+                        <ElButton v-on:click="addHeader">+</ElButton>
                         <ElButton>-</ElButton>
                     </div>
                 </ElTabPane>
                 <ElTabPane label="Query">
-                    <div class="flex space-x-2 pr-2">
+                    <div class="flex space-x-2 pr-2 pt-2" v-for="(item, index) in query" :key="index">
                         <ElCheckbox />
-                        <ElInput v-model="queryName"></ElInput>
-                        <ElInput v-model="queryValue"></ElInput>
+                        <ElInput v-model="item.queryName.value"></ElInput>
+                        <ElInput v-model="item.queryValue.value"></ElInput>
                     </div>
                     <div class="flex pt-2">
-                        <ElButton>+</ElButton>
+                        <ElButton v-on:click="addQuery">+</ElButton>
                         <ElButton>-</ElButton>
                     </div>
                 </ElTabPane>
