@@ -60,7 +60,7 @@ export default {
             <ElTabs class="pr-2">
                 <ElTabPane label="Headers">
                     <div class="flex space-x-2 pr-2 pt-2" v-for="(item, index) in headers" :key="index">
-                        <ElCheckbox />
+                        <ElCheckbox class="w-10" />
                         <ElInput />
                         <ElInput />
                     </div>
@@ -71,7 +71,7 @@ export default {
                 </ElTabPane>
                 <ElTabPane label="Query">
                     <div class="flex space-x-2 pr-2 pt-2" v-for="(item, index) in query" :key="index">
-                        <ElCheckbox />
+                        <ElCheckbox class="w-10" />
                         <ElInput />
                         <ElInput />
                     </div>
