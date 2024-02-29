@@ -29,3 +29,7 @@ body {
 .p-splitter-gutter, .p-splitter-gutter-handle {
     background-color: #232323;
 }
+
+.el-textarea__inner {
+    height: 80vh;
+}

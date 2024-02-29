@@ -75,14 +75,22 @@ export default {
                         <ElInput />
                         <ElInput />
                     </div>
-                    <div class="flex pt-2">
+                    <div class="flex flex-col pt-2">
                         <ElButton v-on:click="addQuery">+</ElButton>
+                        <br />
                         <ElButton v-on:click="removeQuery">-</ElButton>
                     </div>
                 </ElTabPane>
                 <ElTabPane label="Cookies"></ElTabPane>
-                <ElTabPane label="Body" v-if="props.type == 'http'"></ElTabPane>
-                <ElTabPane label="Message" v-if="props.type == 'ws'"></ElTabPane>
+                <ElTabPane label="Body" v-if="props.type == 'http'">
+                    <ElInput type="textarea" resize="none" />
+                </ElTabPane>
+                <ElTabPane label="Message" v-if="props.type == 'ws'">
+                    <div class="flex flex-col space-y-1">
+                        <ElInput type="textarea" resize="none" />
+                        <ElButton>Send</ElButton>
+                    </div>
+                </ElTabPane>
             </ElTabs>
         </SplitterPanel>
         <SplitterPanel :min-size="20">
