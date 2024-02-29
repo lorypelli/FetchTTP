@@ -28,13 +28,25 @@ const queryValue = ref('');
 export default {
     data() {
         return {
-            headers: [{ [headerName.value]: headerValue.value }],
-            query: [{ [queryName.value]: queryValue.value }]
+            headers: [{
+                disabled: false,
+                name: '',
+                value: ''
+            }],
+            query: [{ 
+                disabled: false,
+                name: '',
+                value: ''
+            }]
         };
     },
     methods: {
         addHeader() {
-            this.headers.push({});
+            this.headers.push({
+                disabled: false,
+                name: '',
+                value: ''
+            });
         },
         removeHeader() {
             if (this.headers.length == 1) {
@@ -43,7 +55,11 @@ export default {
             this.headers.pop();
         },
         addQuery() {
-            this.query.push({});
+            this.query.push({
+                disabled: false,
+                name: '',
+                value: ''
+            });
         },
         removeQuery() {
             if (this.query.length == 1) {
@@ -60,9 +76,15 @@ export default {
             <ElTabs class="pr-2">
                 <ElTabPane label="Headers">
                     <div class="flex space-x-2 pr-2 pt-2" v-for="(item, index) in headers" :key="index">
-                        <ElCheckbox class="w-10" />
-                        <ElInput />
-                        <ElInput />
+                        <ElCheckbox class="w-10" v-on:change="(e) => {
+                            item.disabled = !e
+                        }" />
+                        <ElInput v-model="headerName" v-on:change="(e) => {
+                            item.name += e
+                        }" />
+                        <ElInput v-model="headerValue" v-on:change="(e) => {
+                            item.value += e
+                        }" />
                     </div>
                     <div class="flex flex-col pt-2 space-y-2">
                         <ElButton v-on:click="addHeader">+</ElButton>
@@ -72,8 +94,12 @@ export default {
                 <ElTabPane label="Query">
                     <div class="flex space-x-2 pr-2 pt-2" v-for="(item, index) in query" :key="index">
                         <ElCheckbox class="w-10" />
-                        <ElInput />
-                        <ElInput />
+                        <ElInput v-model="queryName" v-on:change="(e) => {
+                            item.name += e
+                        }" />
+                        <ElInput v-model="queryValue" v-on:change="(e) => {
+                            item.value += e
+                        }" />
                     </div>
                     <div class="flex flex-col pt-2 space-y-2">
                         <ElButton v-on:click="addQuery">+</ElButton>
