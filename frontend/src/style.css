@@ -33,3 +33,7 @@ body {
 .el-textarea__inner {
     height: 80vh;
 }
+
+.el-button+.el-button {
+    margin-left: 0;
+}

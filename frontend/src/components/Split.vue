@@ -64,7 +64,7 @@ export default {
                         <ElInput />
                         <ElInput />
                     </div>
-                    <div class="flex pt-2">
+                    <div class="flex flex-col pt-2 space-y-2">
                         <ElButton v-on:click="addHeader">+</ElButton>
                         <ElButton v-on:click="removeHeader">-</ElButton>
                     </div>
@@ -75,9 +75,8 @@ export default {
                         <ElInput />
                         <ElInput />
                     </div>
-                    <div class="flex flex-col pt-2">
+                    <div class="flex flex-col pt-2 space-y-2">
                         <ElButton v-on:click="addQuery">+</ElButton>
-                        <br />
                         <ElButton v-on:click="removeQuery">-</ElButton>
                     </div>
                 </ElTabPane>
