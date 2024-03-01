@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ElButton, ElInput, ElOption, ElSelect } from 'element-plus';
-import { MakeRequest } from '../../wailsjs/go/main/App.js';
+//import { MakeRequest } from '../../wailsjs/go/main/App.js';
 import { ref } from 'vue';
 import Split from './Split.vue';
 defineOptions({
@@ -31,11 +31,16 @@ const input = ref('');
         </ElSelect>
         <ElInput v-model="input" placeholder="echo.zuplo.io"></ElInput>
         <ElButton class="w-20" v-on:click="() => {
-            MakeRequest(select, input ? (input.startsWith('https://') ? input : (input.startsWith('http://') ? input : 'https' + input)) : 'https://echo.zuplo.io').then((res) => {
-                console.log(res)
-                return
-            })
+            if (input) {
+                if (!input.startsWith('http://') && !input.startsWith('https://')) {
+                    input = 'https://' + input
+                }
+            }
+            else {
+                input = 'https://echo.zuplo.io'
+            }
+            //MakeRequest(select, input).then((res) => {})
         }">Send</ElButton>
     </div>
-    <Split type='http' />
+    <Split type='http' ref="data" />
 </template>

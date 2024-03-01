@@ -1,9 +1,10 @@
 package main
 
 import (
+	"bytes"
 	"context"
-	"io"
 	j "encoding/json"
+	"io"
 	"net/http"
 )
 
@@ -36,7 +37,8 @@ type Query struct {
 }
 
 func (a *App) MakeRequest(method string, url string, headers []Header, query []Query, body string) (string, http.Header, []byte) {
-	req, err := http.NewRequest(method, url, nil)
+	data := []byte(body)
+	req, err := http.NewRequest(method, url, bytes.NewReader(data))
 	if err != nil {
 		return "", http.Header{}, []byte{}
 	}
