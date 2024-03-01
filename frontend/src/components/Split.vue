@@ -25,6 +25,8 @@ const headerName = ref('');
 const headerValue = ref('');
 const queryName = ref('');
 const queryValue = ref('');
+const body = ref('');
+const message = ref('');
 export default {
     data() {
         return {
@@ -108,11 +110,11 @@ export default {
                 </ElTabPane>
                 <ElTabPane label="Cookies"></ElTabPane>
                 <ElTabPane label="Body" v-if="props.type == 'http'">
-                    <ElInput type="textarea" resize="none" />
+                    <ElInput v-model="body" type="textarea" resize="none" />
                 </ElTabPane>
                 <ElTabPane label="Message" v-if="props.type == 'ws'">
                     <div class="flex flex-col space-y-1">
-                        <ElInput type="textarea" resize="none" />
+                        <ElInput v-model="message" type="textarea" resize="none" />
                         <ElButton>Send</ElButton>
                     </div>
                 </ElTabPane>
