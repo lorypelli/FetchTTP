@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ElButton, ElInput, ElOption, ElSelect } from 'element-plus';
-//import { MakeRequest } from '../../wailsjs/go/main/App.js';
+import { MakeRequest } from '../../wailsjs/go/main/App.js';
 import { ref } from 'vue';
 import Split from './Split.vue';
 defineOptions({
@@ -15,6 +15,34 @@ defineOptions({
 });
 const select = ref('GET');
 const input = ref('');
+</script>
+<script lang="ts">
+interface Header {
+	disabled: boolean,
+	name: string,
+	value: string
+}
+let headers: Header[] = [];
+let query: Query[] = [];
+let body = '';
+interface Query {
+	disabled: boolean,
+	name: string,
+	value: string
+}
+export default {
+    methods: {
+        handleHeader(h: Header[]) {
+            headers = h;
+        },
+        handleQuery(q: Query[]) {
+            query = q;
+        },
+        handleBody(b: string) {
+            body = b;
+        }
+    }
+};
 </script>
 <template>
     <div class="flex p-1 space-x-1">
@@ -39,8 +67,10 @@ const input = ref('');
             else {
                 input = 'https://echo.zuplo.io'
             }
-            //MakeRequest(select, input).then((res) => {})
+            MakeRequest(select, input, headers, query, body).then((res) => {
+                console.log(res)
+            })
         }">Send</ElButton>
     </div>
-    <Split type='http' ref="data" />
+    <Split type='http' v-on:headers="handleHeader" v-on:query="handleQuery" v-on:body="handleBody" />
 </template>

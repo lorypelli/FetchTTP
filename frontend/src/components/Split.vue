@@ -2,7 +2,6 @@
 import { ElButton, ElCheckbox, ElInput, ElTabPane, ElTabs } from 'element-plus';
 import Splitter from 'primevue/splitter';
 import SplitterPanel from 'primevue/splitterpanel';
-import { ref } from 'vue';
 defineOptions({
     // eslint-disable-next-line vue/multi-word-component-names
     name: 'Split',
@@ -21,8 +20,6 @@ const props = defineProps<{
 }>();
 </script>
 <script lang="ts">
-const body = ref('');
-const message = ref('');
 export default {
     data() {
         return {
@@ -35,7 +32,9 @@ export default {
                 disabled: false,
                 name: '',
                 value: ''
-            }]
+            }],
+            body: '',
+            message: ''
         };
     },
     methods: {
@@ -65,6 +64,18 @@ export default {
             }
             this.query.pop();
         },
+        sendHeader() {
+            this.$emit('headers', this.headers);
+        },
+        sendQuery() {
+            this.$emit('query', this.query);
+        },
+        sendBody() {
+            this.$emit('body', this.body);
+        },
+        sendMessage() {
+            this.$emit('message', this.message);
+        }
     }
 };
 </script>
@@ -74,9 +85,9 @@ export default {
             <ElTabs class="pr-2">
                 <ElTabPane label="Headers">
                     <div class="flex space-x-2 pr-2 pt-2" v-for="(item, index) in headers" :key="index">
-                        <ElCheckbox v-model="item.disabled" class="w-10" />
-                        <ElInput v-model="item.name" />
-                        <ElInput v-model="item.value" />
+                        <ElCheckbox v-model="item.disabled" v-on:change="sendHeader" class="w-10" />
+                        <ElInput v-model="item.name" v-on:change="sendHeader" />
+                        <ElInput v-model="item.value" v-on:change="sendHeader" />
                     </div>
                     <div class="flex flex-col pt-2 space-y-2">
                         <ElButton v-on:click="addHeader">+</ElButton>
@@ -85,9 +96,9 @@ export default {
                 </ElTabPane>
                 <ElTabPane label="Query">
                     <div class="flex space-x-2 pr-2 pt-2" v-for="(item, index) in query" :key="index">
-                        <ElCheckbox v-model="item.disabled" class="w-10" />
-                        <ElInput v-model="item.name" />
-                        <ElInput v-model="item.value" />
+                        <ElCheckbox v-model="item.disabled" v-on:change="sendQuery" class="w-10" />
+                        <ElInput v-model="item.name" v-on:change="sendQuery" />
+                        <ElInput v-model="item.value" v-on:change="sendQuery" />
                     </div>
                     <div class="flex flex-col pt-2 space-y-2">
                         <ElButton v-on:click="addQuery">+</ElButton>
