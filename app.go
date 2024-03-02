@@ -36,17 +36,27 @@ type Query struct {
 	value string
 }
 
-func (a *App) MakeRequest(method string, url string, headers []Header, query []Query, body string) (string, http.Header, []byte) {
+type Response struct {
+	status string
+	header http.Header
+	body string
+}
+
+func (a *App) MakeRequest(method string, url string, headers []Header, query []Query, body string) Response {
 	data := []byte(body)
 	req, err := http.NewRequest(method, url, bytes.NewReader(data))
 	if err != nil {
-		return "", http.Header{}, []byte{}
+		return Response{
+			"", http.Header{}, "",
+		}
 	}
 	req.Header.Set("User-Agent", "FetchTTP")
 	c := &http.Client{}
 	res, err := c.Do(req)
 	if err != nil {
-		return "", http.Header{}, []byte{}
+		return Response{
+			"", http.Header{}, "",
+		}
 	}
 	var resBody []byte
 	if res.Header.Get("Content-Type") == "application/json" {
@@ -58,5 +68,7 @@ func (a *App) MakeRequest(method string, url string, headers []Header, query []Q
 		bytes, _ := io.ReadAll(res.Body)
 		resBody = bytes
 	}
-	return res.Status, res.Header, resBody
+	return Response{
+		res.Status, res.Header, string(resBody),
+	}
 }
