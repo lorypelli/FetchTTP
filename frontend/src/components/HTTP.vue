@@ -23,15 +23,27 @@ interface Header {
     name: string,
     value: string
 }
-let headers: Header[] = [];
-let query: Query[] = [];
-let body = '';
 interface Query {
     disabled: boolean,
     name: string,
     value: string
 }
+interface Response {
+    Status: string,
+    Header: [],
+    Body: string
+}
+let headers: Header[] = [];
+let query: Query[] = [];
+let body = '';
 export default {
+    data() {
+        return {
+            status: '',
+            headers: [],
+            response: ''
+        };
+    },
     methods: {
         handleHeader(h: Header[]) {
             headers = h;
@@ -41,6 +53,11 @@ export default {
         },
         handleBody(b: string) {
             body = b;
+        },
+        update(res: Response) {
+            this.status = res['Status'];
+            this.headers = res['Header'];
+            this.response = res['Body'];
         }
     }
 };
@@ -70,9 +87,9 @@ export default {
                 input = 'https://echo.zuplo.io'
             }
             MakeRequest(select, input, headers, query, body).then((res) => {
-                console.log(res)
+                update(res)
             })
         }">Send</ElButton>
     </div>
-    <Split type='http' v-on:headers="handleHeader" v-on:query="handleQuery" v-on:body="handleBody" />
+    <Split :status=status :headers=headers :response=body type='http' v-on:headers="handleHeader" v-on:query="handleQuery" v-on:body="handleBody" />
 </template>

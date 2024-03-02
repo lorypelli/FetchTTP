@@ -19,5 +19,5 @@ const input = ref('');
         <ElInput v-model="input" placeholder="echo.websocket.org"></ElInput>
         <ElButton class="w-28">Connect</ElButton>
     </div>
-    <Split type='ws' />
+    <!--<Split type='ws' />-->
 </template>

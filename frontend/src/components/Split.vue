@@ -16,6 +16,9 @@ defineOptions({
     }
 });
 const props = defineProps<{
+    status: string,
+    headers: string[],
+    response: string,
     type: 'http' | 'ws'
 }>();
 </script>
@@ -121,7 +124,9 @@ export default {
         </SplitterPanel>
         <SplitterPanel :min-size="20">
             <ElTabs class="pl-2">
-                <ElTabPane label="Headers"></ElTabPane>
+                <ElTabPane label="Headers">
+                    <h1>{{ props.status }}</h1>
+                </ElTabPane>
                 <ElTabPane label="Response"></ElTabPane>
             </ElTabs>
         </SplitterPanel>
