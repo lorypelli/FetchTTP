@@ -16,19 +16,20 @@ defineOptions({
 const select = ref('GET');
 const input = ref('');
 </script>
+
 <script lang="ts">
 interface Header {
-	disabled: boolean,
-	name: string,
-	value: string
+    disabled: boolean,
+    name: string,
+    value: string
 }
 let headers: Header[] = [];
 let query: Query[] = [];
 let body = '';
 interface Query {
-	disabled: boolean,
-	name: string,
-	value: string
+    disabled: boolean,
+    name: string,
+    value: string
 }
 export default {
     methods: {
@@ -44,6 +45,7 @@ export default {
     }
 };
 </script>
+
 <template>
     <div class="flex p-1 space-x-1">
         <ElSelect class="w-32" v-model="select">

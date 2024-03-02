@@ -13,6 +13,7 @@ defineOptions({
 });
 const input = ref('');
 </script>
+
 <template>
     <div class="flex p-1 space-x-1">
         <ElInput v-model="input" placeholder="echo.websocket.org"></ElInput>

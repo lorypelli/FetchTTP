@@ -19,6 +19,7 @@ const props = defineProps<{
     type: 'http' | 'ws'
 }>();
 </script>
+
 <script lang="ts">
 export default {
     data() {
@@ -28,7 +29,7 @@ export default {
                 name: '',
                 value: ''
             }],
-            query: [{ 
+            query: [{
                 disabled: false,
                 name: '',
                 value: ''
@@ -79,6 +80,7 @@ export default {
     }
 };
 </script>
+
 <template>
     <Splitter>
         <SplitterPanel :min-size="20">
