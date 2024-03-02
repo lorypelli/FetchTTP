@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ElButton, ElCheckbox, ElInput, ElTabPane, ElTabs } from 'element-plus';
+import { ElButton, ElCheckbox, ElInput, ElTabPane, ElTabs, ElText, ElDivider } from 'element-plus';
 import Splitter from 'primevue/splitter';
 import SplitterPanel from 'primevue/splitterpanel';
 defineOptions({
@@ -12,7 +12,9 @@ defineOptions({
         ElTabs,
         ElInput,
         ElButton,
-        ElCheckbox
+        ElCheckbox,
+        ElText,
+        ElDivider
     }
 });
 const props = defineProps<{
@@ -125,9 +127,15 @@ export default {
         <SplitterPanel :min-size="20">
             <ElTabs class="pl-2">
                 <ElTabPane label="Headers">
-                    <h1>{{ props.status }}</h1>
+                    <ElText class="flex justify-center">{{ props.status }}</ElText>
+                    <ElDivider v-if="props.status" />
+                    <div v-for="(item, index) in props.header" :key="index">
+                        <ElText>{{ item }}</ElText>
+                    </div>
                 </ElTabPane>
-                <ElTabPane label="Response"></ElTabPane>
+                <ElTabPane label="Response">
+                    <ElText>{{ props.response }}</ElText>
+                </ElTabPane>
             </ElTabs>
         </SplitterPanel>
     </Splitter>

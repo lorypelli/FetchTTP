@@ -55,9 +55,9 @@ export default {
             body = b;
         },
         update(res: Response) {
-            this.status = res['Status'];
-            this.header = res['Header'];
-            this.response = res['Body'];
+            this.status = res.Status;
+            this.header = res.Header;
+            this.response = res.Body;
         }
     }
 };
@@ -91,5 +91,5 @@ export default {
             })
         }">Send</ElButton>
     </div>
-    <Split :status=status :header=header :response=body type='http' v-on:headers="handleHeader" v-on:query="handleQuery" v-on:body="handleBody" />
+    <Split :status=status :header=header :response=response type='http' v-on:headers="handleHeader" v-on:query="handleQuery" v-on:body="handleBody" />
 </template>
