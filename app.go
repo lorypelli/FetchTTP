@@ -25,21 +25,21 @@ func (a *App) startup(ctx context.Context) {
 }
 
 type Header struct {
-	disabled bool
-	name string
-	value string
+	Disabled bool
+	Name string
+	Value string
 }
 
 type Query struct {
-	disabled bool
-	name string
-	value string
+	Disabled bool
+	Name string
+	Value string
 }
 
 type Response struct {
-	status string
-	header http.Header
-	body string
+	Status string
+	Header http.Header
+	Body string
 }
 
 func (a *App) MakeRequest(method string, url string, headers []Header, query []Query, body string) Response {
