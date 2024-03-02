@@ -17,7 +17,7 @@ defineOptions({
 });
 const props = defineProps<{
     status: string,
-    headers: string[],
+    header: object,
     response: string,
     type: 'http' | 'ws'
 }>();
