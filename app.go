@@ -6,6 +6,7 @@ import (
 	j "encoding/json"
 	"io"
 	"net/http"
+	"strings"
 )
 
 // App struct
@@ -59,7 +60,7 @@ func (a *App) MakeRequest(method string, url string, headers []Header, query []Q
 		}
 	}
 	var resBody []byte
-	if res.Header.Get("Content-Type") == "application/json" {
+	if strings.Contains(res.Header.Get("Content-Type"), "application/json") {
 		var jsonBody map[string]interface{}
 		bytes, _ := io.ReadAll(res.Body)
 		j.Unmarshal(bytes, &jsonBody)
