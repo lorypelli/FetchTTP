@@ -166,9 +166,7 @@ export default {
                     <ElText class="flex justify-center">{{ props.status }}</ElText>
                     <ElDivider v-if="props.status" />
                     <ElScrollbar height="75vh">
-                        <div v-for="(item, index) in props.header" :key="index">
-                            <ElText>{{ item }}</ElText>
-                        </div>
+                        <ElText v-if="Object.keys(props.header).length > 0">{{ props.header }}</ElText>
                     </ElScrollbar>
                 </ElTabPane>
                 <ElTabPane label="Response">
