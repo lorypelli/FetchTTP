@@ -6,6 +6,7 @@ import (
 	j "encoding/json"
 	"io"
 	"net/http"
+	"regexp"
 	"strings"
 )
 
@@ -26,21 +27,21 @@ func (a *App) startup(ctx context.Context) {
 }
 
 type Header struct {
-	Disabled bool
-	Name string
-	Value string
+	Enabled bool
+	Name    string
+	Value   string
 }
 
 type Query struct {
-	Disabled bool
-	Name string
-	Value string
+	Enabled bool
+	Name    string
+	Value   string
 }
 
 type Response struct {
 	Status string
 	Header http.Header
-	Body string
+	Body   string
 }
 
 func (a *App) MakeRequest(method string, url string, headers []Header, query []Query, body string) Response {
@@ -52,6 +53,12 @@ func (a *App) MakeRequest(method string, url string, headers []Header, query []Q
 		}
 	}
 	req.Header.Set("User-Agent", "FetchTTP")
+	for i := 0; i < len(headers); i++ {
+		regexp, _ := regexp.Compile(`^[A-Za-z\d[\]{}()<>\/@?=:";,-]*$`)
+		if headers[i].Enabled && strings.TrimSpace(headers[i].Name) != "" && regexp.MatchString(headers[i].Name) && strings.TrimSpace(headers[i].Value) != "" {
+			req.Header.Add(headers[i].Name, headers[i].Value)
+		}
+	}
 	c := &http.Client{}
 	res, err := c.Do(req)
 	if err != nil {

@@ -19,12 +19,12 @@ const input = ref('');
 
 <script lang="ts">
 interface Header {
-    disabled: boolean,
+    enabled: boolean,
     name: string,
     value: string
 }
 interface Query {
-    disabled: boolean,
+    enabled: boolean,
     name: string,
     value: string
 }
@@ -47,6 +47,7 @@ export default {
     methods: {
         handleHeader(h: Header[]) {
             headers = h;
+            console.log(headers);
         },
         handleQuery(q: Query[]) {
             query = q;
