@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	j "encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"regexp"
@@ -46,6 +47,15 @@ type Response struct {
 
 func (a *App) MakeRequest(method string, url string, headers []Header, query []Query, body string) Response {
 	data := []byte(body)
+	for i := 0; i < len(query); i++ {
+		if query[i].Enabled && strings.TrimSpace(query[i].Name) != "" && strings.TrimSpace(query[i].Value) != "" {
+			if strings.Contains(url, "?") {
+				url += fmt.Sprintf("&%s=%s", query[i].Name, query[i].Value)
+			} else {
+				url += fmt.Sprintf("?%s=%s", query[i].Name, query[i].Value)
+			}
+		}
+	}
 	req, err := http.NewRequest(method, url, bytes.NewReader(data))
 	if err != nil {
 		return Response{
