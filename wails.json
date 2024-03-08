@@ -3,8 +3,8 @@
   "name": "FetchTTP",
   "outputfilename": "FetchTTP",
   "frontend:install": "pnpm install",
-  "frontend:build": "pnpm run build",
-  "frontend:dev:watcher": "pnpm run dev",
+  "frontend:build": "pnpm build",
+  "frontend:dev:watcher": "pnpm dev",
   "frontend:dev:serverUrl": "auto",
   "author": {
     "name": "LoryPelli"

@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.1",
-    "element-plus": "^2.6.0",
+    "element-plus": "^2.6.1",
     "primevue": "^3.49.1",
     "vue": "^3.4.21"
   },
@@ -24,7 +24,7 @@
     "eslint-plugin-vue": "^9.22.0",
     "postcss": "^8.4.35",
     "tailwindcss": "^3.4.1",
-    "typescript": "^5.3.3",
+    "typescript": "^5.4.2",
     "vite": "^5.1.5",
     "vite-plugin-minify": "^1.5.2",
     "vue-tsc": "^1.8.27"
