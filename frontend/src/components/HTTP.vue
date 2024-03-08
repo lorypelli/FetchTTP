@@ -47,7 +47,6 @@ export default {
     methods: {
         handleHeader(h: Header[]) {
             headers = h;
-            console.log(headers);
         },
         handleQuery(q: Query[]) {
             query = q;
