@@ -84,7 +84,7 @@ export default {
             this.$emit('message', this.message);
         },
         isText(h: object) {
-            return !this.isImage(h) && !this.isVideo(h);
+            return !this.isImage(h) && !this.isVideo(h) && !this.isAudio(h);
         },
         isImage(h: object) {
             const regex = /image\/*/;
@@ -94,6 +94,12 @@ export default {
         },
         isVideo(h: object) {
             const regex = /video\/*/;
+            return Object.entries(h).filter(([k, v]) => {
+                return k == 'Content-Type' && regex.test(v[0]);
+            }).length > 0;
+        },
+        isAudio(h: object) {
+            const regex = /audio\/*/;
             return Object.entries(h).filter(([k, v]) => {
                 return k == 'Content-Type' && regex.test(v[0]);
             }).length > 0;
@@ -205,6 +211,7 @@ export default {
                         <div class="flex justify-center">
                             <img v-if="isImage(props.header)" :src="props.url" />
                             <video v-if="isVideo(props.header)" :src="props.url" controls></video>
+                            <audio v-if="isAudio(props.header)" :src="props.url" controls></audio>
                         </div>
                     </ElScrollbar>
                 </ElTabPane>
