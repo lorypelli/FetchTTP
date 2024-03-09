@@ -62,7 +62,6 @@ func (a *App) MakeRequest(method string, url string, headers []Header, query []Q
 			"", http.Header{}, "",
 		}
 	}
-	req.Header.Set("User-Agent", "FetchTTP")
 	for i := 0; i < len(headers); i++ {
 		regexp, _ := regexp.Compile(`^[A-Za-z\d[\]{}()<>\/@?=:";,-]*$`)
 		if headers[i].Enabled && strings.TrimSpace(headers[i].Name) != "" && regexp.MatchString(headers[i].Name) && strings.TrimSpace(headers[i].Value) != "" {

@@ -30,9 +30,9 @@ export default {
     data() {
         return {
             headers: [{
-                enabled: false,
-                name: '',
-                value: ''
+                enabled: true,
+                name: 'User-Agent',
+                value: 'FetchTTP'
             }],
             query: [{
                 enabled: false,

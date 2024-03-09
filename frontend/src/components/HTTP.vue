@@ -33,7 +33,13 @@ interface Response {
     Header: [],
     Body: string
 }
-let headers: Header[] = [];
+let headers: Header[] = [
+    {
+        enabled: true,
+        name: 'User-Agent',
+        value: 'FetchTTP'
+    }
+];
 let query: Query[] = [];
 let body = '';
 export default {
