@@ -90,10 +90,17 @@ export default {
     <Splitter>
         <SplitterPanel :min-size="20">
             <ElTabs class="pr-2">
-                <ElTabPane label="Headers">
+                <ElTabPane :label="`Headers (${headers.filter((h) => {
+                    return h.enabled
+                }).length})`">
                     <ElScrollbar height="83.5vh">
                         <div class="flex space-x-2 pr-2 pt-2" v-for="(item, index) in headers" :key="index">
-                            <ElCheckbox v-model="item.enabled" v-on:change="sendHeader" class="w-10" />
+                            <ElCheckbox v-model="item.enabled" v-on:change="() => {
+                                sendHeader()
+                                if (!item.name || !item.value) {
+                                    item.enabled = false
+                                }
+                            }" class="w-10" />
                             <ElInput v-model="item.name" v-on:input="() => {
                                 sendHeader()
                                 if (item.name && item.value) {
@@ -119,10 +126,17 @@ export default {
                         </div>
                     </ElScrollbar>
                 </ElTabPane>
-                <ElTabPane label="Query">
+                <ElTabPane :label="`Query (${query.filter((q) => {
+                    return q.enabled
+                }).length})`">
                     <ElScrollbar height="83.5vh">
                         <div class="flex space-x-2 pr-2 pt-2" v-for="(item, index) in query" :key="index">
-                            <ElCheckbox v-model="item.enabled" v-on:change="sendQuery" class="w-10" />
+                            <ElCheckbox v-model="item.enabled" v-on:change="() => {
+                                sendQuery()
+                                if (!item.name || !item.value) {
+                                    item.enabled = false
+                                }
+                            }" class="w-10" />
                             <ElInput v-model="item.name" v-on:input="() => {
                                 sendQuery()
                                 if (item.name && item.value) {
