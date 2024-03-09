@@ -40,6 +40,7 @@ type Query struct {
 }
 
 type Response struct {
+	URL string
 	Status string
 	Header http.Header
 	Body   string
@@ -59,7 +60,7 @@ func (a *App) MakeRequest(method string, url string, headers []Header, query []Q
 	req, err := http.NewRequest(method, url, bytes.NewReader(data))
 	if err != nil {
 		return Response{
-			"", http.Header{}, "",
+			url, "", http.Header{}, "",
 		}
 	}
 	for i := 0; i < len(headers); i++ {
@@ -72,7 +73,7 @@ func (a *App) MakeRequest(method string, url string, headers []Header, query []Q
 	res, err := c.Do(req)
 	if err != nil {
 		return Response{
-			"", http.Header{}, "",
+			url, "", http.Header{}, "",
 		}
 	}
 	var resBody []byte
@@ -86,6 +87,6 @@ func (a *App) MakeRequest(method string, url string, headers []Header, query []Q
 		resBody = bytes
 	}
 	return Response{
-		res.Status, res.Header, string(resBody),
+		url, res.Status, res.Header, string(resBody),
 	}
 }

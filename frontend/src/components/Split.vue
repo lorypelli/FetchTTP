@@ -18,6 +18,7 @@ defineOptions({
     }
 });
 const props = defineProps<{
+    url: string,
     status: string,
     header: object,
     response: string,
@@ -81,6 +82,15 @@ export default {
         },
         sendMessage() {
             this.$emit('message', this.message);
+        },
+        isText(h: object) {
+            return !this.isImage(h);
+        },
+        isImage(h: object) {
+            const regex = /image\/*/;
+            return Object.entries(h).filter(([k, v]) => {
+                return k == 'Content-Type' && regex.test(v[0]);
+            }).length > 0;
         }
     }
 };
@@ -185,7 +195,10 @@ export default {
                 </ElTabPane>
                 <ElTabPane label="Response">
                     <ElScrollbar height="83.5vh">
-                        <ElText>{{ props.response }}</ElText>
+                        <ElText v-if="isText(props.header)">{{ props.response }}</ElText>
+                        <div class="flex justify-center">
+                            <img v-if="isImage(props.header)" :src="props.url" />
+                        </div>
                     </ElScrollbar>
                 </ElTabPane>
             </ElTabs>

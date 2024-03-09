@@ -29,6 +29,7 @@ interface Query {
     value: string
 }
 interface Response {
+    URL: string,
     Status: string,
     Header: [],
     Body: string
@@ -47,7 +48,8 @@ export default {
         return {
             status: '',
             header: {},
-            response: ''
+            response: '',
+            url: ''
         };
     },
     methods: {
@@ -64,6 +66,7 @@ export default {
             this.status = res.Status;
             this.header = res.Header;
             this.response = res.Body;
+            this.url = res.URL;
         }
     }
 };
@@ -97,5 +100,5 @@ export default {
             })
         }">Send</ElButton>
     </div>
-    <Split :status=status :header=header :response=response type='http' v-on:headers="handleHeader" v-on:query="handleQuery" v-on:body="handleBody" />
+    <Split :url="url" :status="status" :header="header" :response="response" type='http' v-on:headers="handleHeader" v-on:query="handleQuery" v-on:body="handleBody" />
 </template>
