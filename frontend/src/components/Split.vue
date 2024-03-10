@@ -201,17 +201,17 @@ export default {
                 <ElTabPane label="Headers">
                     <ElText class="flex justify-center">{{ props.status }}</ElText>
                     <ElDivider v-if="props.status" />
-                    <ElScrollbar height="75vh">
+                    <ElScrollbar class="h-scrollbar-partial">
                         <ElText v-if="Object.keys(props.header).length > 0">{{ props.header }}</ElText>
                     </ElScrollbar>
                 </ElTabPane>
                 <ElTabPane label="Response">
-                    <ElScrollbar height="83.5vh">
+                    <ElScrollbar class="h-scrollbar-full">
                         <ElText v-if="isText(props.header)">{{ props.response }}</ElText>
-                        <div class="flex justify-center">
+                        <div class="flex justify-center items-center h-scrollbar-full">
                             <img v-if="isImage(props.header)" :src="props.url" />
-                            <video v-if="isVideo(props.header)" :src="props.url" controls></video>
                             <audio v-if="isAudio(props.header)" :src="props.url" controls></audio>
+                            <video v-if="isVideo(props.header)" :src="props.url" controls></video>
                         </div>
                     </ElScrollbar>
                 </ElTabPane>
