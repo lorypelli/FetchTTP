@@ -18,7 +18,7 @@ defineOptions({
     }
 });
 const props = defineProps<{
-    url: string,
+    url?: string,
     status: string,
     header: object,
     response: string,
