@@ -9,6 +9,9 @@ import (
 	"net/http"
 	"regexp"
 	"strings"
+	"time"
+
+	"github.com/gorilla/websocket"
 )
 
 // App struct
@@ -39,14 +42,21 @@ type Query struct {
 	Value   string
 }
 
-type Response struct {
-	URL string
+type HTTPResponse struct {
+	URL    string
 	Status string
 	Header http.Header
 	Body   string
 }
 
-func (a *App) MakeRequest(method string, url string, headers []Header, query []Query, body string) Response {
+type WSResponse struct {
+	Ws     *websocket.Conn
+	Status string
+	Header http.Header
+	Msg    []byte
+}
+
+func (a *App) MakeRequest(method string, url string, headers []Header, query []Query, body string) HTTPResponse {
 	data := []byte(body)
 	for i := 0; i < len(query); i++ {
 		if query[i].Enabled && strings.TrimSpace(query[i].Name) != "" && strings.TrimSpace(query[i].Value) != "" {
@@ -59,7 +69,7 @@ func (a *App) MakeRequest(method string, url string, headers []Header, query []Q
 	}
 	req, err := http.NewRequest(method, url, bytes.NewReader(data))
 	if err != nil {
-		return Response{
+		return HTTPResponse{
 			url, "", http.Header{}, "",
 		}
 	}
@@ -72,7 +82,7 @@ func (a *App) MakeRequest(method string, url string, headers []Header, query []Q
 	c := &http.Client{}
 	res, err := c.Do(req)
 	if err != nil {
-		return Response{
+		return HTTPResponse{
 			url, "", http.Header{}, "",
 		}
 	}
@@ -86,7 +96,45 @@ func (a *App) MakeRequest(method string, url string, headers []Header, query []Q
 		bytes, _ := io.ReadAll(res.Body)
 		resBody = bytes
 	}
-	return Response{
+	return HTTPResponse{
 		url, res.Status, res.Header, string(resBody),
+	}
+}
+
+func (a *App) ConnectWS(url string, headers []Header, query []Query, timer *time.Ticker, msg_channel chan WSResponse) {
+	for range timer.C {
+		for i := 0; i < len(query); i++ {
+			if query[i].Enabled && strings.TrimSpace(query[i].Name) != "" && strings.TrimSpace(query[i].Value) != "" {
+				if strings.Contains(url, "?") {
+					url += fmt.Sprintf("&%s=%s", query[i].Name, query[i].Value)
+				} else {
+					url += fmt.Sprintf("?%s=%s", query[i].Name, query[i].Value)
+				}
+			}
+		}
+		header := http.Header{}
+		for i := 0; i < len(headers); i++ {
+			regexp, _ := regexp.Compile(`^[A-Za-z\d[\]{}()<>\/@?=:";,-]*$`)
+			if headers[i].Enabled && strings.TrimSpace(headers[i].Name) != "" && regexp.MatchString(headers[i].Name) && strings.TrimSpace(headers[i].Value) != "" {
+				header.Add(headers[i].Name, headers[i].Value)
+			}
+		}
+		ws, res, err := websocket.DefaultDialer.Dial(url, header)
+		if err != nil {
+			msg_channel <- WSResponse{
+				&websocket.Conn{}, "", http.Header{}, []byte{},
+			}
+		} else {
+			_, msg, err := ws.ReadMessage()
+			if err != nil {
+				msg_channel <- WSResponse{
+					ws, res.Status, res.Header, []byte{},
+				}
+			} else {
+				msg_channel <- WSResponse{
+					ws, res.Status, res.Header, msg,
+				}
+			}
+		}
 	}
 }
