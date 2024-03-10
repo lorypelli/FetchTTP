@@ -3,6 +3,8 @@ import { ElButton, ElInput } from 'element-plus';
 import 'element-plus/dist/index.css';
 import { ref } from 'vue';
 import Split from './Split.vue';
+import { ConnectWS } from '../../wailsjs/go/main/App';
+import { EventsOn } from '../../wailsjs/runtime/runtime';
 defineOptions({
     name: 'WS',
     components: {
@@ -12,6 +14,7 @@ defineOptions({
     }
 });
 const input = ref('');
+let connected = false;
 </script>
 
 <script lang="ts">
@@ -68,8 +71,27 @@ export default {
 
 <template>
     <div class="flex p-1 space-x-1">
-        <ElInput v-model="input" placeholder="echo.websocket.org"></ElInput>
-        <ElButton class="w-28">Connect</ElButton>
+        <ElInput v-model="input" :disabled="connected" placeholder="echo.websocket.org"></ElInput>
+        <ElButton v-model="connected" class="w-36" v-on:click="() => {
+            if (connected) {
+                connected = false
+            }
+            else {
+                connected = true
+            }
+            if (input) {
+                if (!input.startsWith('ws://') && !input.startsWith('wss://')) {
+                    input = 'wss://' + input
+                }
+            }
+            else {
+                input = 'wss://echo.websocket.org'
+            }
+            ConnectWS(input, headers, query)
+            EventsOn('websocket', (data: Response) => {
+                update(data)
+            })
+        }">{{ connected ? 'Disconnect' : 'Connect' }}</ElButton>
     </div>
     <Split :status="status" :header="header" :response="response" type='ws' v-on:headers="handleHeader" v-on:query="handleQuery" v-on:message="handleMessage" />
 </template>

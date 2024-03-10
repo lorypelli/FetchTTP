@@ -9,9 +9,9 @@ import (
 	"net/http"
 	"regexp"
 	"strings"
-	"time"
 
 	"github.com/gorilla/websocket"
+	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 // App struct
@@ -53,7 +53,7 @@ type WSResponse struct {
 	Ws     *websocket.Conn
 	Status string
 	Header http.Header
-	Msg    []byte
+	Message    string
 }
 
 func (a *App) MakeRequest(method string, url string, headers []Header, query []Query, body string) HTTPResponse {
@@ -101,39 +101,31 @@ func (a *App) MakeRequest(method string, url string, headers []Header, query []Q
 	}
 }
 
-func (a *App) ConnectWS(url string, headers []Header, query []Query, timer *time.Ticker, msg_channel chan WSResponse) {
-	for range timer.C {
-		for i := 0; i < len(query); i++ {
-			if query[i].Enabled && strings.TrimSpace(query[i].Name) != "" && strings.TrimSpace(query[i].Value) != "" {
-				if strings.Contains(url, "?") {
-					url += fmt.Sprintf("&%s=%s", query[i].Name, query[i].Value)
-				} else {
-					url += fmt.Sprintf("?%s=%s", query[i].Name, query[i].Value)
-				}
-			}
-		}
-		header := http.Header{}
-		for i := 0; i < len(headers); i++ {
-			regexp, _ := regexp.Compile(`^[A-Za-z\d[\]{}()<>\/@?=:";,-]*$`)
-			if headers[i].Enabled && strings.TrimSpace(headers[i].Name) != "" && regexp.MatchString(headers[i].Name) && strings.TrimSpace(headers[i].Value) != "" {
-				header.Add(headers[i].Name, headers[i].Value)
-			}
-		}
-		ws, res, err := websocket.DefaultDialer.Dial(url, header)
-		if err != nil {
-			msg_channel <- WSResponse{
-				&websocket.Conn{}, "", http.Header{}, []byte{},
-			}
-		} else {
-			_, msg, err := ws.ReadMessage()
-			if err != nil {
-				msg_channel <- WSResponse{
-					ws, res.Status, res.Header, []byte{},
-				}
+func (a *App) ConnectWS(url string, headers []Header, query []Query) {
+	for i := 0; i < len(query); i++ {
+		if query[i].Enabled && strings.TrimSpace(query[i].Name) != "" && strings.TrimSpace(query[i].Value) != "" {
+			if strings.Contains(url, "?") {
+				url += fmt.Sprintf("&%s=%s", query[i].Name, query[i].Value)
 			} else {
-				msg_channel <- WSResponse{
-					ws, res.Status, res.Header, msg,
-				}
+				url += fmt.Sprintf("?%s=%s", query[i].Name, query[i].Value)
+			}
+		}
+	}
+	header := http.Header{}
+	for i := 0; i < len(headers); i++ {
+		regexp, _ := regexp.Compile(`^[A-Za-z\d[\]{}()<>\/@?=:";,-]*$`)
+		if headers[i].Enabled && strings.TrimSpace(headers[i].Name) != "" && regexp.MatchString(headers[i].Name) && strings.TrimSpace(headers[i].Value) != "" {
+			header.Add(headers[i].Name, headers[i].Value)
+		}
+	}
+	ws, res, err := websocket.DefaultDialer.Dial(url, header)
+	if err == nil {
+		for {
+			_, msg, err := ws.ReadMessage()
+			if err == nil {
+				runtime.EventsEmit(a.ctx, "websocket", WSResponse{
+					ws, res.Status, res.Header, string(msg),
+				})
 			}
 		}
 	}

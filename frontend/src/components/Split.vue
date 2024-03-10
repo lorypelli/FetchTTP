@@ -208,7 +208,7 @@ export default {
                 <ElTabPane label="Response">
                     <ElScrollbar class="h-scrollbar-full">
                         <ElText v-if="isText(props.header)">{{ props.response }}</ElText>
-                        <div class="flex justify-center items-center h-scrollbar-full">
+                        <div :class="`${isText(props.header) ? 'hidden' : 'flex'} justify-center items-center h-scrollbar-full`">
                             <img v-if="isImage(props.header)" :src="props.url" />
                             <audio v-if="isAudio(props.header)" :src="props.url" controls></audio>
                             <video v-if="isVideo(props.header)" :src="props.url" controls></video>
