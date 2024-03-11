@@ -120,13 +120,15 @@ func (a *App) ConnectWS(url string, headers []Header, query []Query) {
 	}
 	ws, res, err := websocket.DefaultDialer.Dial(url, header)
 	if err == nil {
-		for {
-			_, msg, err := ws.ReadMessage()
-			if err == nil {
-				runtime.EventsEmit(a.ctx, "websocket", WSResponse{
-					ws, res.Status, res.Header, string(msg),
-				})
+		go func() {
+			for {
+				_, msg, err := ws.ReadMessage()
+				if err == nil {
+					runtime.EventsEmit(a.ctx, "websocket", WSResponse{
+						ws, res.Status, res.Header, string(msg),
+					})
+				}
 			}
-		}
+		}()
 	}
 }
