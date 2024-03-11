@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ElButton, ElInput, ElOption, ElSelect } from 'element-plus';
-import { MakeRequest } from '../../wailsjs/go/main/App.js';
+import { HTTP } from '../../wailsjs/go/main/App.js';
 import { ref } from 'vue';
 import Split from './Split.vue';
 defineOptions({
@@ -95,7 +95,7 @@ export default {
             else {
                 input = 'https://echo.zuplo.io'
             }
-            MakeRequest(select, input, headers, query, body).then((res) => {
+            HTTP(select, input, headers, query, body).then((res) => {
                 update(res)
             })
         }">Send</ElButton>

@@ -3,7 +3,7 @@ import { ElButton, ElInput } from 'element-plus';
 import 'element-plus/dist/index.css';
 import { ref } from 'vue';
 import Split from './Split.vue';
-import { ConnectWS } from '../../wailsjs/go/main/App';
+import { WS } from '../../wailsjs/go/main/App';
 import { EventsOn } from '../../wailsjs/runtime/runtime';
 defineOptions({
     name: 'WS',
@@ -63,7 +63,7 @@ export default {
         update(res: Response) {
             this.status = res.Status;
             this.header = res.Header;
-            this.response = res.Message;
+            this.response += res.Message + '\n';
         }
     }
 };
@@ -87,10 +87,12 @@ export default {
             else {
                 input = 'wss://echo.websocket.org'
             }
-            ConnectWS(input, headers, query)
-            EventsOn('websocket', (data: Response) => {
-                update(data)
-            })
+            WS(input, headers, query, connected)
+            if (connected) {
+                EventsOn('websocket', (data: Response) => {
+                    update(data)
+                })
+            }
         }">{{ connected ? 'Disconnect' : 'Connect' }}</ElButton>
     </div>
     <Split :status="status" :header="header" :response="response" type='ws' v-on:headers="handleHeader" v-on:query="handleQuery" v-on:message="handleMessage" />

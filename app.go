@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"regexp"
 	"strings"
+	"time"
 
 	"github.com/gorilla/websocket"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
@@ -50,13 +51,13 @@ type HTTPResponse struct {
 }
 
 type WSResponse struct {
-	Ws     *websocket.Conn
-	Status string
-	Header http.Header
-	Message    string
+	Ws      *websocket.Conn
+	Status  string
+	Header  http.Header
+	Message string
 }
 
-func (a *App) MakeRequest(method string, url string, headers []Header, query []Query, body string) HTTPResponse {
+func (a *App) HTTP(method string, url string, headers []Header, query []Query, body string) HTTPResponse {
 	data := []byte(body)
 	for i := 0; i < len(query); i++ {
 		if query[i].Enabled && strings.TrimSpace(query[i].Name) != "" && strings.TrimSpace(query[i].Value) != "" {
@@ -101,7 +102,8 @@ func (a *App) MakeRequest(method string, url string, headers []Header, query []Q
 	}
 }
 
-func (a *App) ConnectWS(url string, headers []Header, query []Query) {
+func (a *App) WS(url string, headers []Header, query []Query, connected bool) {
+	stop := make(chan struct{})
 	for i := 0; i < len(query); i++ {
 		if query[i].Enabled && strings.TrimSpace(query[i].Name) != "" && strings.TrimSpace(query[i].Value) != "" {
 			if strings.Contains(url, "?") {
@@ -120,15 +122,33 @@ func (a *App) ConnectWS(url string, headers []Header, query []Query) {
 	}
 	ws, res, err := websocket.DefaultDialer.Dial(url, header)
 	if err == nil {
-		go func() {
-			for {
-				_, msg, err := ws.ReadMessage()
-				if err == nil {
-					runtime.EventsEmit(a.ctx, "websocket", WSResponse{
-						ws, res.Status, res.Header, string(msg),
-					})
-				}
+		go Connect(res, ws, connected, a, stop)
+		if !connected {
+			close(stop)
+		}
+	}
+}
+
+func Connect(res *http.Response, ws *websocket.Conn, connected bool, a *App, stop chan struct{}) {
+	for {
+		select {
+		case <-stop:
+			{
+				ws.Close()
+				return
 			}
-		}()
+		default:
+			{
+				if connected {
+					_, msg, err := ws.ReadMessage()
+					if err == nil {
+						runtime.EventsEmit(a.ctx, "websocket", WSResponse{
+							ws, res.Status, res.Header, string(msg),
+						})
+					}
+				}
+				time.Sleep(1 * time.Second)
+			}
+		}
 	}
 }
