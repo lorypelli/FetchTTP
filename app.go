@@ -8,6 +8,7 @@ import (
 	"io"
 	"net/http"
 	"regexp"
+	"strconv"
 	"strings"
 	"time"
 
@@ -102,8 +103,11 @@ func (a *App) HTTP(method string, url string, headers []Header, query []Query, b
 	}
 }
 
+var currentConnection *websocket.Conn
+var currentResponse *http.Response
+var currentError error
+
 func (a *App) WS(url string, headers []Header, query []Query, connected bool) {
-	stop := make(chan struct{})
 	for i := 0; i < len(query); i++ {
 		if query[i].Enabled && strings.TrimSpace(query[i].Name) != "" && strings.TrimSpace(query[i].Value) != "" {
 			if strings.Contains(url, "?") {
@@ -120,35 +124,33 @@ func (a *App) WS(url string, headers []Header, query []Query, connected bool) {
 			header.Add(headers[i].Name, headers[i].Value)
 		}
 	}
-	ws, res, err := websocket.DefaultDialer.Dial(url, header)
-	if err == nil {
-		go Connect(res, ws, connected, a, stop)
-		if !connected {
-			close(stop)
-		}
+	if connected {
+		ws, res, err := websocket.DefaultDialer.Dial(url, header)
+		currentConnection = ws
+		currentResponse = res
+		currentError = err
+	}
+	if currentError == nil {
+		go Connect(currentResponse, currentConnection, connected, a)
 	}
 }
 
-func Connect(res *http.Response, ws *websocket.Conn, connected bool, a *App, stop chan struct{}) {
+func Connect(res *http.Response, ws *websocket.Conn, connected bool, a *App) {
+	runtime.EventsOn(a.ctx, "connected", func(data ...interface{}) {
+		connected, _ = strconv.ParseBool(fmt.Sprint(data[0]))
+	})
 	for {
-		select {
-		case <-stop:
-			{
-				ws.Close()
-				return
+		if connected {
+			_, msg, err := ws.ReadMessage()
+			if err == nil {
+				runtime.EventsEmit(a.ctx, "websocket", WSResponse{
+					ws, res.Status, res.Header, string(msg),
+				})
 			}
-		default:
-			{
-				if connected {
-					_, msg, err := ws.ReadMessage()
-					if err == nil {
-						runtime.EventsEmit(a.ctx, "websocket", WSResponse{
-							ws, res.Status, res.Header, string(msg),
-						})
-					}
-				}
-				time.Sleep(1 * time.Second)
-			}
+		} else {
+			ws.Close()
+			return
 		}
+		time.Sleep(1 * time.Second)
 	}
 }

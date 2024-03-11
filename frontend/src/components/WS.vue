@@ -4,7 +4,7 @@ import 'element-plus/dist/index.css';
 import { ref } from 'vue';
 import Split from './Split.vue';
 import { WS } from '../../wailsjs/go/main/App';
-import { EventsOn } from '../../wailsjs/runtime/runtime';
+import { EventsEmit, EventsOff, EventsOn } from '../../wailsjs/runtime/runtime';
 defineOptions({
     name: 'WS',
     components: {
@@ -14,7 +14,7 @@ defineOptions({
     }
 });
 const input = ref('');
-let connected = false;
+let connected = ref(false);
 </script>
 
 <script lang="ts">
@@ -73,12 +73,8 @@ export default {
     <div class="flex p-1 space-x-1">
         <ElInput v-model="input" :disabled="connected" placeholder="echo.websocket.org"></ElInput>
         <ElButton v-model="connected" class="w-36" v-on:click="() => {
-            if (connected) {
-                connected = false
-            }
-            else {
-                connected = true
-            }
+            connected = !connected
+            EventsEmit('connected', connected)
             if (input) {
                 if (!input.startsWith('ws://') && !input.startsWith('wss://')) {
                     input = 'wss://' + input
@@ -92,6 +88,9 @@ export default {
                 EventsOn('websocket', (data: Response) => {
                     update(data)
                 })
+            }
+            else {
+                EventsOff('websocket')
             }
         }">{{ connected ? 'Disconnect' : 'Connect' }}</ElButton>
     </div>
