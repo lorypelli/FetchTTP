@@ -74,6 +74,9 @@ export default {
         <ElInput v-model="input" :disabled="connected" placeholder="echo.websocket.org"></ElInput>
         <ElButton v-model="connected" class="w-36" v-on:click="() => {
             connected = !connected
+            if (connected) {
+                response = ''
+            }
             EventsEmit('connected', connected)
             if (input) {
                 if (!input.startsWith('ws://') && !input.startsWith('wss://')) {
