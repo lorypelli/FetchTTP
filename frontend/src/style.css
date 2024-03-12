@@ -7,12 +7,12 @@
     font-family: 'Martian Mono', monospace;
 }
 
-  
 :focus {
-    outline: none;
+    outline: none !important;
 }
 
 body {
+    width: 100% !important;
     background-color: #171717;
 }
 
@@ -34,10 +34,14 @@ body {
     height: 80vh;
 }
 
-.el-button+.el-button {
-    margin-left: 0;
+.el-button {
+    margin-left: 0 !important;
 }
 
 span {
     white-space: pre-wrap;
+}
+
+.el-form-item__content {
+    justify-content: center;
 }

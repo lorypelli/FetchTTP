@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { ElButton, ElCheckbox, ElInput, ElTabPane, ElTabs, ElText, ElDivider, ElScrollbar, ElForm, ElFormItem, ElDatePicker, ElTimePicker } from 'element-plus';
+import { ElButton, ElCheckbox, ElInput, ElTabPane, ElTabs, ElText, ElDivider, ElScrollbar, ElForm, ElFormItem, ElDatePicker, ElTimePicker, ElMessageBox } from 'element-plus';
 import Splitter from 'primevue/splitter';
 import SplitterPanel from 'primevue/splitterpanel';
-import { ref } from 'vue';
+import { reactive, h } from 'vue';
 defineOptions({
     // eslint-disable-next-line vue/multi-word-component-names
     name: 'Split',
@@ -29,18 +29,6 @@ const props = defineProps<{
     response: string,
     type: 'http' | 'ws'
 }>();
-const form = ref({
-    key: ref(''),
-    value: ref(''),
-    domain: ref(''),
-    path: ref(''),
-    expires: ref({
-        date: ref(''),
-        time: ref('')
-    }),
-    secure: ref(false),
-    http_only: ref(false)
-});
 </script>
 
 <script lang="ts">
@@ -201,30 +189,115 @@ export default {
                         </div>
                     </ElScrollbar>
                 </ElTabPane>
-                <ElTabPane label="Cookies" class="flex justify-center relative h-[510px]">
-                    <ElButton>Add Cookie</ElButton>
-                    <div class="flex absolute top-1/4">
-                        <ElForm label-position="top">
-                            <ElFormItem label="Key">
-                                <ElInput v-model="form.key" />
-                            </ElFormItem>
-                            <ElFormItem label="Value">
-                                <ElInput v-model="form.value" />
-                            </ElFormItem>
-                            <ElFormItem label="Domain">
-                                <ElInput v-model="form.domain" />
-                            </ElFormItem>
-                            <ElFormItem label="Path">
-                                <ElInput v-model="form.path" />
-                            </ElFormItem>
-                            <ElFormItem label="Expires">
-                                <div class="flex space-x-1">
-                                    <ElDatePicker v-model="form.expires.date" />
-                                    <ElTimePicker v-model="form.expires.time" />
-                                </div>
-                            </ElFormItem>
-                        </ElForm>
-                    </div>
+                <ElTabPane label="Cookies" class="flex justify-center">
+                    <ElButton v-on:click="() => {
+                        const form = reactive({
+                            key: '',
+                            value: '',
+                            domain: '',
+                            path: '',
+                            expires: {
+                                date: '',
+                                time: ''
+                            },
+                            secure: false,
+                            http_only: false
+                        });
+                        ElMessageBox({
+                            title: 'New Cookie',
+                            message: () => h(ElForm, {
+                                labelPosition: 'top'
+                            }, [
+                                h(ElFormItem, {
+                                    label: 'Key'
+                                }, [
+                                    h(ElInput, {
+                                        modelValue: form.key,
+                                        'onUpdate:modelValue': (val) => {
+                                            form.key = val
+                                        }
+                                    })
+                                ]),
+                                h(ElFormItem, {
+                                    label: 'Value'
+                                }, [
+                                    h(ElInput, {
+                                        modelValue: form.value,
+                                        'onUpdate:modelValue': (val) => {
+                                            form.value = val
+                                        }
+                                    })
+                                ]),
+                                h(ElFormItem, {
+                                    label: 'Domain'
+                                }, [
+                                    h(ElInput, {
+                                        modelValue: form.domain,
+                                        'onUpdate:modelValue': (val) => {
+                                            form.domain = val
+                                        }
+                                    })
+                                ]),
+                                h(ElFormItem, {
+                                    label: 'Path'
+                                }, [
+                                    h(ElInput, {
+                                        modelValue: form.path,
+                                        'onUpdate:modelValue': (val) => {
+                                            form.path = val
+                                        }
+                                    })
+                                ]),
+                                h(ElFormItem, {
+                                    label: 'Expires'
+                                }, [
+                                    h('div', {
+                                        class: 'flex space-x-1'
+                                    }, [
+                                        h(ElDatePicker, {
+                                            modelValue: form.expires.date,
+                                            'onUpdate:modelValue': (val) => {
+                                                form.expires.date = val
+                                            }
+                                        }),
+                                        h(ElTimePicker, {
+                                            modelValue: form.expires.time,
+                                            'onUpdate:modelValue': (val) => {
+                                                form.expires.time = val
+                                            }
+                                        })
+                                    ])
+                                ]),
+                                h('div', {
+                                    class: 'flex justify-around'
+                                }, [
+                                    h(ElFormItem, {
+                                        label: 'Secure'
+                                    }, [
+                                        h(ElCheckbox, {
+                                            modelValue: form.secure,
+                                            'onUpdate:modelValue': (val) => {
+                                                form.secure = !!val
+                                            }
+                                        })
+                                    ]),
+                                    h(ElFormItem, {
+                                        label: 'HTTPOnly'
+                                    }, [
+                                        h(ElCheckbox, {
+                                            modelValue: form.http_only,
+                                            'onUpdate:modelValue': (val) => {
+                                                form.http_only = !!val
+                                            }
+                                        })
+                                    ])
+                                ]),
+                            ]),
+                            confirmButtonText: 'Add',
+                            closeOnClickModal: false
+                        })
+                        .catch(() => { })
+                    }">Add Cookie</ElButton>
                 </ElTabPane>
                 <ElTabPane label="Body" v-if="props.type == 'http'">
                     <ElInput v-model="body" type="textarea" resize="none" />
