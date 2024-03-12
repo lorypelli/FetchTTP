@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { ElButton, ElCheckbox, ElInput, ElTabPane, ElTabs, ElText, ElDivider, ElScrollbar } from 'element-plus';
+import { ElButton, ElCheckbox, ElInput, ElTabPane, ElTabs, ElText, ElDivider, ElScrollbar, ElForm, ElFormItem, ElDatePicker, ElTimePicker } from 'element-plus';
 import Splitter from 'primevue/splitter';
 import SplitterPanel from 'primevue/splitterpanel';
+import { ref } from 'vue';
 defineOptions({
     // eslint-disable-next-line vue/multi-word-component-names
     name: 'Split',
@@ -14,7 +15,11 @@ defineOptions({
         ElButton,
         ElCheckbox,
         ElText,
-        ElDivider
+        ElDivider,
+        ElForm,
+        ElFormItem,
+        ElDatePicker,
+        ElTimePicker
     }
 });
 const props = defineProps<{
@@ -24,6 +29,18 @@ const props = defineProps<{
     response: string,
     type: 'http' | 'ws'
 }>();
+const form = ref({
+    key: ref(''),
+    value: ref(''),
+    domain: ref(''),
+    path: ref(''),
+    expires: ref({
+        date: ref(''),
+        time: ref('')
+    }),
+    secure: ref(false),
+    http_only: ref(false)
+});
 </script>
 
 <script lang="ts">
@@ -184,7 +201,31 @@ export default {
                         </div>
                     </ElScrollbar>
                 </ElTabPane>
-                <ElTabPane label="Cookies"></ElTabPane>
+                <ElTabPane label="Cookies" class="flex justify-center relative h-[510px]">
+                    <ElButton>Add Cookie</ElButton>
+                    <div class="flex absolute top-1/4">
+                        <ElForm label-position="top">
+                            <ElFormItem label="Key">
+                                <ElInput v-model="form.key" />
+                            </ElFormItem>
+                            <ElFormItem label="Value">
+                                <ElInput v-model="form.value" />
+                            </ElFormItem>
+                            <ElFormItem label="Domain">
+                                <ElInput v-model="form.domain" />
+                            </ElFormItem>
+                            <ElFormItem label="Path">
+                                <ElInput v-model="form.path" />
+                            </ElFormItem>
+                            <ElFormItem label="Expires">
+                                <div class="flex space-x-1">
+                                    <ElDatePicker v-model="form.expires.date" />
+                                    <ElTimePicker v-model="form.expires.time" />
+                                </div>
+                            </ElFormItem>
+                        </ElForm>
+                    </div>
+                </ElTabPane>
                 <ElTabPane label="Body" v-if="props.type == 'http'">
                     <ElInput v-model="body" type="textarea" resize="none" />
                 </ElTabPane>
