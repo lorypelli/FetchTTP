@@ -3,7 +3,6 @@
 @tailwind utilities;
 
 * {
-    overflow: hidden;
     font-family: 'Martian Mono', monospace;
 }
 
@@ -12,6 +11,7 @@
 }
 
 body {
+    overflow: hidden;
     width: 100% !important;
     background-color: #171717;
 }
@@ -26,7 +26,8 @@ body {
     background-color: #171717;
 }
 
-.p-splitter-gutter, .p-splitter-gutter-handle {
+.p-splitter-gutter,
+.p-splitter-gutter-handle {
     background-color: #232323;
 }
 
@@ -44,4 +45,16 @@ span {
 
 .el-form-item__content {
     justify-content: center;
+}
+
+.el-message-box__container {
+    display: block;
+}
+
+.el-date-editor {
+    width: 100% !important;
+}
+
+.el-tabs__nav-wrap::after {
+    height: 1px;
 }

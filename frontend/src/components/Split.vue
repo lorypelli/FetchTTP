@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ElButton, ElCheckbox, ElInput, ElTabPane, ElTabs, ElText, ElDivider, ElScrollbar, ElForm, ElFormItem, ElDatePicker, ElTimePicker, ElMessageBox } from 'element-plus';
+import { ElButton, ElCheckbox, ElInput, ElTabPane, ElTabs, ElText, ElDivider, ElScrollbar, ElForm, ElFormItem, ElDatePicker, ElMessageBox } from 'element-plus';
 import Splitter from 'primevue/splitter';
 import SplitterPanel from 'primevue/splitterpanel';
 import { reactive, h } from 'vue';
@@ -18,8 +18,7 @@ defineOptions({
         ElDivider,
         ElForm,
         ElFormItem,
-        ElDatePicker,
-        ElTimePicker
+        ElDatePicker
     }
 });
 const props = defineProps<{
@@ -202,10 +201,7 @@ export default {
                             value: '',
                             domain: '',
                             path: '',
-                            expires: {
-                                date: '',
-                                time: ''
-                            },
+                            expires: '',
                             secure: false,
                             http_only: false
                         });
@@ -258,18 +254,14 @@ export default {
                                     label: 'Expires'
                                 }, [
                                     h('div', {
-                                        class: 'flex space-x-1'
+                                        class: 'w-full'
                                     }, [
                                         h(ElDatePicker, {
-                                            modelValue: form.expires.date,
+                                            modelValue: form.expires,
+                                            type: 'datetime',
+                                            valueFormat: 'x',
                                             'onUpdate:modelValue': (val) => {
-                                                form.expires.date = val
-                                            }
-                                        }),
-                                        h(ElTimePicker, {
-                                            modelValue: form.expires.time,
-                                            'onUpdate:modelValue': (val) => {
-                                                form.expires.time = val
+                                                form.expires = val
                                             }
                                         })
                                     ])
