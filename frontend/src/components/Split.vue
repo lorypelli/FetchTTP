@@ -59,6 +59,9 @@ export default {
         },
         removeHeader() {
             if (this.headers.length == 1) {
+                this.headers[0].name = '';
+                this.headers[0].value = '';
+                this.headers[0].enabled = false;
                 return;
             }
             this.headers.pop();
@@ -72,6 +75,9 @@ export default {
         },
         removeQuery() {
             if (this.query.length == 1) {
+                this.query[0].name = '';
+                this.query[0].value = '';
+                this.query[0].enabled = false;
                 return;
             }
             this.query.pop();
@@ -295,6 +301,15 @@ export default {
                             ]),
                             confirmButtonText: 'Add',
                             closeOnClickModal: false
+                        })
+                        .then(() => {
+                            if (headers.filter((h) => h.name == 'Cookie').length == 0) {
+                                headers.push({
+                                    enabled: true,
+                                    name: 'Cookie',
+                                    value: ''
+                                })
+                            }
                         })
                         .catch(() => { })
                     }">Add Cookie</ElButton>
