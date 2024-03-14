@@ -90,10 +90,10 @@ func (a *App) HTTP(method string, url string, headers []Header, query []Query, b
 	}
 	var resBody []byte
 	if strings.Contains(res.Header.Get("Content-Type"), "application/json") {
-		var jsonBody map[string]interface{}
+		var jsonBody interface{}
 		bytes, _ := io.ReadAll(res.Body)
 		j.Unmarshal(bytes, &jsonBody)
-		resBody, _ = j.MarshalIndent(jsonBody, "", "  ")
+		resBody, _ = j.MarshalIndent(jsonBody, "", "\t")
 	} else {
 		bytes, _ := io.ReadAll(res.Body)
 		resBody = bytes
