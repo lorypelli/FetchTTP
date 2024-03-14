@@ -298,7 +298,7 @@ export default {
                             if (headers.filter((h) => h.name == 'Cookie').length == 0) {
                                 headers.push({
                                     enabled: true,
-                                    name: 'Cookie',
+                                    name: 'Set-Cookie',
                                     value: ''
                                 })
                             }
