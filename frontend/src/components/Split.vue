@@ -295,13 +295,11 @@ export default {
                             closeOnClickModal: false
                         })
                         .then(() => {
-                            if (headers.filter((h) => h.name == 'Cookie').length == 0) {
-                                headers.push({
-                                    enabled: true,
-                                    name: 'Set-Cookie',
-                                    value: ''
-                                })
-                            }
+                            headers.push({
+                                enabled: true,
+                                name: 'Set-Cookie',
+                                value: ''
+                            })
                         })
                         .catch(() => { })
                     }">Add Cookie</ElButton>
