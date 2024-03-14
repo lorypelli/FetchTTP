@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ElButton, ElCheckbox, ElInput, ElTabPane, ElTabs, ElText, ElDivider, ElScrollbar, ElForm, ElFormItem, ElDatePicker, ElMessageBox } from 'element-plus';
+import { ElButton, ElCheckbox, ElInput, ElTabPane, ElTabs, ElText, ElDivider, ElScrollbar, ElForm, ElFormItem, ElDatePicker, ElMessageBox, ElSelect, ElOption } from 'element-plus';
 import Splitter from 'primevue/splitter';
 import SplitterPanel from 'primevue/splitterpanel';
 import { reactive, h } from 'vue';
@@ -18,7 +18,9 @@ defineOptions({
         ElDivider,
         ElForm,
         ElFormItem,
-        ElDatePicker
+        ElDatePicker,
+        ElSelect,
+        ElOption
     }
 });
 const props = defineProps<{
@@ -202,6 +204,7 @@ export default {
                             domain: '',
                             path: '',
                             expires: '',
+                            same_site: 'Lax',
                             secure: false,
                             http_only: false
                         });
@@ -266,6 +269,26 @@ export default {
                                         })
                                     ])
                                 ]),
+                                h(ElFormItem, {
+                                    label: 'SameSite'
+                                }, [
+                                    h(ElSelect, {
+                                        modelValue: form.same_site,
+                                        'onUpdate:modelValue': (val) => {
+                                            form.same_site = val
+                                        }
+                                    }, [
+                                        h(ElOption, {
+                                            value: 'None'
+                                        }),
+                                        h(ElOption, {
+                                            value: 'Lax'
+                                        }),
+                                        h(ElOption, {
+                                            value: 'Strict'
+                                        })
+                                    ])
+                                ]),
                                 h('div', {
                                     class: 'flex justify-around'
                                 }, [
@@ -289,7 +312,7 @@ export default {
                                             }
                                         })
                                     ])
-                                ]),
+                                ])
                             ]),
                             confirmButtonText: 'Add',
                             closeOnClickModal: false
