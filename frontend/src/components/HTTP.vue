@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ElButton, ElInput, ElOption, ElSelect } from 'element-plus';
+import { ElButton, ElInput, ElNotification, ElOption, ElSelect } from 'element-plus';
 import { HTTP } from '../../wailsjs/go/main/App.js';
 import { ref } from 'vue';
 import Split from './Split.vue';
@@ -33,6 +33,7 @@ interface Response {
     Status: string,
     Header: [],
     Body: string
+    Error: string
 }
 let headers: Header[] = [
     {
@@ -95,9 +96,27 @@ export default {
             else {
                 input = 'https://echo.zuplo.io'
             }
-            HTTP(select, input, headers, query, body).then((res) => {
-                update(res)
-            })
+            try {
+                HTTP(select, input, headers, query, body).then((res) => {
+                    if (res.Error) {
+                        ElNotification({
+                            title: 'Something went wrong!',
+                            message: res.Error,
+                            type: 'error',
+                            position: 'bottom-right'
+                        })
+                        return
+                    }
+                    update(res)
+                })
+            }
+            catch {
+                ElNotification({
+                    title: 'Something went wrong!',
+                    type: 'error',
+                    position: 'bottom-right'
+                })
+            }
         }">Send</ElButton>
     </div>
     <Split :url="url" :status="status" :header="header" :response="response" type='http' v-on:headers="handleHeader" v-on:query="handleQuery" v-on:body="handleBody" />

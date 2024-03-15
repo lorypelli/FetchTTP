@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ElButton, ElInput } from 'element-plus';
+import { ElButton, ElInput, ElNotification } from 'element-plus';
 import 'element-plus/dist/index.css';
 import { ref } from 'vue';
 import Split from './Split.vue';
@@ -77,7 +77,6 @@ export default {
             if (connected) {
                 response = ''
             }
-            EventsEmit('connected', connected)
             if (input) {
                 if (!input.startsWith('ws://') && !input.startsWith('wss://')) {
                     input = 'wss://' + input
@@ -86,14 +85,25 @@ export default {
             else {
                 input = 'wss://echo.websocket.org'
             }
-            WS(input, headers, query, connected)
-            if (connected) {
-                EventsOn('websocket', (data: Response) => {
-                    update(data)
-                })
+            try {
+                EventsEmit('connected', connected)
+                WS(input, headers, query, connected)
+                if (connected) {
+                    EventsOn('websocket', (data: Response) => {
+                        update(data)
+                    })
+                }
+                else {
+                    EventsOff('websocket')
+                }
             }
-            else {
-                EventsOff('websocket')
+            catch {
+                connected = false
+                ElNotification({
+                    title: 'Something went wrong!',
+                    type: 'error',
+                    position: 'bottom-right'
+                })
             }
         }">{{ connected ? 'Disconnect' : 'Connect' }}</ElButton>
     </div>

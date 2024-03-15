@@ -49,6 +49,7 @@ type HTTPResponse struct {
 	Status string
 	Header http.Header
 	Body   string
+	Error  string
 }
 
 type WSResponse struct {
@@ -72,7 +73,7 @@ func (a *App) HTTP(method string, url string, headers []Header, query []Query, b
 	req, err := http.NewRequest(method, url, bytes.NewReader(data))
 	if err != nil {
 		return HTTPResponse{
-			url, "", http.Header{}, "",
+			url, "", http.Header{}, "", err.Error(),
 		}
 	}
 	for i := 0; i < len(headers); i++ {
@@ -85,7 +86,7 @@ func (a *App) HTTP(method string, url string, headers []Header, query []Query, b
 	res, err := c.Do(req)
 	if err != nil {
 		return HTTPResponse{
-			url, "", http.Header{}, "",
+			url, "", http.Header{}, "", err.Error(),
 		}
 	}
 	var resBody []byte
@@ -99,7 +100,7 @@ func (a *App) HTTP(method string, url string, headers []Header, query []Query, b
 		resBody = bytes
 	}
 	return HTTPResponse{
-		url, res.Status, res.Header, string(resBody),
+		url, res.Status, res.Header, string(resBody), "",
 	}
 }
 
