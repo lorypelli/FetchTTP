@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ElButton, ElCheckbox, ElInput, ElTabPane, ElTabs, ElText, ElDivider, ElScrollbar, ElForm, ElFormItem, ElDatePicker, ElMessageBox, ElSelect, ElOption } from 'element-plus';
+import { ElButton, ElCheckbox, ElInput, ElTabPane, ElTabs, ElText, ElDivider, ElScrollbar, ElForm, ElFormItem, ElDatePicker, ElMessageBox, ElSelect, ElOption, ElEmpty } from 'element-plus';
 import Splitter from 'primevue/splitter';
 import SplitterPanel from 'primevue/splitterpanel';
 import { reactive, h } from 'vue';
@@ -20,7 +20,8 @@ defineOptions({
         ElFormItem,
         ElDatePicker,
         ElSelect,
-        ElOption
+        ElOption,
+        ElEmpty
     }
 });
 const props = defineProps<{
@@ -352,6 +353,7 @@ export default {
         <SplitterPanel :min-size="20">
             <ElTabs class="pl-2">
                 <ElTabPane label="Headers">
+                    <ElEmpty :class="`${Object.keys(props.header).length == 0 ? 'flex' : 'hidden'} justify-center h-scrollbar-partial`" description="Nothing to display here..." />
                     <ElText class="flex justify-center">{{ props.status }}</ElText>
                     <ElDivider v-if="props.status" />
                     <ElScrollbar class="h-scrollbar-partial">
@@ -359,6 +361,7 @@ export default {
                     </ElScrollbar>
                 </ElTabPane>
                 <ElTabPane label="Response">
+                    <ElEmpty :class="`${Object.keys(props.header).length == 0 ? 'flex' : 'hidden'} justify-center h-scrollbar-partial`" description="Nothing to display here..." />
                     <ElScrollbar class="h-scrollbar-full">
                         <ElText v-if="isText(props.header)">{{ props.response }}</ElText>
                         <div :class="`${isText(props.header) ? 'hidden' : 'flex'} justify-center items-center h-scrollbar-full`">
