@@ -36,6 +36,7 @@ const props = defineProps<{
 export default {
     data() {
         return {
+            width: 0,
             headers: [{
                 enabled: true,
                 name: 'User-Agent',
@@ -50,7 +51,17 @@ export default {
             message: ''
         };
     },
+    mounted() {
+        this.update();
+        window.addEventListener('resize', this.update);
+    },
+    beforeUnmount() {
+        window.removeEventListener('resize', this.update);
+    },
     methods: {
+        update() {
+            this.width = window.innerWidth;
+        },
         addHeader() {
             this.headers.push({
                 enabled: false,
@@ -121,7 +132,7 @@ export default {
 </script>
 
 <template>
-    <Splitter>
+    <Splitter :layout="width < 900 ? 'vertical' : 'horizontal'">
         <SplitterPanel :min-size="20">
             <ElTabs class="pr-2">
                 <ElTabPane :label="`Headers (${headers.filter((h) => {
