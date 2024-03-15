@@ -16,6 +16,10 @@ body {
     background-color: #171717;
 }
 
+span {
+    white-space: pre-wrap;
+}
+
 .el-select__placeholder {
     position: relative;
     transform: none;
@@ -37,10 +41,6 @@ body {
 
 .el-button {
     margin-left: 0 !important;
-}
-
-span {
-    white-space: pre-wrap;
 }
 
 .el-form-item__content {
