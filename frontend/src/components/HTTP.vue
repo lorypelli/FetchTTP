@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ElButton, ElInput, ElNotification, ElOption, ElSelect, ElTabPane, ElTabs, TabPaneName } from 'element-plus';
 import { HTTP } from '../../wailsjs/go/main/App.js';
-import { ref } from 'vue';
 import Split from './Split.vue';
 defineOptions({
     name: 'HTTP',
@@ -15,8 +14,6 @@ defineOptions({
         ElTabPane
     }
 });
-const select = ref('GET');
-const input = ref('');
 </script>
 
 <script lang="ts">
@@ -91,7 +88,7 @@ export default {
 </script>
 
 <template>
-    <ElTabs type="card" editable v-on:edit="handleTab">
+    <ElTabs tab-position="bottom" editable v-on:edit="handleTab">
         <ElTabPane :label="item.select" v-for="(item, index) in tabs" :key="index">
             <div class="flex p-1 space-x-1">
                 <ElSelect class="w-32" v-model="item.select">
@@ -107,16 +104,16 @@ export default {
                 </ElSelect>
                 <ElInput v-model="item.input" placeholder="echo.zuplo.io"></ElInput>
                 <ElButton class="w-20" v-on:click="() => {
-            if (input) {
-                if (!input.startsWith('http://') && !input.startsWith('https://')) {
-                    input = 'https://' + input
+            if (item.input) {
+                if (!item.input.startsWith('http://') && !item.input.startsWith('https://')) {
+                    item.input = 'https://' + item.input
                 }
             }
             else {
-                input = 'https://echo.zuplo.io'
+                item.input = 'https://echo.zuplo.io'
             }
             try {
-                HTTP(select, input, headers, query, body).then((res) => {
+                HTTP(item.select, item.input, headers, query, body).then((res) => {
                     if (res.Error) {
                         ElNotification({
                             title: 'Something went wrong!',
