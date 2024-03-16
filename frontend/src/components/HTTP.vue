@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ElButton, ElInput, ElNotification, ElOption, ElSelect } from 'element-plus';
+import { ElButton, ElInput, ElNotification, ElOption, ElSelect, ElTabPane, ElTabs, TabPaneName } from 'element-plus';
 import { HTTP } from '../../wailsjs/go/main/App.js';
 import { ref } from 'vue';
 import Split from './Split.vue';
@@ -10,7 +10,9 @@ defineOptions({
         ElInput,
         ElOption,
         ElSelect,
-        Split
+        Split,
+        ElTabs,
+        ElTabPane
     }
 });
 const select = ref('GET');
@@ -50,7 +52,11 @@ export default {
             status: '',
             header: {},
             response: '',
-            url: ''
+            url: '',
+            tabs: [{
+                select: 'GET',
+                input: ''
+            }]
         };
     },
     methods: {
@@ -63,6 +69,17 @@ export default {
         handleBody(b: string) {
             body = b;
         },
+        handleTab(targetName: TabPaneName | undefined, action: 'add' | 'remove') {
+            switch (action) {
+            case 'add': {
+                this.tabs.push({
+                    select: 'GET',
+                    input: ''
+                });
+                break;
+            }
+            }
+        },
         update(res: Response) {
             this.status = res.Status;
             this.header = res.Header;
@@ -74,20 +91,22 @@ export default {
 </script>
 
 <template>
-    <div class="flex p-1 space-x-1">
-        <ElSelect class="w-32" v-model="select">
-            <ElOption value="GET" />
-            <ElOption value="HEAD" />
-            <ElOption value="POST" />
-            <ElOption value="PUT" />
-            <ElOption value="DELETE" />
-            <ElOption value="CONNECT" />
-            <ElOption value="OPTIONS" />
-            <ElOption value="TRACE" />
-            <ElOption value="PATCH" />
-        </ElSelect>
-        <ElInput v-model="input" placeholder="echo.zuplo.io"></ElInput>
-        <ElButton class="w-20" v-on:click="() => {
+    <ElTabs type="card" editable v-on:edit="handleTab">
+        <ElTabPane :label="item.select" v-for="(item, index) in tabs" :key="index">
+            <div class="flex p-1 space-x-1">
+                <ElSelect class="w-32" v-model="item.select">
+                    <ElOption value="GET" />
+                    <ElOption value="HEAD" />
+                    <ElOption value="POST" />
+                    <ElOption value="PUT" />
+                    <ElOption value="DELETE" />
+                    <ElOption value="CONNECT" />
+                    <ElOption value="OPTIONS" />
+                    <ElOption value="TRACE" />
+                    <ElOption value="PATCH" />
+                </ElSelect>
+                <ElInput v-model="item.input" placeholder="echo.zuplo.io"></ElInput>
+                <ElButton class="w-20" v-on:click="() => {
             if (input) {
                 if (!input.startsWith('http://') && !input.startsWith('https://')) {
                     input = 'https://' + input
@@ -118,6 +137,9 @@ export default {
                 })
             }
         }">Send</ElButton>
-    </div>
-    <Split :url="url" :status="status" :header="header" :response="response" type='http' v-on:headers="handleHeader" v-on:query="handleQuery" v-on:body="handleBody" />
+            </div>
+            <Split :url="url" :status="status" :header="header" :response="response" type='http'
+                v-on:headers="handleHeader" v-on:query="handleQuery" v-on:body="handleBody" />
+        </ElTabPane>
+    </ElTabs>
 </template>
