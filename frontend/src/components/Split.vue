@@ -393,7 +393,7 @@ export default {
                 headers.push({
                     enabled: true,
                     name: 'Set-Cookie',
-                    value: ''
+                    value: `${form.key}=${form.value};${form.domain ? `Domain=${form.domain};` : ''}${form.path ? `Path=${form.path};` : ''}${form.expires ? `Expires=${new Date(form.expires).toUTCString()};` : ''}${form.same_site ? `SameSite=${form.same_site};` : ''}${form.secure ? 'Secure;' : ''}${form.http_only ? 'HTTPOnly;' : ''}`
                 })
             })
             .catch(() => { })
