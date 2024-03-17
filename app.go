@@ -147,6 +147,9 @@ func Connect(res *http.Response, ws *websocket.Conn, connected bool, a *App) {
 				runtime.EventsEmit(a.ctx, "websocket", WSResponse{
 					ws, res.Status, res.Header, string(msg),
 				})
+				runtime.EventsOn(a.ctx, "message", func(data ...interface{}) {
+					ws.WriteMessage(websocket.TextMessage, []byte(fmt.Sprint(data[0])))
+				})
 			}
 		} else {
 			ws.Close()

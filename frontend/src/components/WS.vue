@@ -83,7 +83,6 @@ let headers: Header[] = [
     }
 ];
 let query: Query[] = [];
-let message = '';
 export default {
     data() {
         return {
@@ -98,9 +97,6 @@ export default {
         },
         handleQuery(q: Query[]) {
             query = q;
-        },
-        handleMessage(m: string) {
-            message = m;
         },
         update(res: Response) {
             this.status = res.Status;
@@ -152,7 +148,7 @@ export default {
     }">{{ item.connected ? 'Disconnect' : 'Connect' }}</ElButton>
             </div>
             <Split :status="status" :header="header" :response="response" type='ws' v-on:headers="handleHeader"
-                v-on:query="handleQuery" v-on:message="handleMessage" />
+                v-on:query="handleQuery" />
         </ElTabPane>
     </ElTabs>
 </template>

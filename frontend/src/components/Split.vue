@@ -3,6 +3,7 @@ import { ElButton, ElCheckbox, ElInput, ElTabPane, ElTabs, ElText, ElDivider, El
 import Splitter from 'primevue/splitter';
 import SplitterPanel from 'primevue/splitterpanel';
 import { reactive, h } from 'vue';
+import { EventsEmit } from '../../wailsjs/runtime/runtime';
 defineOptions({
     // eslint-disable-next-line vue/multi-word-component-names
     name: 'Split',
@@ -401,7 +402,9 @@ export default {
                 <ElTabPane label="Message" v-if="props.type == 'ws'">
                     <div class="flex flex-col space-y-1">
                         <ElInput v-model="message" type="textarea" resize="none" />
-                        <ElButton>Send</ElButton>
+                        <ElButton v-on:click="() => {
+        EventsEmit('message', message)
+    }">Send</ElButton>
                     </div>
                 </ElTabPane>
             </ElTabs>
