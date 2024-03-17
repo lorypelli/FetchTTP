@@ -63,37 +63,101 @@ export default {
         update() {
             this.width = window.innerWidth;
         },
-        addHeader() {
-            this.headers.push({
-                enabled: false,
-                name: '',
-                value: ''
-            });
-        },
-        removeHeader() {
-            if (this.headers.length == 1) {
-                this.headers[0].name = '';
-                this.headers[0].value = '';
-                this.headers[0].enabled = false;
-                return;
+        addHeader(index: number) {
+            for (let i = 0; i < this.headers.length; i++) {
+                if (i == index) {
+                    if (!this.headers[i + 1]) {
+                        this.headers.push({
+                            enabled: false,
+                            name: '',
+                            value: ''
+                        });
+                    }
+                    else {
+                        this.headers.push({
+                            enabled: this.headers[i + 1].enabled,
+                            name: this.headers[i + 1].name,
+                            value: this.headers[i + 1].value
+                        });
+                        this.headers[i + 1] = {
+                            enabled: false,
+                            name: '',
+                            value: ''
+                        };
+                    }
+                }
             }
-            this.headers.pop();
         },
-        addQuery() {
-            this.query.push({
-                enabled: false,
-                name: '',
-                value: ''
-            });
-        },
-        removeQuery() {
-            if (this.query.length == 1) {
-                this.query[0].name = '';
-                this.query[0].value = '';
-                this.query[0].enabled = false;
-                return;
+        removeHeader(index: number) {
+            for (let i = this.headers.length; i >= 0; i--) {
+                if (i == index) {
+                    if (!this.headers[i]) {
+                        this.headers[i] = {
+                            enabled: false,
+                            name: '',
+                            value: ''
+                        };
+                    }
+                    else {
+                        this.headers[i] = {
+                            enabled: false,
+                            name: '',
+                            value: ''
+                        };
+                        if (this.headers.length > 1) {
+                            this.headers.pop();
+                        }
+                    }
+                }
             }
-            this.query.pop();
+        },
+        addQuery(index: number) {
+            for (let i = 0; i < this.query.length; i++) {
+                if (i == index) {
+                    if (!this.query[i + 1]) {
+                        this.query.push({
+                            enabled: false,
+                            name: '',
+                            value: ''
+                        });
+                    }
+                    else {
+                        this.query.push({
+                            enabled: this.query[i + 1].enabled,
+                            name: this.query[i + 1].name,
+                            value: this.query[i + 1].value
+                        });
+                        this.query[i + 1] = {
+                            enabled: false,
+                            name: '',
+                            value: ''
+                        };
+                    }
+                }
+            }
+        },
+        removeQuery(index: number) {
+            for (let i = this.query.length; i >= 0; i--) {
+                if (i == index) {
+                    if (!this.query[i]) {
+                        this.query[i] = {
+                            enabled: false,
+                            name: '',
+                            value: ''
+                        };
+                    }
+                    else {
+                        this.query[i] = {
+                            enabled: false,
+                            name: '',
+                            value: ''
+                        };
+                        if (this.query.length > 1) {
+                            this.query.pop();
+                        }
+                    }
+                }
+            }
         },
         sendHeader() {
             this.$emit('headers', this.headers);
@@ -165,10 +229,8 @@ export default {
             item.enabled = false
         }
     }" />
-                        </div>
-                        <div class="flex flex-col pt-2 space-y-2">
-                            <ElButton v-on:click="addHeader">+</ElButton>
-                            <ElButton v-on:click="removeHeader">-</ElButton>
+                            <ElButton v-on:click="addHeader(index)">+</ElButton>
+                            <ElButton v-on:click="removeHeader(index)">-</ElButton>
                         </div>
                     </ElScrollbar>
                 </ElTabPane>
@@ -201,10 +263,8 @@ export default {
             item.enabled = false
         }
     }" />
-                        </div>
-                        <div class="flex flex-col pt-2 space-y-2">
-                            <ElButton v-on:click="addQuery">+</ElButton>
-                            <ElButton v-on:click="removeQuery">-</ElButton>
+                            <ElButton v-on:click="addQuery(index)">+</ElButton>
+                            <ElButton v-on:click="removeQuery(index)">-</ElButton>
                         </div>
                     </ElScrollbar>
                 </ElTabPane>
