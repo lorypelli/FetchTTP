@@ -204,7 +204,7 @@ export default {
         return h.enabled
     }).length})`">
                     <ElScrollbar height="83.5vh">
-                        <div class="flex space-x-2 pr-2 pt-2" v-for="(item, index) in headers" :key="index">
+                        <div class="flex space-x-1 pr-2 pt-2" v-for="(item, index) in headers" :key="index">
                             <ElCheckbox v-model="item.enabled" v-on:change="() => {
         sendHeader()
         if (!item.name || !item.value) {
@@ -238,7 +238,7 @@ export default {
         return q.enabled
     }).length})`">
                     <ElScrollbar height="83.5vh">
-                        <div class="flex space-x-2 pr-2 pt-2" v-for="(item, index) in query" :key="index">
+                        <div class="flex space-x-1 pr-2 pt-2" v-for="(item, index) in query" :key="index">
                             <ElCheckbox v-model="item.enabled" v-on:change="() => {
         sendQuery()
         if (!item.name || !item.value) {

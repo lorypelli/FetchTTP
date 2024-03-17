@@ -39,11 +39,6 @@ span {
     height: 80vh;
 }
 
-.el-button+
-.el-button {
-    margin-left: 0;
-}
-
 .el-form-item__content {
     justify-content: center;
 }
