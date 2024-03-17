@@ -2,6 +2,7 @@
 import { ElButton, ElInput, ElNotification, ElOption, ElSelect, ElTabPane, ElTabs, TabPaneName } from 'element-plus';
 import { HTTP } from '../../wailsjs/go/main/App.js';
 import Split from './Split.vue';
+import { ref } from 'vue';
 defineOptions({
     name: 'HTTP',
     components: {
@@ -43,6 +44,15 @@ let headers: Header[] = [
 ];
 let query: Query[] = [];
 let body = '';
+let tabIndex = 1;
+const selectedTab = ref(`${tabIndex}`);
+const t = ref([
+    {
+        name: `${selectedTab.value}`,
+        select: 'GET',
+        input: ''
+    }
+]);
 export default {
     data() {
         return {
@@ -51,6 +61,7 @@ export default {
             response: '',
             url: '',
             tabs: [{
+                name: `${selectedTab.value}`,
                 select: 'GET',
                 input: ''
             }]
@@ -69,10 +80,30 @@ export default {
         handleTab(targetName: TabPaneName | undefined, action: 'add' | 'remove') {
             switch (action) {
             case 'add': {
+                const newTabIndex = `${++tabIndex}`;
                 this.tabs.push({
+                    name: newTabIndex,
                     select: 'GET',
                     input: ''
                 });
+                selectedTab.value = newTabIndex;
+                break;
+            }
+            case 'remove': {
+                const tabs = t.value;
+                let activeTab = selectedTab.value;
+                if (activeTab == targetName) {
+                    tabs.forEach((tab, index) => {
+                        if (tab.name == targetName) {
+                            const nextTab = tabs[index + 1] || tabs[index - 1];
+                            if (nextTab) {
+                                activeTab = nextTab.name;
+                            }
+                        }
+                    });
+                }
+                selectedTab.value = activeTab;
+                t.value = tabs.filter((tab) => tab.name != targetName);
                 break;
             }
             }
@@ -88,8 +119,8 @@ export default {
 </script>
 
 <template>
-    <ElTabs tab-position="bottom" editable v-on:edit="handleTab">
-        <ElTabPane :label="item.select" v-for="(item, index) in tabs" :key="index">
+    <ElTabs tab-position="left" editable v-on:edit="handleTab">
+        <ElTabPane :label="item.select" v-for="(item, index) in tabs" :name="item.name" :key="index">
             <div class="flex p-1 space-x-1">
                 <ElSelect class="w-32" v-model="item.select">
                     <ElOption value="GET" />
