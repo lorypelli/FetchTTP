@@ -54,3 +54,35 @@ span {
 .el-tabs__nav-wrap::after {
     height: 1px;
 }
+
+.el-tabs--left .el-tabs__nav-wrap.is-left {
+    margin-right: 0;
+}
+
+.pl-2 > .el-tabs__content, .pr-2 > .el-tabs__content {
+    overflow-y: auto;
+    max-height: 80vh;
+}
+
+.is-left {
+    max-height: 90vh;
+}
+
+.el-tabs__nav-scroll {
+    overflow-y: auto;
+}
+
+::-webkit-scrollbar {
+    width: 20px;
+}
+
+::-webkit-scrollbar-track {
+    background: #171717;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #232323;
+    border: 5px solid;
+    border-color: #171717;
+    border-radius: 10px;
+}

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ElButton, ElCheckbox, ElInput, ElTabPane, ElTabs, ElText, ElDivider, ElScrollbar, ElForm, ElFormItem, ElDatePicker, ElMessageBox, ElSelect, ElOption, ElEmpty } from 'element-plus';
+import { ElButton, ElCheckbox, ElInput, ElTabPane, ElTabs, ElText, ElDivider, ElForm, ElFormItem, ElDatePicker, ElMessageBox, ElSelect, ElOption, ElEmpty } from 'element-plus';
 import Splitter from 'primevue/splitter';
 import SplitterPanel from 'primevue/splitterpanel';
 import { reactive, h } from 'vue';
@@ -203,15 +203,14 @@ export default {
                 <ElTabPane :label="`Headers (${headers.filter((h) => {
         return h.enabled
     }).length})`">
-                    <ElScrollbar height="83.5vh">
-                        <div class="flex space-x-1 pr-2 pt-2" v-for="(item, index) in headers" :key="index">
-                            <ElCheckbox v-model="item.enabled" v-on:change="() => {
+                    <div class="flex space-x-1 pr-2 pt-2" v-for="(item, index) in headers" :key="index">
+                        <ElCheckbox v-model="item.enabled" v-on:change="() => {
         sendHeader()
         if (!item.name || !item.value) {
             item.enabled = false
         }
     }" class="w-10" />
-                            <ElInput v-model="item.name" v-on:input="() => {
+                        <ElInput v-model="item.name" v-on:input="() => {
         sendHeader()
         if (item.name && item.value) {
             item.enabled = true
@@ -220,7 +219,7 @@ export default {
             item.enabled = false
         }
     }" />
-                            <ElInput v-model="item.value" v-on:input="() => {
+                        <ElInput v-model="item.value" v-on:input="() => {
         sendHeader()
         if (item.name && item.value) {
             item.enabled = true
@@ -229,23 +228,21 @@ export default {
             item.enabled = false
         }
     }" />
-                            <ElButton v-on:click="addHeader(index)">+</ElButton>
-                            <ElButton v-on:click="removeHeader(index)">-</ElButton>
-                        </div>
-                    </ElScrollbar>
+                        <ElButton v-on:click="addHeader(index)">+</ElButton>
+                        <ElButton v-on:click="removeHeader(index)">-</ElButton>
+                    </div>
                 </ElTabPane>
                 <ElTabPane :label="`Query (${query.filter((q) => {
         return q.enabled
     }).length})`">
-                    <ElScrollbar height="83.5vh">
-                        <div class="flex space-x-1 pr-2 pt-2" v-for="(item, index) in query" :key="index">
-                            <ElCheckbox v-model="item.enabled" v-on:change="() => {
+                    <div class="flex space-x-1 pr-2 pt-2" v-for="(item, index) in query" :key="index">
+                        <ElCheckbox v-model="item.enabled" v-on:change="() => {
         sendQuery()
         if (!item.name || !item.value) {
             item.enabled = false
         }
     }" class="w-10" />
-                            <ElInput v-model="item.name" v-on:input="() => {
+                        <ElInput v-model="item.name" v-on:input="() => {
         sendQuery()
         if (item.name && item.value) {
             item.enabled = true
@@ -254,7 +251,7 @@ export default {
             item.enabled = false
         }
     }" />
-                            <ElInput v-model="item.value" v-on:input="() => {
+                        <ElInput v-model="item.value" v-on:input="() => {
         sendQuery()
         if (item.name && item.value) {
             item.enabled = true
@@ -263,10 +260,9 @@ export default {
             item.enabled = false
         }
     }" />
-                            <ElButton v-on:click="addQuery(index)">+</ElButton>
-                            <ElButton v-on:click="removeQuery(index)">-</ElButton>
-                        </div>
-                    </ElScrollbar>
+                        <ElButton v-on:click="addQuery(index)">+</ElButton>
+                        <ElButton v-on:click="removeQuery(index)">-</ElButton>
+                    </div>
                 </ElTabPane>
                 <ElTabPane label="Cookies" class="flex justify-center">
                     <ElButton v-on:click="() => {
@@ -418,23 +414,19 @@ export default {
                         description="Nothing to display here..." />
                     <ElText class="flex justify-center">{{ props.status }}</ElText>
                     <ElDivider v-if="props.status" />
-                    <ElScrollbar class="h-scrollbar-partial">
-                        <ElText v-if="Object.keys(props.header).length > 0">{{ props.header }}</ElText>
-                    </ElScrollbar>
+                    <ElText v-if="Object.keys(props.header).length > 0">{{ props.header }}</ElText>
                 </ElTabPane>
                 <ElTabPane label="Response">
                     <ElEmpty
                         :class="`${Object.keys(props.header).length == 0 ? 'flex' : 'hidden'} justify-center h-scrollbar-partial`"
                         description="Nothing to display here..." />
-                    <ElScrollbar class="h-scrollbar-full">
-                        <ElText v-if="isText(props.header)">{{ props.response }}</ElText>
-                        <div
-                            :class="`${isText(props.header) ? 'hidden' : 'flex'} justify-center items-center h-scrollbar-full`">
-                            <img v-if="isImage(props.header)" :src="props.url" />
-                            <audio v-if="isAudio(props.header)" :src="props.url" controls></audio>
-                            <video v-if="isVideo(props.header)" :src="props.url" controls></video>
-                        </div>
-                    </ElScrollbar>
+                    <ElText v-if="isText(props.header)">{{ props.response }}</ElText>
+                    <div
+                        :class="`${isText(props.header) ? 'hidden' : 'flex'} justify-center items-center h-scrollbar-full`">
+                        <img v-if="isImage(props.header)" :src="props.url" />
+                        <audio v-if="isAudio(props.header)" :src="props.url" controls></audio>
+                        <video v-if="isVideo(props.header)" :src="props.url" controls></video>
+                    </div>
                 </ElTabPane>
             </ElTabs>
         </SplitterPanel>
