@@ -39,8 +39,9 @@ span {
     height: 70vh;
 }
 
+.el-button+
 .el-button {
-    margin-left: 0 !important;
+    margin-left: 0;
 }
 
 .el-form-item__content {
