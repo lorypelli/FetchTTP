@@ -15,6 +15,48 @@ defineOptions({
         ElTabPane
     }
 });
+let tabIndex = 1;
+const selectedTab = ref('1');
+const tabs = ref([
+    {
+        name: '1',
+        select: 'GET',
+        input: ''
+    }
+]);
+function handleTab(targetName: TabPaneName | undefined, action: 'add' | 'remove') {
+    switch (action) {
+    case 'add': {
+        const newTabIndex = `${++tabIndex}`;
+        tabs.value.push({
+            name: newTabIndex,
+            select: 'GET',
+            input: ''
+        });
+        selectedTab.value = newTabIndex;
+        break;
+    }
+    case 'remove': {
+        const t = tabs.value;
+        if (t.length > 1) {
+            let activeTab = selectedTab.value;
+            if (activeTab == targetName) {
+                t.forEach((tab, index) => {
+                    if (tab.name == targetName) {
+                        const nextTab = t[index + 1] || t[index - 1];
+                        if (nextTab) {
+                            activeTab = nextTab.name;
+                        }
+                    }
+                });
+            }
+            selectedTab.value = activeTab;
+            tabs.value = t.filter((tab) => tab.name != targetName);
+        }
+        break;
+    }
+    }
+}
 </script>
 
 <script lang="ts">
@@ -44,27 +86,13 @@ let headers: Header[] = [
 ];
 let query: Query[] = [];
 let body = '';
-let tabIndex = 1;
-const selectedTab = ref(`${tabIndex}`);
-const t = ref([
-    {
-        name: `${selectedTab.value}`,
-        select: 'GET',
-        input: ''
-    }
-]);
 export default {
     data() {
         return {
             status: '',
             header: {},
             response: '',
-            url: '',
-            tabs: [{
-                name: `${selectedTab.value}`,
-                select: 'GET',
-                input: ''
-            }]
+            url: ''
         };
     },
     methods: {
@@ -77,37 +105,6 @@ export default {
         handleBody(b: string) {
             body = b;
         },
-        handleTab(targetName: TabPaneName | undefined, action: 'add' | 'remove') {
-            switch (action) {
-            case 'add': {
-                const newTabIndex = `${++tabIndex}`;
-                this.tabs.push({
-                    name: newTabIndex,
-                    select: 'GET',
-                    input: ''
-                });
-                selectedTab.value = newTabIndex;
-                break;
-            }
-            case 'remove': {
-                const tabs = t.value;
-                let activeTab = selectedTab.value;
-                if (activeTab == targetName) {
-                    tabs.forEach((tab, index) => {
-                        if (tab.name == targetName) {
-                            const nextTab = tabs[index + 1] || tabs[index - 1];
-                            if (nextTab) {
-                                activeTab = nextTab.name;
-                            }
-                        }
-                    });
-                }
-                selectedTab.value = activeTab;
-                t.value = tabs.filter((tab) => tab.name != targetName);
-                break;
-            }
-            }
-        },
         update(res: Response) {
             this.status = res.Status;
             this.header = res.Header;
@@ -119,7 +116,7 @@ export default {
 </script>
 
 <template>
-    <ElTabs tab-position="left" editable v-on:edit="handleTab">
+    <ElTabs v-model="selectedTab" tab-position="left" editable v-on:edit="handleTab">
         <ElTabPane :label="item.select" v-for="(item, index) in tabs" :name="item.name" :key="index">
             <div class="flex p-1 space-x-1">
                 <ElSelect class="w-32" v-model="item.select">
@@ -135,36 +132,36 @@ export default {
                 </ElSelect>
                 <ElInput v-model="item.input" placeholder="echo.zuplo.io"></ElInput>
                 <ElButton class="w-20" v-on:click="() => {
-            if (item.input) {
-                if (!item.input.startsWith('http://') && !item.input.startsWith('https://')) {
-                    item.input = 'https://' + item.input
+        if (item.input) {
+            if (!item.input.startsWith('http://') && !item.input.startsWith('https://')) {
+                item.input = 'https://' + item.input
+            }
+        }
+        else {
+            item.input = 'https://echo.zuplo.io'
+        }
+        try {
+            HTTP(item.select, item.input, headers, query, body).then((res) => {
+                if (res.Error) {
+                    ElNotification({
+                        title: 'Something went wrong!',
+                        message: res.Error,
+                        type: 'error',
+                        position: 'bottom-right'
+                    })
+                    return
                 }
-            }
-            else {
-                item.input = 'https://echo.zuplo.io'
-            }
-            try {
-                HTTP(item.select, item.input, headers, query, body).then((res) => {
-                    if (res.Error) {
-                        ElNotification({
-                            title: 'Something went wrong!',
-                            message: res.Error,
-                            type: 'error',
-                            position: 'bottom-right'
-                        })
-                        return
-                    }
-                    update(res)
-                })
-            }
-            catch {
-                ElNotification({
-                    title: 'Something went wrong!',
-                    type: 'error',
-                    position: 'bottom-right'
-                })
-            }
-        }">Send</ElButton>
+                update(res)
+            })
+        }
+        catch {
+            ElNotification({
+                title: 'Something went wrong!',
+                type: 'error',
+                position: 'bottom-right'
+            })
+        }
+    }">Send</ElButton>
             </div>
             <Split :url="url" :status="status" :header="header" :response="response" type='http'
                 v-on:headers="handleHeader" v-on:query="handleQuery" v-on:body="handleBody" />
