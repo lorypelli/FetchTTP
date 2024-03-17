@@ -137,34 +137,34 @@ export default {
         <SplitterPanel :min-size="20">
             <ElTabs class="pr-2">
                 <ElTabPane :label="`Headers (${headers.filter((h) => {
-                    return h.enabled
-                }).length})`">
+        return h.enabled
+    }).length})`">
                     <ElScrollbar height="83.5vh">
                         <div class="flex space-x-2 pr-2 pt-2" v-for="(item, index) in headers" :key="index">
                             <ElCheckbox v-model="item.enabled" v-on:change="() => {
-                                sendHeader()
-                                if (!item.name || !item.value) {
-                                    item.enabled = false
-                                }
-                            }" class="w-10" />
+        sendHeader()
+        if (!item.name || !item.value) {
+            item.enabled = false
+        }
+    }" class="w-10" />
                             <ElInput v-model="item.name" v-on:input="() => {
-                                sendHeader()
-                                if (item.name && item.value) {
-                                    item.enabled = true
-                                }
-                                else {
-                                    item.enabled = false
-                                }
-                            }" />
+        sendHeader()
+        if (item.name && item.value) {
+            item.enabled = true
+        }
+        else {
+            item.enabled = false
+        }
+    }" />
                             <ElInput v-model="item.value" v-on:input="() => {
-                                sendHeader()
-                                if (item.name && item.value) {
-                                    item.enabled = true
-                                }
-                                else {
-                                    item.enabled = false
-                                }
-                            }" />
+        sendHeader()
+        if (item.name && item.value) {
+            item.enabled = true
+        }
+        else {
+            item.enabled = false
+        }
+    }" />
                         </div>
                         <div class="flex flex-col pt-2 space-y-2">
                             <ElButton v-on:click="addHeader">+</ElButton>
@@ -173,34 +173,34 @@ export default {
                     </ElScrollbar>
                 </ElTabPane>
                 <ElTabPane :label="`Query (${query.filter((q) => {
-                    return q.enabled
-                }).length})`">
+        return q.enabled
+    }).length})`">
                     <ElScrollbar height="83.5vh">
                         <div class="flex space-x-2 pr-2 pt-2" v-for="(item, index) in query" :key="index">
                             <ElCheckbox v-model="item.enabled" v-on:change="() => {
-                                sendQuery()
-                                if (!item.name || !item.value) {
-                                    item.enabled = false
-                                }
-                            }" class="w-10" />
+        sendQuery()
+        if (!item.name || !item.value) {
+            item.enabled = false
+        }
+    }" class="w-10" />
                             <ElInput v-model="item.name" v-on:input="() => {
-                                sendQuery()
-                                if (item.name && item.value) {
-                                    item.enabled = true
-                                }
-                                else {
-                                    item.enabled = false
-                                }
-                            }" />
+        sendQuery()
+        if (item.name && item.value) {
+            item.enabled = true
+        }
+        else {
+            item.enabled = false
+        }
+    }" />
                             <ElInput v-model="item.value" v-on:input="() => {
-                                sendQuery()
-                                if (item.name && item.value) {
-                                    item.enabled = true
-                                }
-                                else {
-                                    item.enabled = false
-                                }
-                            }" />
+        sendQuery()
+        if (item.name && item.value) {
+            item.enabled = true
+        }
+        else {
+            item.enabled = false
+        }
+    }" />
                         </div>
                         <div class="flex flex-col pt-2 space-y-2">
                             <ElButton v-on:click="addQuery">+</ElButton>
@@ -210,134 +210,134 @@ export default {
                 </ElTabPane>
                 <ElTabPane label="Cookies" class="flex justify-center">
                     <ElButton v-on:click="() => {
-                        const form = reactive({
-                            key: '',
-                            value: '',
-                            domain: '',
-                            path: '',
-                            expires: '',
-                            same_site: 'Lax',
-                            secure: false,
-                            http_only: false
-                        });
-                        ElMessageBox({
-                            title: 'New Cookie',
-                            message: () => h(ElForm, {
-                                labelPosition: 'top'
-                            }, [
-                                h(ElFormItem, {
-                                    label: 'Key'
-                                }, [
-                                    h(ElInput, {
-                                        modelValue: form.key,
-                                        'onUpdate:modelValue': (val) => {
-                                            form.key = val
-                                        }
-                                    })
-                                ]),
-                                h(ElFormItem, {
-                                    label: 'Value'
-                                }, [
-                                    h(ElInput, {
-                                        modelValue: form.value,
-                                        'onUpdate:modelValue': (val) => {
-                                            form.value = val
-                                        }
-                                    })
-                                ]),
-                                h(ElFormItem, {
-                                    label: 'Domain'
-                                }, [
-                                    h(ElInput, {
-                                        modelValue: form.domain,
-                                        'onUpdate:modelValue': (val) => {
-                                            form.domain = val
-                                        }
-                                    })
-                                ]),
-                                h(ElFormItem, {
-                                    label: 'Path'
-                                }, [
-                                    h(ElInput, {
-                                        modelValue: form.path,
-                                        'onUpdate:modelValue': (val) => {
-                                            form.path = val
-                                        }
-                                    })
-                                ]),
-                                h(ElFormItem, {
-                                    label: 'Expires'
-                                }, [
-                                    h('div', {
-                                        class: 'w-full'
-                                    }, [
-                                        h(ElDatePicker, {
-                                            modelValue: form.expires,
-                                            type: 'datetime',
-                                            valueFormat: 'x',
-                                            'onUpdate:modelValue': (val) => {
-                                                form.expires = val
-                                            }
-                                        })
-                                    ])
-                                ]),
-                                h(ElFormItem, {
-                                    label: 'SameSite'
-                                }, [
-                                    h(ElSelect, {
-                                        modelValue: form.same_site,
-                                        'onUpdate:modelValue': (val) => {
-                                            form.same_site = val
-                                        }
-                                    }, [
-                                        h(ElOption, {
-                                            value: 'None'
-                                        }),
-                                        h(ElOption, {
-                                            value: 'Lax'
-                                        }),
-                                        h(ElOption, {
-                                            value: 'Strict'
-                                        })
-                                    ])
-                                ]),
-                                h('div', {
-                                    class: 'flex justify-around'
-                                }, [
-                                    h(ElFormItem, {
-                                        label: 'Secure'
-                                    }, [
-                                        h(ElCheckbox, {
-                                            modelValue: form.secure,
-                                            'onUpdate:modelValue': (val) => {
-                                                form.secure = !!val
-                                            }
-                                        })
-                                    ]),
-                                    h(ElFormItem, {
-                                        label: 'HTTPOnly'
-                                    }, [
-                                        h(ElCheckbox, {
-                                            modelValue: form.http_only,
-                                            'onUpdate:modelValue': (val) => {
-                                                form.http_only = !!val
-                                            }
-                                        })
-                                    ])
-                                ])
-                            ]),
-                            confirmButtonText: 'Add',
-                            closeOnClickModal: false
+        const form = reactive({
+            key: '',
+            value: '',
+            domain: '',
+            path: '',
+            expires: '',
+            same_site: 'Lax',
+            secure: false,
+            http_only: false
+        });
+        ElMessageBox({
+            title: 'New Cookie',
+            message: () => h(ElForm, {
+                labelPosition: 'top'
+            }, [
+                h(ElFormItem, {
+                    label: 'Key'
+                }, [
+                    h(ElInput, {
+                        modelValue: form.key,
+                        'onUpdate:modelValue': (val) => {
+                            form.key = val
+                        }
+                    })
+                ]),
+                h(ElFormItem, {
+                    label: 'Value'
+                }, [
+                    h(ElInput, {
+                        modelValue: form.value,
+                        'onUpdate:modelValue': (val) => {
+                            form.value = val
+                        }
+                    })
+                ]),
+                h(ElFormItem, {
+                    label: 'Domain'
+                }, [
+                    h(ElInput, {
+                        modelValue: form.domain,
+                        'onUpdate:modelValue': (val) => {
+                            form.domain = val
+                        }
+                    })
+                ]),
+                h(ElFormItem, {
+                    label: 'Path'
+                }, [
+                    h(ElInput, {
+                        modelValue: form.path,
+                        'onUpdate:modelValue': (val) => {
+                            form.path = val
+                        }
+                    })
+                ]),
+                h(ElFormItem, {
+                    label: 'Expires'
+                }, [
+                    h('div', {
+                        class: 'w-full'
+                    }, [
+                        h(ElDatePicker, {
+                            modelValue: form.expires,
+                            type: 'datetime',
+                            valueFormat: 'x',
+                            'onUpdate:modelValue': (val) => {
+                                form.expires = val
+                            }
                         })
-                        .then(() => {
-                            headers.push({
-                                enabled: true,
-                                name: 'Set-Cookie',
-                                value: ''
-                            })
+                    ])
+                ]),
+                h(ElFormItem, {
+                    label: 'SameSite'
+                }, [
+                    h(ElSelect, {
+                        modelValue: form.same_site,
+                        'onUpdate:modelValue': (val) => {
+                            form.same_site = val
+                        }
+                    }, [
+                        h(ElOption, {
+                            value: 'None'
+                        }),
+                        h(ElOption, {
+                            value: 'Lax'
+                        }),
+                        h(ElOption, {
+                            value: 'Strict'
                         })
-                        .catch(() => { })
-                    }">Add Cookie</ElButton>
+                    ])
+                ]),
+                h('div', {
+                    class: 'flex justify-around'
+                }, [
+                    h(ElFormItem, {
+                        label: 'Secure'
+                    }, [
+                        h(ElCheckbox, {
+                            modelValue: form.secure,
+                            'onUpdate:modelValue': (val) => {
+                                form.secure = !!val
+                            }
+                        })
+                    ]),
+                    h(ElFormItem, {
+                        label: 'HTTPOnly'
+                    }, [
+                        h(ElCheckbox, {
+                            modelValue: form.http_only,
+                            'onUpdate:modelValue': (val) => {
+                                form.http_only = !!val
+                            }
+                        })
+                    ])
+                ])
+            ]),
+            confirmButtonText: 'Add',
+            closeOnClickModal: false
+        })
+            .then(() => {
+                headers.push({
+                    enabled: true,
+                    name: 'Set-Cookie',
+                    value: ''
+                })
+            })
+            .catch(() => { })
+    }">Add Cookie</ElButton>
                 </ElTabPane>
                 <ElTabPane label="Body" v-if="props.type == 'http'">
                     <ElInput v-model="body" type="textarea" resize="none" />
@@ -353,7 +353,9 @@ export default {
         <SplitterPanel :min-size="20">
             <ElTabs class="pl-2">
                 <ElTabPane label="Headers">
-                    <ElEmpty :class="`${Object.keys(props.header).length == 0 ? 'flex' : 'hidden'} justify-center h-scrollbar-partial`" description="Nothing to display here..." />
+                    <ElEmpty
+                        :class="`${Object.keys(props.header).length == 0 ? 'flex' : 'hidden'} justify-center h-scrollbar-partial`"
+                        description="Nothing to display here..." />
                     <ElText class="flex justify-center">{{ props.status }}</ElText>
                     <ElDivider v-if="props.status" />
                     <ElScrollbar class="h-scrollbar-partial">
@@ -361,10 +363,13 @@ export default {
                     </ElScrollbar>
                 </ElTabPane>
                 <ElTabPane label="Response">
-                    <ElEmpty :class="`${Object.keys(props.header).length == 0 ? 'flex' : 'hidden'} justify-center h-scrollbar-partial`" description="Nothing to display here..." />
+                    <ElEmpty
+                        :class="`${Object.keys(props.header).length == 0 ? 'flex' : 'hidden'} justify-center h-scrollbar-partial`"
+                        description="Nothing to display here..." />
                     <ElScrollbar class="h-scrollbar-full">
                         <ElText v-if="isText(props.header)">{{ props.response }}</ElText>
-                        <div :class="`${isText(props.header) ? 'hidden' : 'flex'} justify-center items-center h-scrollbar-full`">
+                        <div
+                            :class="`${isText(props.header) ? 'hidden' : 'flex'} justify-center items-center h-scrollbar-full`">
                             <img v-if="isImage(props.header)" :src="props.url" />
                             <audio v-if="isAudio(props.header)" :src="props.url" controls></audio>
                             <video v-if="isVideo(props.header)" :src="props.url" controls></video>

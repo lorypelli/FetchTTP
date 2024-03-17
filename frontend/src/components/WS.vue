@@ -107,5 +107,6 @@ export default {
             }
         }">{{ connected ? 'Disconnect' : 'Connect' }}</ElButton>
     </div>
-    <Split :status="status" :header="header" :response="response" type='ws' v-on:headers="handleHeader" v-on:query="handleQuery" v-on:message="handleMessage" />
+    <Split :status="status" :header="header" :response="response" type='ws' v-on:headers="handleHeader"
+        v-on:query="handleQuery" v-on:message="handleMessage" />
 </template>
