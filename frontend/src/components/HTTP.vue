@@ -117,7 +117,7 @@ export default {
 
 <template>
     <ElTabs v-model="selectedTab" tab-position="left" editable v-on:edit="handleTab">
-        <ElTabPane :label="item.select" v-for="(item, index) in tabs" :name="item.name" :key="index">
+        <ElTabPane :label="item.name" v-for="(item, index) in tabs" :name="item.name" :key="index">
             <div class="flex p-1 space-x-1">
                 <ElSelect class="w-32" v-model="item.select">
                     <ElOption value="GET" />
