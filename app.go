@@ -137,8 +137,17 @@ func (a *App) WS(url string, headers []Header, query []Query, connected bool) {
 }
 
 func Connect(res *http.Response, ws *websocket.Conn, connected bool, a *App) {
+	runtime.EventsOff(a.ctx, "connected")
+	runtime.EventsOff(a.ctx, "message")
 	runtime.EventsOn(a.ctx, "connected", func(data ...interface{}) {
-		connected, _ = strconv.ParseBool(fmt.Sprint(data[0]))
+		d := fmt.Sprint(data[0])
+		connected, _ = strconv.ParseBool(d)
+	})
+	runtime.EventsOn(a.ctx, "message", func(data ...interface{}) {
+		d := fmt.Sprint(data[0])
+		if strings.TrimSpace(d) != "" {
+			ws.WriteMessage(websocket.TextMessage, []byte(d))
+		}
 	})
 	for {
 		if connected {
@@ -146,9 +155,6 @@ func Connect(res *http.Response, ws *websocket.Conn, connected bool, a *App) {
 			if err == nil {
 				runtime.EventsEmit(a.ctx, "websocket", WSResponse{
 					ws, res.Status, res.Header, string(msg),
-				})
-				runtime.EventsOn(a.ctx, "message", func(data ...interface{}) {
-					ws.WriteMessage(websocket.TextMessage, []byte(fmt.Sprint(data[0])))
 				})
 			}
 		} else {
