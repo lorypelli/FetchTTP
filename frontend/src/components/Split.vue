@@ -421,9 +421,9 @@ export default {
                 </ElTabPane>
                 <ElTabPane label="Response">
                     <ElEmpty
-                        :class="`${Object.keys(props.header).length == 0 ? 'flex' : 'hidden'} justify-center h-scrollbar-partial`"
+                        :class="`${['', 'null'].includes(props.response.trim()) ? 'flex' : 'hidden'} justify-center h-scrollbar-partial`"
                         description="Nothing to display here..." />
-                    <ElText v-if="isText(props.header)">{{ props.response }}</ElText>
+                    <ElText v-if="isText(props.header) && !['', 'null'].includes(props.response.trim())">{{ props.response }}</ElText>
                     <div
                         :class="`${isText(props.header) ? 'hidden' : 'flex'} justify-center items-center h-scrollbar-full`">
                         <img v-if="isImage(props.header)" :src="props.url" />
