@@ -15,6 +15,32 @@ defineOptions({
         ElTabPane
     }
 });
+</script>
+
+<script lang="ts">
+interface Header {
+    enabled: boolean,
+    name: string,
+    value: string
+}
+interface Query {
+    enabled: boolean,
+    name: string,
+    value: string
+}
+interface Response {
+    Status: string,
+    Header: [],
+    Message: string
+}
+let headers: Header[] = [
+    {
+        enabled: true,
+        name: 'User-Agent',
+        value: 'FetchTTP'
+    }
+];
+let query: Query[] = [];
 let tabIndex = 1;
 const selectedTab = ref('1');
 const tabs = ref([
@@ -24,7 +50,8 @@ const tabs = ref([
         connected: false
     }
 ]);
-function handleTab(targetName: TabPaneName | undefined, action: 'add' | 'remove') {
+export function handleTab(targetName: TabPaneName | undefined, action: 'add' | 'remove') {
+    console.log(targetName);
     switch (action) {
     case 'add': {
         const newTabIndex = `${++tabIndex}`;
@@ -57,32 +84,6 @@ function handleTab(targetName: TabPaneName | undefined, action: 'add' | 'remove'
     }
     }
 }
-</script>
-
-<script lang="ts">
-interface Header {
-    enabled: boolean,
-    name: string,
-    value: string
-}
-interface Query {
-    enabled: boolean,
-    name: string,
-    value: string
-}
-interface Response {
-    Status: string,
-    Header: [],
-    Message: string
-}
-let headers: Header[] = [
-    {
-        enabled: true,
-        name: 'User-Agent',
-        value: 'FetchTTP'
-    }
-];
-let query: Query[] = [];
 export default {
     data() {
         return {

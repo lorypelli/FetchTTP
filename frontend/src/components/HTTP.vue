@@ -15,48 +15,6 @@ defineOptions({
         ElTabPane
     }
 });
-let tabIndex = 1;
-const selectedTab = ref('1');
-const tabs = ref([
-    {
-        name: '1',
-        select: 'GET',
-        input: ''
-    }
-]);
-function handleTab(targetName: TabPaneName | undefined, action: 'add' | 'remove') {
-    switch (action) {
-    case 'add': {
-        const newTabIndex = `${++tabIndex}`;
-        tabs.value.push({
-            name: newTabIndex,
-            select: 'GET',
-            input: ''
-        });
-        selectedTab.value = newTabIndex;
-        break;
-    }
-    case 'remove': {
-        const t = tabs.value;
-        if (t.length > 1) {
-            let activeTab = selectedTab.value;
-            if (activeTab == targetName) {
-                t.forEach((tab, index) => {
-                    if (tab.name == targetName) {
-                        const nextTab = t[index + 1] || t[index - 1];
-                        if (nextTab) {
-                            activeTab = nextTab.name;
-                        }
-                    }
-                });
-            }
-            selectedTab.value = activeTab;
-            tabs.value = t.filter((tab) => tab.name != targetName);
-        }
-        break;
-    }
-    }
-}
 </script>
 
 <script lang="ts">
@@ -113,6 +71,48 @@ export default {
         }
     }
 };
+let tabIndex = 1;
+const selectedTab = ref('1');
+const tabs = ref([
+    {
+        name: '1',
+        select: 'GET',
+        input: ''
+    }
+]);
+export function handleTab(targetName: TabPaneName | undefined, action: 'add' | 'remove') {
+    switch (action) {
+    case 'add': {
+        const newTabIndex = `${++tabIndex}`;
+        tabs.value.push({
+            name: newTabIndex,
+            select: 'GET',
+            input: ''
+        });
+        selectedTab.value = newTabIndex;
+        break;
+    }
+    case 'remove': {
+        const t = tabs.value;
+        if (t.length > 1) {
+            let activeTab = selectedTab.value;
+            if (activeTab == targetName) {
+                t.forEach((tab, index) => {
+                    if (tab.name == targetName) {
+                        const nextTab = t[index + 1] || t[index - 1];
+                        if (nextTab) {
+                            activeTab = nextTab.name;
+                        }
+                    }
+                });
+            }
+            selectedTab.value = activeTab;
+            tabs.value = t.filter((tab) => tab.name != targetName);
+        }
+        break;
+    }
+    }
+}
 </script>
 
 <template>
