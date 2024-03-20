@@ -19,7 +19,7 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
-const APP_VERSION = "1.1.0"
+const APP_VERSION = "1.1.1"
 
 // App struct
 type App struct {
@@ -240,15 +240,14 @@ func (a *App) Update() {
 	file.Write(bytes)
 	tempPath := strings.Split(path, "FetchTTP.exe")[0] + "temp.bat"
 	tempFile, _ := os.Create(tempPath)
-	pathWithoutExe := filepath.Dir(path)
 	exe := filepath.Base(path)
-	p_new := filepath.Base(newPath)
 	commands := `@echo off
-cd ` + pathWithoutExe + `
+cd ` + filepath.Dir(path) + `
 taskkill /IM ` + exe + `
 taskkill /IM ` + exe + `
 del ` + exe + `
-rename "` + p_new + `" "` + exe + `"
+rename "` + filepath.Base(newPath) + `" "` + exe + `"
+start ` + exe + `
 exit`
 	tempFile.WriteString(commands)
 	cmd := exec.Command("cmd.exe", "/C", tempPath)

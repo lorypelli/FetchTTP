@@ -93,7 +93,7 @@ export default {
                                             .then(() => {
                                                 ElMessageBox({
                                                     title: 'Warning!',
-                                                    message: 'The app will now exit and you will need to re-open it manually',
+                                                    message: 'The app will now exit and will be re-opened automatically',
                                                     type: 'warning',
                                                     showClose: false,
                                                     closeOnClickModal: false,
@@ -164,7 +164,7 @@ export default {
                         .then(() => {
                             ElMessageBox({
                                 title: 'Warning!',
-                                message: 'The app will now exit and you will need to re-open it manually',
+                                message: 'The app will now exit and will be re-opened automatically',
                                 type: 'warning',
                                 showClose: false,
                                 closeOnClickModal: false,
