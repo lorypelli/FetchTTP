@@ -279,7 +279,7 @@ export default {
         });
         ElMessageBox({
             title: 'New Cookie',
-            message: () => h(ElForm, {
+            message: h(ElForm, {
                 labelPosition: 'top'
             }, [
                 h(ElFormItem, {
@@ -423,7 +423,8 @@ export default {
                     <ElEmpty
                         :class="`${['', 'null'].includes(props.response.trim()) ? 'flex' : 'hidden'} justify-center h-scrollbar-partial`"
                         description="Nothing to display here..." />
-                    <ElText v-if="isText(props.header) && !['', 'null'].includes(props.response.trim())">{{ props.response }}</ElText>
+                    <ElText v-if="isText(props.header) && !['', 'null'].includes(props.response.trim())">{{
+        props.response }}</ElText>
                     <div
                         :class="`${isText(props.header) ? 'hidden' : 'flex'} justify-center items-center h-scrollbar-full`">
                         <img v-if="isImage(props.header)" :src="props.url" />

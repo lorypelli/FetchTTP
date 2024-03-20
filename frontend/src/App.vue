@@ -1,24 +1,31 @@
 <script setup lang="ts">
-import { ElNotification, ElTabPane, ElTabs } from 'element-plus';
-import HTTP from './components/HTTP.vue';
-import WS from './components/WS.vue';
+import { ElMessageBox, ElNotification, ElTabPane, ElTabs } from 'element-plus';
+import HTTP, { handleTab as HTTPTab } from './components/HTTP.vue';
+import WS, { handleTab as WSTab } from './components/WS.vue';
+import Updater from './components/Updater.vue';
 import 'element-plus/dist/index.css';
 import 'primevue/resources/themes/aura-light-green/theme.css';
-import { ref } from 'vue';
-import { handleTab as HTTPTab } from './components/HTTP.vue';
-import { handleTab as WSTab } from './components/WS.vue';
+import { h, ref } from 'vue';
+import { CheckUpdates, Update as U } from '../wailsjs/go/main/App.js';
 defineOptions({
     name: 'App',
     components: {
         ElTabPane,
         ElTabs,
         HTTP,
-        WS
+        WS,
+        Updater
     }
 });
 </script>
 
 <script lang="ts">
+interface Update {
+    IsLatest: boolean,
+    Version: string,
+    Description: string,
+    Error: string
+}
 const selectedTab = ref('HTTP');
 export default {
     methods: {
@@ -49,6 +56,69 @@ export default {
                         ]
                     },
                     {
+                        label: 'Check for Updates',
+                        onClick: () => {
+                            try {
+                                CheckUpdates().then((res: Update) => {
+                                    if (res.Error) {
+                                        ElNotification({
+                                            title: 'Error while checking for updates!',
+                                            message: res.Error,
+                                            type: 'error',
+                                            position: 'bottom-right'
+                                        });
+                                        return;
+                                    }
+                                    if (res.IsLatest) {
+                                        ElMessageBox({
+                                            message: 'You are using latest version'
+                                        }).catch(() => { });
+                                    }
+                                    else {
+                                        ElMessageBox({
+                                            title: 'A new version is avaible!\nDo you want to update?',
+                                            message: h(Updater, {
+                                                version: res.Version,
+                                                description: res.Description
+                                            }),
+                                            confirmButtonText: 'Yes',
+                                            showCancelButton: true,
+                                            cancelButtonText: 'No',
+                                            showClose: false,
+                                            closeOnClickModal: false,
+                                            closeOnHashChange: false,
+                                            closeOnPressEscape: false,
+                                            center: true
+                                        })
+                                            .then(() => {
+                                                ElMessageBox({
+                                                    title: 'Warning!',
+                                                    message: 'The app will now exit and you will need to re-open it manually',
+                                                    type: 'warning',
+                                                    showClose: false,
+                                                    closeOnClickModal: false,
+                                                    closeOnHashChange: false,
+                                                    closeOnPressEscape: false,
+                                                    center: true
+                                                })
+                                                    .then(() => {
+                                                        U();
+                                                    });
+                                            })
+                                            .catch(() => { });
+                                    }
+                                });
+                            }
+                            catch {
+                                ElNotification({
+                                    title: 'Error while checking for updates!',
+                                    type: 'error',
+                                    position: 'bottom-right'
+                                });
+                            }
+                        }
+                    },
+                    {
                         label: 'Open Devtools',
                         onClick: () => {
                             ElNotification({
@@ -60,6 +130,61 @@ export default {
                         }
                     }
                 ]
+            });
+        }
+    },
+    mounted() {
+        try {
+            CheckUpdates().then((res: Update) => {
+                if (res.Error) {
+                    ElNotification({
+                        title: 'Error while checking for updates!',
+                        message: res.Error,
+                        type: 'error',
+                        position: 'bottom-right'
+                    });
+                    return;
+                }
+                if (!res.IsLatest) {
+                    ElMessageBox({
+                        title: 'A new version is avaible!\nDo you want to update?',
+                        message: h(Updater, {
+                            version: res.Version,
+                            description: res.Description
+                        }),
+                        confirmButtonText: 'Yes',
+                        showCancelButton: true,
+                        cancelButtonText: 'No',
+                        showClose: false,
+                        closeOnClickModal: false,
+                        closeOnHashChange: false,
+                        closeOnPressEscape: false,
+                        center: true
+                    })
+                        .then(() => {
+                            ElMessageBox({
+                                title: 'Warning!',
+                                message: 'The app will now exit and you will need to re-open it manually',
+                                type: 'warning',
+                                showClose: false,
+                                closeOnClickModal: false,
+                                closeOnHashChange: false,
+                                closeOnPressEscape: false,
+                                center: true
+                            })
+                                .then(() => {
+                                    U();
+                                });
+                        })
+                        .catch(() => { });
+                }
+            });
+        }
+        catch {
+            ElNotification({
+                title: 'Error while checking for updates!',
+                type: 'error',
+                position: 'bottom-right'
             });
         }
     }

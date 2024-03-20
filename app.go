@@ -7,6 +7,9 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"os"
+	"os/exec"
+	"path/filepath"
 	"regexp"
 	"strconv"
 	"strings"
@@ -15,6 +18,8 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
+
+const APP_VERSION = "1.1.0"
 
 // App struct
 type App struct {
@@ -29,6 +34,13 @@ func NewApp() *App {
 // startup is called when the app starts. The context is saved
 // so we can call the runtime methods
 func (a *App) startup(ctx context.Context) {
+	bin, _ := os.Executable()
+	path := filepath.Dir(bin)
+	bat := filepath.Join(path, "temp.bat")
+	_, err := os.Stat(bat)
+	if (!os.IsNotExist(err)) {
+		os.Remove(bat)
+	}
 	a.ctx = ctx
 }
 
@@ -57,6 +69,23 @@ type WSResponse struct {
 	Status  string
 	Header  http.Header
 	Message string
+}
+
+type Update struct {
+	IsLatest    bool
+	Version     string
+	Description string
+	Error       string
+}
+
+type Github struct {
+	Tag_name string
+	Body     string
+	Assets   []Download
+}
+
+type Download struct {
+	Browser_download_url string
 }
 
 func (a *App) HTTP(method string, url string, headers []Header, query []Query, body string) HTTPResponse {
@@ -163,4 +192,67 @@ func Connect(res *http.Response, ws *websocket.Conn, connected bool, a *App) {
 		}
 		time.Sleep(1 * time.Second)
 	}
+}
+
+func (a *App) CheckUpdates() Update {
+	res, err := http.Get("https://api.github.com/repos/lorypelli/FetchTTP/releases/latest")
+	if err != nil {
+		return Update{
+			true, "", "", err.Error(),
+		}
+	}
+	jsonBody := Github{}
+	bytes, _ := io.ReadAll(res.Body)
+	j.Unmarshal(bytes, &jsonBody)
+	tag := jsonBody.Tag_name
+	description := jsonBody.Body
+	version := strings.ReplaceAll(tag, ".", "")
+	currentVersion := strings.ReplaceAll(APP_VERSION, ".", "")
+	version_int, _ := strconv.Atoi(version)
+	currentVersion_int, _ := strconv.Atoi(currentVersion)
+	if version_int > currentVersion_int {
+		return Update{
+			false, tag, description, "",
+		}
+	}
+	return Update{
+		true, "", "", "",
+	}
+}
+
+func (a *App) Update() {
+	res, err := http.Get("https://api.github.com/repos/lorypelli/FetchTTP/releases/latest")
+	if err != nil {
+		return
+	}
+	jsonBody := Github{}
+	bytes, _ := io.ReadAll(res.Body)
+	j.Unmarshal(bytes, &jsonBody)
+	bin, _ := os.Executable()
+	path, _ := filepath.Abs(bin)
+	res, err = http.Get(jsonBody.Assets[0].Browser_download_url)
+	if err != nil {
+		return
+	}
+	bytes, _ = io.ReadAll(res.Body)
+	newPath := strings.Split(path, ".exe")[0] + "1.exe"
+	file, _ := os.Create(newPath)
+	file.Write(bytes)
+	tempPath := strings.Split(path, "FetchTTP.exe")[0] + "temp.bat"
+	tempFile, _ := os.Create(tempPath)
+	pathWithoutExe := filepath.Dir(path)
+	exe := filepath.Base(path)
+	p_new := filepath.Base(newPath)
+	commands := `@echo off
+cd ` + pathWithoutExe + `
+taskkill /IM ` + exe + `
+taskkill /IM ` + exe + `
+del ` + exe + `
+rename "` + p_new + `" "` + exe + `"
+exit`
+	tempFile.WriteString(commands)
+	cmd := exec.Command("cmd.exe", "/C", tempPath)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	cmd.Run()
 }

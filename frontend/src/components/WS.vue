@@ -51,7 +51,6 @@ const tabs = ref([
     }
 ]);
 export function handleTab(targetName: TabPaneName | undefined, action: 'add' | 'remove') {
-    console.log(targetName);
     switch (action) {
     case 'add': {
         const newTabIndex = `${++tabIndex}`;
