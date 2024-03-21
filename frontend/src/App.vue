@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { ElMessageBox, ElNotification, ElTabPane, ElTabs } from 'element-plus';
-import HTTP, { handleTab as HTTPTab } from './components/HTTP.vue';
-import WS, { handleTab as WSTab } from './components/WS.vue';
+import HTTP from './components/HTTP.vue';
+import WS from './components/WS.vue';
+import { httpTabHandle as HTTPTab, wsTabHandle as WSTab } from './components/Tabs.vue';
 import Updater from './components/Updater.vue';
 import 'element-plus/dist/index.css';
 import 'primevue/resources/themes/aura-light-green/theme.css';

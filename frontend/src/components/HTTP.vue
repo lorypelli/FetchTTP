@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { ElButton, ElInput, ElNotification, ElOption, ElSelect, ElTabPane, ElTabs, TabPaneName } from 'element-plus';
+import { ElButton, ElInput, ElNotification, ElOption, ElSelect } from 'element-plus';
 import { HTTP } from '../../wailsjs/go/main/App.js';
 import Split from './Split.vue';
-import { ref } from 'vue';
+import Tabs from './Tabs.vue';
 defineOptions({
     name: 'HTTP',
     components: {
@@ -11,8 +11,7 @@ defineOptions({
         ElOption,
         ElSelect,
         Split,
-        ElTabs,
-        ElTabPane
+        Tabs,
     }
 });
 </script>
@@ -71,53 +70,11 @@ export default {
         }
     }
 };
-let tabIndex = 1;
-const selectedTab = ref('1');
-const tabs = ref([
-    {
-        name: '1',
-        select: 'GET',
-        input: ''
-    }
-]);
-export function handleTab(targetName: TabPaneName | undefined, action: 'add' | 'remove') {
-    switch (action) {
-    case 'add': {
-        const newTabIndex = `${++tabIndex}`;
-        tabs.value.push({
-            name: newTabIndex,
-            select: 'GET',
-            input: ''
-        });
-        selectedTab.value = newTabIndex;
-        break;
-    }
-    case 'remove': {
-        const t = tabs.value;
-        if (t.length > 1) {
-            let activeTab = selectedTab.value;
-            if (activeTab == targetName) {
-                t.forEach((tab, index) => {
-                    if (tab.name == targetName) {
-                        const nextTab = t[index + 1] || t[index - 1];
-                        if (nextTab) {
-                            activeTab = nextTab.name;
-                        }
-                    }
-                });
-            }
-            selectedTab.value = activeTab;
-            tabs.value = t.filter((tab) => tab.name != targetName);
-        }
-        break;
-    }
-    }
-}
 </script>
 
 <template>
-    <ElTabs v-model="selectedTab" tab-position="left" editable v-on:edit="handleTab">
-        <ElTabPane :label="item.name" v-for="(item, index) in tabs" :name="item.name" :key="index">
+    <Tabs type="http">
+        <template #default="{ item }">
             <div class="flex p-1 space-x-1">
                 <ElSelect class="w-32" v-model="item.select">
                     <ElOption value="GET" />
@@ -132,39 +89,39 @@ export function handleTab(targetName: TabPaneName | undefined, action: 'add' | '
                 </ElSelect>
                 <ElInput v-model="item.input" placeholder="echo.zuplo.io"></ElInput>
                 <ElButton class="w-20" v-on:click="() => {
-        if (item.input) {
-            if (!item.input.startsWith('http://') && !item.input.startsWith('https://')) {
-                item.input = 'https://' + item.input
-            }
-        }
-        else {
-            item.input = 'https://echo.zuplo.io'
-        }
-        try {
-            HTTP(item.select, item.input, headers, query, body).then((res) => {
-                if (res.Error) {
-                    ElNotification({
-                        title: 'Something went wrong!',
-                        message: res.Error,
-                        type: 'error',
-                        position: 'bottom-right'
-                    })
-                    return
+            if (item.input) {
+                if (!item.input.startsWith('http://') && !item.input.startsWith('https://')) {
+                    item.input = 'https://' + item.input
                 }
-                update(res)
-            })
-        }
-        catch {
-            ElNotification({
-                title: 'Something went wrong!',
-                type: 'error',
-                position: 'bottom-right'
-            })
-        }
-    }">Send</ElButton>
+            }
+            else {
+                item.input = 'https://echo.zuplo.io'
+            }
+            try {
+                HTTP(item.select, item.input, headers, query, body).then((res) => {
+                    if (res.Error) {
+                        ElNotification({
+                            title: 'Something went wrong!',
+                            message: res.Error,
+                            type: 'error',
+                            position: 'bottom-right'
+                        })
+                        return
+                    }
+                    update(res)
+                })
+            }
+            catch {
+                ElNotification({
+                    title: 'Something went wrong!',
+                    type: 'error',
+                    position: 'bottom-right'
+                })
+            }
+        }">Send</ElButton>
             </div>
             <Split :url="url" :status="status" :header="header" :response="response" type='http'
                 v-on:headers="handleHeader" v-on:query="handleQuery" v-on:body="handleBody" />
-        </ElTabPane>
-    </ElTabs>
+        </template>
+    </Tabs>
 </template>
