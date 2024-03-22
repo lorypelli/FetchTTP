@@ -99,7 +99,7 @@ export function wsTabHandle(targetName: TabPaneName | undefined, action: 'add' |
     }
     }
 }
-interface CompleteItem {
+export interface CompleteItem {
     name: string,
     select: string,
     input: string,
@@ -121,7 +121,7 @@ export default {
                 return this.type == 'http' ? httpSelectedTab.value : wsSelectedTab.value;
             }
         },
-        tabHandle: function() {
+        tabHandle: function () {
             return this.type == 'http' ? httpTabHandle : wsTabHandle;
         }
     },
@@ -129,8 +129,32 @@ export default {
 </script>
 
 <template>
-    <ElTabs v-model="selectedTab" tab-position="left" editable v-on:edit="tabHandle">
-        <ElTabPane :label="item.name" v-for="(item, index) in (props.type == 'http' ? httpTab : props.type == 'ws' ? wsTab : null)" :name="item.name" :key="index">
+    <ElTabs v-model="selectedTab" tab-position="left" editable v-on:edit="tabHandle" v-on:keydown.alt="(e: KeyboardEvent) => {
+        const tab = props.type == 'http' ? httpTab.length : props.type == 'ws' ? wsTab.length : null
+        if (tab) {
+            switch (props.type) {
+                case 'http': {
+                    for (let i = 0; i < tab; i++) {
+                        if (e.key == httpTab[i].name) {
+                            httpSelectedTab = e.key
+                        }
+                    }
+                    break
+                }
+                case 'ws': {
+                    for (let i = 0; i < tab; i++) {
+                        if (e.key == wsTab[i].name) {
+                            wsSelectedTab = e.key
+                        }
+                    }
+                    break
+                }
+            }
+        }
+    }">
+        <ElTabPane :label="item.name"
+            v-for="(item, index) in (props.type == 'http' ? httpTab : props.type == 'ws' ? wsTab : null)"
+            :name="item.name" :key="index">
             <slot :item="item as CompleteItem"></slot>
         </ElTabPane>
     </ElTabs>

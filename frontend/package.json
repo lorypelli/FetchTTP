@@ -11,22 +11,22 @@
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.1",
     "@imengyu/vue3-context-menu": "^1.3.9",
-    "element-plus": "^2.6.1",
-    "primevue": "^3.49.1",
+    "element-plus": "^2.6.2",
+    "primevue": "^3.50.0",
     "vue": "^3.4.21"
   },
   "devDependencies": {
     "@babel/types": "^7.24.0",
-    "@typescript-eslint/eslint-plugin": "^7.1.1",
-    "@typescript-eslint/parser": "^7.1.1",
+    "@typescript-eslint/eslint-plugin": "^7.3.1",
+    "@typescript-eslint/parser": "^7.3.1",
     "@vitejs/plugin-vue": "^5.0.4",
-    "autoprefixer": "^10.4.18",
+    "autoprefixer": "^10.4.19",
     "eslint": "^8.57.0",
-    "eslint-plugin-vue": "^9.22.0",
-    "postcss": "^8.4.35",
+    "eslint-plugin-vue": "^9.23.0",
+    "postcss": "^8.4.38",
     "tailwindcss": "^3.4.1",
-    "typescript": "^5.4.2",
-    "vite": "^5.1.6",
+    "typescript": "^5.4.3",
+    "vite": "^5.2.3",
     "vite-plugin-minify": "^1.5.2"
   }
 }

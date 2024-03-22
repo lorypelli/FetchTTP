@@ -2,7 +2,7 @@
 import { ElButton, ElInput, ElNotification, ElOption, ElSelect } from 'element-plus';
 import { HTTP } from '../../wailsjs/go/main/App.js';
 import Split from './Split.vue';
-import Tabs from './Tabs.vue';
+import Tabs, { CompleteItem } from './Tabs.vue';
 defineOptions({
     name: 'HTTP',
     components: {
@@ -67,6 +67,37 @@ export default {
             this.header = res.Header;
             this.response = res.Body;
             this.url = res.URL;
+        },
+        sendRequest(item: CompleteItem) {
+            if (item.input) {
+                if (!item.input.startsWith('http://') && !item.input.startsWith('https://')) {
+                    item.input = 'https://' + item.input;
+                }
+            }
+            else {
+                item.input = 'https://echo.zuplo.io';
+            }
+            try {
+                HTTP(item.select, item.input, headers, query, body).then((res) => {
+                    if (res.Error) {
+                        ElNotification({
+                            title: 'Something went wrong!',
+                            message: res.Error,
+                            type: 'error',
+                            position: 'bottom-right'
+                        });
+                        return;
+                    }
+                    this.update(res);
+                });
+            }
+            catch {
+                ElNotification({
+                    title: 'Something went wrong!',
+                    type: 'error',
+                    position: 'bottom-right'
+                });
+            }
         }
     }
 };
@@ -87,38 +118,8 @@ export default {
                     <ElOption value="TRACE" />
                     <ElOption value="PATCH" />
                 </ElSelect>
-                <ElInput v-model="item.input" placeholder="echo.zuplo.io"></ElInput>
-                <ElButton class="w-20" v-on:click="() => {
-            if (item.input) {
-                if (!item.input.startsWith('http://') && !item.input.startsWith('https://')) {
-                    item.input = 'https://' + item.input
-                }
-            }
-            else {
-                item.input = 'https://echo.zuplo.io'
-            }
-            try {
-                HTTP(item.select, item.input, headers, query, body).then((res) => {
-                    if (res.Error) {
-                        ElNotification({
-                            title: 'Something went wrong!',
-                            message: res.Error,
-                            type: 'error',
-                            position: 'bottom-right'
-                        })
-                        return
-                    }
-                    update(res)
-                })
-            }
-            catch {
-                ElNotification({
-                    title: 'Something went wrong!',
-                    type: 'error',
-                    position: 'bottom-right'
-                })
-            }
-        }">Send</ElButton>
+                <ElInput v-model="item.input" placeholder="echo.zuplo.io" v-on:keydown.enter="sendRequest(item)"></ElInput>
+                <ElButton class="w-20" v-on:click="sendRequest(item)">Send</ElButton>
             </div>
             <Split :url="url" :status="status" :header="header" :response="response" type='http'
                 v-on:headers="handleHeader" v-on:query="handleQuery" v-on:body="handleBody" />

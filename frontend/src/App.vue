@@ -193,7 +193,18 @@ export default {
 </script>
 
 <template>
-    <ElTabs v-model="selectedTab" v-on:contextmenu="onContextMenu($event)">
+    <ElTabs v-model="selectedTab" v-on:contextmenu="onContextMenu($event)" v-on:keydown.alt="(e: KeyboardEvent) => {
+        switch (e.key.toUpperCase()) {
+            case 'H': {
+                selectedTab = 'HTTP'
+                break
+            }
+            case 'W': {
+                selectedTab = 'WS'
+                break
+            }
+        }
+    }">
         <ElTabPane label="HTTP" name="HTTP">
             <HTTP />
         </ElTabPane>
