@@ -64,100 +64,70 @@ export default {
         update() {
             this.width = window.innerWidth;
         },
-        addHeader(index: number) {
-            for (let i = 0; i < this.headers.length; i++) {
-                if (i == index) {
-                    if (!this.headers[i + 1]) {
-                        this.headers.push({
+        add(type: 'header' | 'query', index: number) {
+            switch (type) {
+            case 'header': {
+                for (let i = 0; i < this.headers.length; i++) {
+                    if (i == index) {
+                        this.headers.splice(i + 1, 0, {
                             enabled: false,
                             name: '',
                             value: ''
                         });
-                    }
-                    else {
-                        this.headers.push({
-                            enabled: this.headers[i + 1].enabled,
-                            name: this.headers[i + 1].name,
-                            value: this.headers[i + 1].value
-                        });
-                        this.headers[i + 1] = {
-                            enabled: false,
-                            name: '',
-                            value: ''
-                        };
                     }
                 }
+                break;
+            }
+            case 'query': {
+                for (let i = 0; i < this.query.length; i++) {
+                    if (i == index) {
+                        this.query.splice(i + 1, 0, {
+                            enabled: false,
+                            name: '',
+                            value: ''
+                        });
+                    }
+                }
+                break;
+            }
             }
         },
-        removeHeader(index: number) {
-            for (let i = this.headers.length; i >= 0; i--) {
-                if (i == index) {
-                    if (!this.headers[i]) {
-                        this.headers[i] = {
-                            enabled: false,
-                            name: '',
-                            value: ''
-                        };
-                    }
-                    else {
-                        this.headers[i] = {
-                            enabled: false,
-                            name: '',
-                            value: ''
-                        };
-                        if (this.headers.length > 1) {
-                            this.headers.pop();
+        remove(type: 'header' | 'query', index: number) {
+            switch (type) {
+            case 'header': {
+                for (let i = 0; i < this.headers.length; i++) {
+                    if (i == index) {
+                        if (i == 0) {
+                            this.headers[0] = {
+                                enabled: false,
+                                name: '',
+                                value: ''
+                            };
+                        }
+                        else {
+                            this.headers.splice(i, 1);
                         }
                     }
                 }
+                break;
             }
-        },
-        addQuery(index: number) {
-            for (let i = 0; i < this.query.length; i++) {
-                if (i == index) {
-                    if (!this.query[i + 1]) {
-                        this.query.push({
-                            enabled: false,
-                            name: '',
-                            value: ''
-                        });
-                    }
-                    else {
-                        this.query.push({
-                            enabled: this.query[i + 1].enabled,
-                            name: this.query[i + 1].name,
-                            value: this.query[i + 1].value
-                        });
-                        this.query[i + 1] = {
-                            enabled: false,
-                            name: '',
-                            value: ''
-                        };
-                    }
-                }
-            }
-        },
-        removeQuery(index: number) {
-            for (let i = this.query.length; i >= 0; i--) {
-                if (i == index) {
-                    if (!this.query[i]) {
-                        this.query[i] = {
-                            enabled: false,
-                            name: '',
-                            value: ''
-                        };
-                    }
-                    else {
-                        this.query[i] = {
-                            enabled: false,
-                            name: '',
-                            value: ''
-                        };
-                        if (this.query.length > 1) {
-                            this.query.pop();
+            case 'query': {
+                for (let i = 0; i < this.headers.length; i++) {
+                    if (i == index) {
+                        if (i == 0) {
+                            this.query[0] = {
+                                enabled: false,
+                                name: '',
+                                value: ''
+                            };
+                        }
+                        else {
+                            this.query.splice(i, 1);
                         }
                     }
                 }
+                break;
+            }
             }
         },
         sendHeader() {
@@ -229,8 +199,8 @@ export default {
             item.enabled = false
         }
     }" />
-                        <ElButton v-on:click="addHeader(index)">+</ElButton>
-                        <ElButton v-on:click="removeHeader(index)">-</ElButton>
+                        <ElButton v-on:click="add('header', index)">+</ElButton>
+                        <ElButton v-on:click="remove('header', index)">-</ElButton>
                     </div>
                 </ElTabPane>
                 <ElTabPane :label="`Query (${query.filter((q) => {
@@ -261,8 +231,8 @@ export default {
             item.enabled = false
         }
     }" />
-                        <ElButton v-on:click="addQuery(index)">+</ElButton>
-                        <ElButton v-on:click="removeQuery(index)">-</ElButton>
+                        <ElButton v-on:click="add('query', index)">+</ElButton>
+                        <ElButton v-on:click="remove('query', index)">-</ElButton>
                     </div>
                 </ElTabPane>
                 <ElTabPane label="Cookies" class="flex justify-center">
