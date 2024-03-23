@@ -121,7 +121,7 @@ export default {
                 <ElInput v-model="item.input" placeholder="echo.zuplo.io" v-on:keydown.enter="sendRequest(item)"></ElInput>
                 <ElButton class="w-20" v-on:click="sendRequest(item)">Send</ElButton>
             </div>
-            <Split :url="url" :status="status" :header="header" :response="response" type='http'
+            <Split :name="item.name" :url="url" :status="status" :header="header" :response="response" type='http'
                 v-on:headers="handleHeader" v-on:query="handleQuery" v-on:body="handleBody" />
         </template>
     </Tabs>

@@ -105,7 +105,7 @@ export default {
                 <ElInput v-model="item.input" :disabled="item.connected" placeholder="echo.websocket.org" v-on:keydown.enter="sendWebsocket(item)"></ElInput>
                 <ElButton v-model="item.connected" class="w-36" v-on:click="sendWebsocket(item)">{{ item.connected ? 'Disconnect' : 'Connect' }}</ElButton>
             </div>
-            <Split :status="status" :header="header" :response="response" type='ws' v-on:headers="handleHeader"
+            <Split :name="item.name" :status="status" :header="header" :response="response" type='ws' v-on:headers="handleHeader"
                 v-on:query="handleQuery" />
         </template>
     </Tabs>

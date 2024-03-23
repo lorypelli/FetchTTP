@@ -26,6 +26,7 @@ defineOptions({
     }
 });
 const props = defineProps<{
+    name: string,
     url?: string,
     status: string,
     header: object,
@@ -54,6 +55,30 @@ export default {
         };
     },
     mounted() {
+        let headers = localStorage.getItem(`${this.name}-headers`);
+        if (headers) {
+            this.headers = JSON.parse(headers);
+        }
+        else {
+            this.headers = [{
+                enabled: false,
+                name: '',
+                value: ''
+            }];
+        }
+        let query = localStorage.getItem(`${this.name}-query`);
+        if (query) {
+            this.query = JSON.parse(query);
+        }
+        else {
+            this.query = [{
+                enabled: false,
+                name: '',
+                value: ''
+            }];
+        }
+        this.body = localStorage.getItem(`${this.name}-body`) || '';
+        this.message = localStorage.getItem(`${this.name}-message`) || '';
         this.update();
         window.addEventListener('resize', this.update);
     },
@@ -131,15 +156,19 @@ export default {
             }
         },
         sendHeader() {
+            localStorage.setItem(`${this.name}-headers`, JSON.stringify(this.headers));
             this.$emit('headers', this.headers);
         },
         sendQuery() {
+            localStorage.setItem(`${this.name}-query`, JSON.stringify(this.query));
             this.$emit('query', this.query);
         },
         sendBody() {
+            localStorage.setItem(`${this.name}-body`, this.body);
             this.$emit('body', this.body);
         },
         sendMessage() {
+            localStorage.setItem(`${this.name}-message`, this.message);
             this.$emit('message', this.message);
         },
         isText(h: object) {
