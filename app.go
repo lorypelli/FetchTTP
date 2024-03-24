@@ -230,6 +230,7 @@ func (a *App) Update() {
 	j.Unmarshal(bytes, &jsonBody)
 	bin, _ := os.Executable()
 	path, _ := filepath.Abs(bin)
+	dir := filepath.Dir(bin)
 	res, err = http.Get(jsonBody.Assets[0].Browser_download_url)
 	if err != nil {
 		return
@@ -238,11 +239,11 @@ func (a *App) Update() {
 	newPath := strings.Split(path, ".exe")[0] + "1.exe"
 	file, _ := os.Create(newPath)
 	file.Write(bytes)
-	tempPath := strings.Split(path, "FetchTTP.exe")[0] + "temp.bat"
+	tempPath := filepath.Join(dir, "temp.bat")
 	tempFile, _ := os.Create(tempPath)
 	exe := filepath.Base(path)
 	commands := `@echo off
-cd ` + filepath.Dir(path) + `
+cd ` + dir + `
 taskkill /IM ` + exe + `
 taskkill /IM ` + exe + `
 del ` + exe + `
