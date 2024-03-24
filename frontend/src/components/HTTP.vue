@@ -53,6 +53,12 @@ export default {
         };
     },
     methods: {
+        handleSelect(item: CompleteItem) {
+            localStorage.setItem(`${item.name}-select`, item.select);
+        },
+        handleInput(item: CompleteItem) {
+            localStorage.setItem(`${item.name}-input-http`, item.input);
+        },
         handleHeader(h: Header[]) {
             headers = h;
         },
@@ -107,7 +113,7 @@ export default {
     <Tabs type="http">
         <template #default="{ item }">
             <div class="flex p-1 space-x-1">
-                <ElSelect class="w-32" v-model="item.select">
+                <ElSelect class="w-32" v-model="item.select" v-on:change="handleSelect(item)">
                     <ElOption value="GET" />
                     <ElOption value="HEAD" />
                     <ElOption value="POST" />
@@ -118,7 +124,7 @@ export default {
                     <ElOption value="TRACE" />
                     <ElOption value="PATCH" />
                 </ElSelect>
-                <ElInput v-model="item.input" placeholder="echo.zuplo.io" v-on:keydown.enter="sendRequest(item)"></ElInput>
+                <ElInput v-model="item.input" placeholder="echo.zuplo.io" v-on:input="handleInput(item)" v-on:keydown.enter="sendRequest(item)"></ElInput>
                 <ElButton class="w-20" v-on:click="sendRequest(item)">Send</ElButton>
             </div>
             <Split :name="item.name" :url="url" :status="status" :header="header" :response="response" type='http'

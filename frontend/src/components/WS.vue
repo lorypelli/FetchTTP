@@ -49,6 +49,9 @@ export default {
         };
     },
     methods: {
+        handleInput(item: CompleteItem) {
+            localStorage.setItem(`${item.name}-input-ws`, item.input);
+        },
         handleHeader(h: Header[]) {
             headers = h;
         },
@@ -102,7 +105,7 @@ export default {
     <Tabs type="ws">
         <template #default="{ item }">
             <div class="flex p-1 space-x-1">
-                <ElInput v-model="item.input" :disabled="item.connected" placeholder="echo.websocket.org" v-on:keydown.enter="sendWebsocket(item)"></ElInput>
+                <ElInput v-model="item.input" :disabled="item.connected" placeholder="echo.websocket.org" v-on:input="handleInput(item)" v-on:keydown.enter="sendWebsocket(item)"></ElInput>
                 <ElButton v-model="item.connected" class="w-36" v-on:click="sendWebsocket(item)">{{ item.connected ? 'Disconnect' : 'Connect' }}</ElButton>
             </div>
             <Split :name="item.name" :status="status" :header="header" :response="response" type='ws' v-on:headers="handleHeader"

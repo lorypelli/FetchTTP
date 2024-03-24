@@ -43,7 +43,6 @@ export function httpTabHandle(targetName: TabPaneName | undefined, action: 'add'
             input: ''
         });
         httpSelectedTab.value = newTabIndex;
-        localStorage.setItem('httpTab', JSON.stringify(httpTab.value));
         break;
     }
     case 'remove': {
@@ -63,7 +62,6 @@ export function httpTabHandle(targetName: TabPaneName | undefined, action: 'add'
             httpSelectedTab.value = activeTab;
             httpTab.value = t.filter((tab) => tab.name != targetName);
         }
-        localStorage.setItem('httpTab', JSON.stringify(httpTab.value));
         break;
     }
     }
@@ -78,7 +76,6 @@ export function wsTabHandle(targetName: TabPaneName | undefined, action: 'add' |
             connected: false
         });
         wsSelectedTab.value = newTabIndex;
-        localStorage.setItem('wsTab', JSON.stringify(wsTab.value));
         break;
     }
     case 'remove': {
@@ -98,7 +95,6 @@ export function wsTabHandle(targetName: TabPaneName | undefined, action: 'add' |
             wsSelectedTab.value = activeTab;
             wsTab.value = t.filter((tab) => tab.name != targetName);
         }
-        localStorage.setItem('wsTab', JSON.stringify(wsTab.value));
         break;
     }
     }
@@ -111,37 +107,17 @@ export interface CompleteItem {
 }
 export default {
     mounted() {
-        const http = localStorage.getItem('httpTab');
-        if (http) {
-            const httpParse = JSON.parse(http);
-            httpTab.value = httpParse;
-            httpSelectedTab.value = httpParse[0].name;
-            httpTabIndex = parseInt(httpSelectedTab.value);
+        const select = localStorage.getItem(`${httpTab.value[httpTabIndex-1].name}-select`);
+        if (select) {
+            httpTab.value[httpTabIndex-1].select = select;
         }
-        else {
-            httpTab.value = [
-                {
-                    name: '1',
-                    select: 'GET',
-                    input: ''
-                }
-            ];
+        const httpInput = localStorage.getItem(`${httpTab.value[httpTabIndex-1].name}-input-http`);
+        if (httpInput) {
+            httpTab.value[httpTabIndex-1].input = httpInput;
         }
-        const ws = localStorage.getItem('wsTab');
-        if (ws) {
-            const wsParse = JSON.parse(ws);
-            wsTab.value = wsParse;
-            wsSelectedTab.value = wsParse[0].name;
-            wsTabIndex = parseInt(wsSelectedTab.value);
-        }
-        else {
-            wsTab.value = [
-                {
-                    name: '1',
-                    input: '',
-                    connected: false
-                }
-            ];
+        const wsInput = localStorage.getItem(`${httpTab.value[httpTabIndex-1].name}-input-ws`);
+        if (wsInput) {
+            wsTab.value[wsTabIndex-1].input = wsInput;
         }
     },
     computed: {
