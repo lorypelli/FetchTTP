@@ -33,6 +33,7 @@ const wsTab = ref([
         connected: false
     }
 ]);
+let key = '';
 export function httpTabHandle(targetName: TabPaneName | undefined, action: 'add' | 'remove') {
     switch (action) {
     case 'add': {
@@ -43,6 +44,7 @@ export function httpTabHandle(targetName: TabPaneName | undefined, action: 'add'
             input: ''
         });
         httpSelectedTab.value = newTabIndex;
+        localStorage.setItem('httpTab', JSON.stringify(httpTab.value));
         break;
     }
     case 'remove': {
@@ -62,6 +64,7 @@ export function httpTabHandle(targetName: TabPaneName | undefined, action: 'add'
             httpSelectedTab.value = activeTab;
             httpTab.value = t.filter((tab) => tab.name != targetName);
         }
+        localStorage.setItem('httpTab', JSON.stringify(httpTab.value));
         break;
     }
     }
@@ -76,6 +79,7 @@ export function wsTabHandle(targetName: TabPaneName | undefined, action: 'add' |
             connected: false
         });
         wsSelectedTab.value = newTabIndex;
+        localStorage.setItem('wsTab', JSON.stringify(wsTab.value));
         break;
     }
     case 'remove': {
@@ -95,6 +99,7 @@ export function wsTabHandle(targetName: TabPaneName | undefined, action: 'add' |
             wsSelectedTab.value = activeTab;
             wsTab.value = t.filter((tab) => tab.name != targetName);
         }
+        localStorage.setItem('wsTab', JSON.stringify(wsTab.value));
         break;
     }
     }
@@ -107,17 +112,69 @@ export interface CompleteItem {
 }
 export default {
     mounted() {
-        const select = localStorage.getItem(`${httpTab.value[httpTabIndex-1].name}-select`);
-        if (select) {
-            httpTab.value[httpTabIndex-1].select = select;
+        let http = localStorage.getItem('httpTab');
+        let httpLen = 1;
+        if (http) {
+            let httpJson = JSON.parse(http);
+            httpLen = httpJson.length;
+            httpTab.value = httpJson;
+            httpTabIndex = httpJson[0].name;
+            httpSelectedTab.value = httpJson[0].name.toString();
         }
-        const httpInput = localStorage.getItem(`${httpTab.value[httpTabIndex-1].name}-input-http`);
-        if (httpInput) {
-            httpTab.value[httpTabIndex-1].input = httpInput;
+        for (let i = 0; i < httpLen; i++) {
+            const select = localStorage.getItem(`${httpTab.value[i].name}-select`);
+            if (select) {
+                httpTab.value[i].select = select;
+            }
+            const httpInput = localStorage.getItem(`${httpTab.value[i].name}-input-http`);
+            if (httpInput) {
+                httpTab.value[i].input = httpInput;
+            }
         }
-        const wsInput = localStorage.getItem(`${httpTab.value[httpTabIndex-1].name}-input-ws`);
-        if (wsInput) {
-            wsTab.value[wsTabIndex-1].input = wsInput;
+        let ws = localStorage.getItem('wsTab');
+        let wsLen = 1;
+        if (ws) {
+            let wsJson = JSON.parse(ws);
+            wsLen = wsJson.length;
+            wsTab.value = wsJson;
+            wsTabIndex = wsJson[0].name;
+            wsSelectedTab.value = wsJson[0].name.toString();
+        }
+        for (let i = 0; i < wsLen; i++) {
+            const wsInput = localStorage.getItem(`${wsTab.value[i].name}-input-ws`);
+            if (wsInput) {
+                wsTab.value[i].input = wsInput;
+            }
+        }
+    },
+    methods: {
+        keyHandle(e: KeyboardEvent) {
+            setTimeout(() => {
+                if (['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'].includes(e.key)) {
+                    key += e.key;
+                }
+            }, 100);
+            const tab = this.type == 'http' ? httpTab.value.length : this.type == 'ws' ? wsTab.value.length : null;
+            if (tab) {
+                switch (this.type) {
+                case 'http': {
+                    for (let i = 0; i < tab; i++) {
+                        if (key == httpTab.value[i].name) {
+                            httpSelectedTab.value = key;
+                        }
+                    }
+                    break;
+                }
+                case 'ws': {
+                    for (let i = 0; i < tab; i++) {
+                        if (key == wsTab.value[i].name) {
+                            wsSelectedTab.value = key;
+                        }
+                    }
+                    break;
+                }
+                }
+            }
         }
     },
     computed: {
@@ -143,29 +200,9 @@ export default {
 </script>
 
 <template>
-    <ElTabs v-model="selectedTab" tab-position="left" editable v-on:edit="tabHandle" v-on:keydown.alt="(e: KeyboardEvent) => {
-        const tab = props.type == 'http' ? httpTab.length : props.type == 'ws' ? wsTab.length : null
-        if (tab) {
-            switch (props.type) {
-                case 'http': {
-                    for (let i = 0; i < tab; i++) {
-                        if (e.key == httpTab[i].name) {
-                            httpSelectedTab = e.key
-                        }
-                    }
-                    break
-                }
-                case 'ws': {
-                    for (let i = 0; i < tab; i++) {
-                        if (e.key == wsTab[i].name) {
-                            wsSelectedTab = e.key
-                        }
-                    }
-                    break
-                }
-            }
-        }
-    }">
+    <ElTabs v-model="selectedTab" tab-position="left" editable v-on:edit="tabHandle" v-on:keyup="() => {
+        key = ''
+    }" v-on:keydown.alt=keyHandle>
         <ElTabPane :label="item.name"
             v-for="(item, index) in (props.type == 'http' ? httpTab : props.type == 'ws' ? wsTab : null)"
             :name="item.name" :key="index">
