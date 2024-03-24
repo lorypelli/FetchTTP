@@ -55,7 +55,7 @@ export default {
         };
     },
     mounted() {
-        let headers = localStorage.getItem(`${this.name}-headers`);
+        let headers = localStorage.getItem(`${this.name}-headers-${this.type}`);
         if (headers) {
             this.headers = JSON.parse(headers);
         }
@@ -66,7 +66,7 @@ export default {
                 value: ''
             }];
         }
-        let query = localStorage.getItem(`${this.name}-query`);
+        let query = localStorage.getItem(`${this.name}-query-${this.type}`);
         if (query) {
             this.query = JSON.parse(query);
         }
@@ -77,8 +77,8 @@ export default {
                 value: ''
             }];
         }
-        this.body = localStorage.getItem(`${this.name}-body`) || '';
-        this.message = localStorage.getItem(`${this.name}-message`) || '';
+        this.body = localStorage.getItem(`${this.name}-body-http`) || '';
+        this.message = localStorage.getItem(`${this.name}-message-ws`) || '';
         this.update();
         window.addEventListener('resize', this.update);
     },
@@ -128,16 +128,18 @@ export default {
                                 name: '',
                                 value: ''
                             };
+                            localStorage.removeItem(`${this.name}-headers-${this.type}`);
                         }
                         else {
                             this.headers.splice(i, 1);
+                            localStorage.setItem(`${this.name}-headers-${this.type}`, JSON.stringify(this.headers));
                         }
                     }
                 }
                 break;
             }
             case 'query': {
-                for (let i = 0; i < this.headers.length; i++) {
+                for (let i = 0; i < this.query.length; i++) {
                     if (i == index) {
                         if (i == 0) {
                             this.query[0] = {
@@ -145,9 +147,11 @@ export default {
                                 name: '',
                                 value: ''
                             };
+                            localStorage.removeItem(`${this.name}-query-${this.type}`);
                         }
                         else {
                             this.query.splice(i, 1);
+                            localStorage.setItem(`${this.name}-query-${this.type}`, JSON.stringify(this.query));
                         }
                     }
                 }
@@ -156,19 +160,19 @@ export default {
             }
         },
         sendHeader() {
-            localStorage.setItem(`${this.name}-headers`, JSON.stringify(this.headers));
+            localStorage.setItem(`${this.name}-headers-${this.type}`, JSON.stringify(this.headers));
             this.$emit('headers', this.headers);
         },
         sendQuery() {
-            localStorage.setItem(`${this.name}-query`, JSON.stringify(this.query));
+            localStorage.setItem(`${this.name}-query-${this.type}`, JSON.stringify(this.query));
             this.$emit('query', this.query);
         },
         sendBody() {
-            localStorage.setItem(`${this.name}-body`, this.body);
+            localStorage.setItem(`${this.name}-body-http`, this.body);
             this.$emit('body', this.body);
         },
         sendMessage() {
-            localStorage.setItem(`${this.name}-message`, this.message);
+            localStorage.setItem(`${this.name}-message-ws`, this.message);
             this.$emit('message', this.message);
         },
         isText(h: object) {
@@ -205,28 +209,28 @@ export default {
     }).length})`">
                     <div class="flex space-x-1 pr-2 pt-2" v-for="(item, index) in headers" :key="index">
                         <ElCheckbox v-model="item.enabled" v-on:change="() => {
-        sendHeader()
         if (!item.name || !item.value) {
             item.enabled = false
         }
+        sendHeader()
     }" class="w-10" />
                         <ElInput v-model="item.name" v-on:input="() => {
-        sendHeader()
         if (item.name && item.value) {
             item.enabled = true
         }
         else {
             item.enabled = false
         }
+        sendHeader()
     }" />
                         <ElInput v-model="item.value" v-on:input="() => {
-        sendHeader()
         if (item.name && item.value) {
             item.enabled = true
         }
         else {
             item.enabled = false
         }
+        sendHeader()
     }" />
                         <ElButton v-on:click="add('header', index)">+</ElButton>
                         <ElButton v-on:click="remove('header', index)">-</ElButton>
@@ -237,28 +241,28 @@ export default {
     }).length})`">
                     <div class="flex space-x-1 pr-2 pt-2" v-for="(item, index) in query" :key="index">
                         <ElCheckbox v-model="item.enabled" v-on:change="() => {
-        sendQuery()
         if (!item.name || !item.value) {
             item.enabled = false
         }
+        sendQuery()
     }" class="w-10" />
                         <ElInput v-model="item.name" v-on:input="() => {
-        sendQuery()
         if (item.name && item.value) {
             item.enabled = true
         }
         else {
             item.enabled = false
         }
+        sendQuery()
     }" />
                         <ElInput v-model="item.value" v-on:input="() => {
-        sendQuery()
         if (item.name && item.value) {
             item.enabled = true
         }
         else {
             item.enabled = false
         }
+        sendQuery()
     }" />
                         <ElButton v-on:click="add('query', index)">+</ElButton>
                         <ElButton v-on:click="remove('query', index)">-</ElButton>

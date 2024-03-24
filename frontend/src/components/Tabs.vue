@@ -43,6 +43,7 @@ export function httpTabHandle(targetName: TabPaneName | undefined, action: 'add'
             input: ''
         });
         httpSelectedTab.value = newTabIndex;
+        localStorage.setItem('httpTab', JSON.stringify(httpTab.value));
         break;
     }
     case 'remove': {
@@ -62,6 +63,7 @@ export function httpTabHandle(targetName: TabPaneName | undefined, action: 'add'
             httpSelectedTab.value = activeTab;
             httpTab.value = t.filter((tab) => tab.name != targetName);
         }
+        localStorage.setItem('httpTab', JSON.stringify(httpTab.value));
         break;
     }
     }
@@ -76,6 +78,7 @@ export function wsTabHandle(targetName: TabPaneName | undefined, action: 'add' |
             connected: false
         });
         wsSelectedTab.value = newTabIndex;
+        localStorage.setItem('wsTab', JSON.stringify(wsTab.value));
         break;
     }
     case 'remove': {
@@ -95,6 +98,7 @@ export function wsTabHandle(targetName: TabPaneName | undefined, action: 'add' |
             wsSelectedTab.value = activeTab;
             wsTab.value = t.filter((tab) => tab.name != targetName);
         }
+        localStorage.setItem('wsTab', JSON.stringify(wsTab.value));
         break;
     }
     }
@@ -106,6 +110,34 @@ export interface CompleteItem {
     connected: boolean
 }
 export default {
+    mounted() {
+        const http = localStorage.getItem('httpTab');
+        if (http) {
+            httpTab.value = JSON.parse(http);
+        }
+        else {
+            httpTab.value = [
+                {
+                    name: '1',
+                    select: 'GET',
+                    input: ''
+                }
+            ];
+        }
+        const ws = localStorage.getItem('wsTab');
+        if (ws) {
+            wsTab.value = JSON.parse(ws);
+        }
+        else {
+            wsTab.value = [
+                {
+                    name: '1',
+                    input: '',
+                    connected: false
+                }
+            ];
+        }
+    },
     computed: {
         selectedTab: {
             get() {
