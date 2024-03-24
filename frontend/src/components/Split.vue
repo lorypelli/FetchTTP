@@ -61,9 +61,9 @@ export default {
         }
         else {
             this.headers = [{
-                enabled: false,
-                name: '',
-                value: ''
+                enabled: true,
+                name: 'User-Agent',
+                value: 'FetchTTP'
             }];
         }
         let query = localStorage.getItem(`${this.name}-query-${this.type}`);

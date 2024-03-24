@@ -113,7 +113,10 @@ export default {
     mounted() {
         const http = localStorage.getItem('httpTab');
         if (http) {
-            httpTab.value = JSON.parse(http);
+            const httpParse = JSON.parse(http);
+            httpTab.value = httpParse;
+            httpSelectedTab.value = httpParse[0].name;
+            httpTabIndex = parseInt(httpSelectedTab.value);
         }
         else {
             httpTab.value = [
@@ -126,7 +129,10 @@ export default {
         }
         const ws = localStorage.getItem('wsTab');
         if (ws) {
-            wsTab.value = JSON.parse(ws);
+            const wsParse = JSON.parse(ws);
+            wsTab.value = wsParse;
+            wsSelectedTab.value = wsParse[0].name;
+            wsTabIndex = parseInt(wsSelectedTab.value);
         }
         else {
             wsTab.value = [
