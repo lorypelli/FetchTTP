@@ -77,8 +77,8 @@ export default {
                 value: ''
             }];
         }
-        this.body = localStorage.getItem(`${this.name}-body-http`) || '';
-        this.message = localStorage.getItem(`${this.name}-message-ws`) || '';
+        this.body = localStorage.getItem(`${this.name}-body`) || '';
+        this.message = localStorage.getItem(`${this.name}-message`) || '';
         this.update();
         window.addEventListener('resize', this.update);
     },
@@ -168,11 +168,11 @@ export default {
             this.$emit('query', this.query);
         },
         sendBody() {
-            localStorage.setItem(`${this.name}-body-http`, this.body);
+            localStorage.setItem(`${this.name}-body`, this.body);
             this.$emit('body', this.body);
         },
         sendMessage() {
-            localStorage.setItem(`${this.name}-message-ws`, this.message);
+            localStorage.setItem(`${this.name}-message`, this.message);
             this.$emit('message', this.message);
         },
         isText(h: object) {
@@ -400,11 +400,11 @@ export default {
     }">Add Cookie</ElButton>
                 </ElTabPane>
                 <ElTabPane label="Body" v-if="props.type == 'http'">
-                    <ElInput v-model="body" type="textarea" resize="none" />
+                    <ElInput v-model="body" v-on:input="sendBody" type="textarea" resize="none" />
                 </ElTabPane>
                 <ElTabPane label="Message" v-if="props.type == 'ws'">
                     <div class="flex flex-col space-y-1">
-                        <ElInput v-model="message" type="textarea" resize="none" />
+                        <ElInput v-model="message" v-on:input="sendMessage" type="textarea" resize="none" />
                         <ElButton v-on:click="() => {
         EventsEmit('message', message)
     }">Send</ElButton>
