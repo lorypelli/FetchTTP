@@ -2,6 +2,7 @@
 import { ElMessageBox, ElNotification, ElTabPane, ElTabs } from 'element-plus';
 import HTTP from './components/HTTP.vue';
 import WS from './components/WS.vue';
+import CURL from './components/CURL.vue';
 import { httpTabHandle as HTTPTab, wsTabHandle as WSTab } from './components/Tabs.vue';
 import Updater from './components/Updater.vue';
 import 'element-plus/dist/index.css';
@@ -15,6 +16,7 @@ defineOptions({
         ElTabs,
         HTTP,
         WS,
+        CURL,
         Updater
     }
 });
@@ -210,6 +212,9 @@ export default {
         </ElTabPane>
         <ElTabPane label="WS" name="WS">
             <WS />
+        </ElTabPane>
+        <ElTabPane class="flex justify-center items-center h-max place-items-center scale-150" label="CURL" name="CURL">
+            <CURL />
         </ElTabPane>
     </ElTabs>
 </template>

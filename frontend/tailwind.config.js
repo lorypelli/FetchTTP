@@ -7,6 +7,7 @@ export default {
     theme: {
         extend: {
             height: {
+                'max': '100vh',
                 'scrollbar-full': '83.5vh',
                 'scrollbar-partial': '75vh'
             }
