@@ -17,7 +17,7 @@ const curl = ref('');
     <ElButton v-on:click="() => {
         ElMessageBox({
             title: 'cURL Request',
-            message: h(ElForm, {
+            message: () => h(ElForm, {
                 labelPosition: 'top'
             }, [
                 h(ElFormItem, {

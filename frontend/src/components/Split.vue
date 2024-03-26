@@ -282,7 +282,7 @@ export default {
         });
         ElMessageBox({
             title: 'New Cookie',
-            message: h(ElForm, {
+            message: () => h(ElForm, {
                 labelPosition: 'top'
             }, [
                 h(ElFormItem, {
