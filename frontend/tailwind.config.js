@@ -8,8 +8,7 @@ export default {
         extend: {
             height: {
                 'max': '100vh',
-                'scrollbar-full': '83.5vh',
-                'scrollbar-partial': '75vh'
+                'full': '80vh'
             }
         },
     },

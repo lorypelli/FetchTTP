@@ -268,8 +268,8 @@ export default {
                         <ElButton v-on:click="remove('query', index)">-</ElButton>
                     </div>
                 </ElTabPane>
-                <ElTabPane label="Cookies" class="flex justify-center">
-                    <ElButton v-on:click="() => {
+                <ElTabPane label="Cookies" class="flex justify-center items-center h-full">
+                    <ElButton class="scale-150" v-on:click="() => {
         const form = reactive({
             key: '',
             value: '',
@@ -416,7 +416,7 @@ export default {
             <ElTabs class="pl-2">
                 <ElTabPane label="Headers">
                     <ElEmpty
-                        :class="`${Object.keys(props.header).length == 0 ? 'flex' : 'hidden'} justify-center h-scrollbar-partial`"
+                        :class="`${Object.keys(props.header).length == 0 ? 'flex' : 'hidden'} justify-center h-full`"
                         description="Nothing to display here..." />
                     <ElText class="flex justify-center">{{ props.status }}</ElText>
                     <ElDivider v-if="props.status" />
@@ -424,12 +424,12 @@ export default {
                 </ElTabPane>
                 <ElTabPane label="Response">
                     <ElEmpty
-                        :class="`${['', 'null'].includes(props.response.trim()) ? 'flex' : 'hidden'} justify-center h-scrollbar-partial`"
+                        :class="`${['', 'null'].includes(props.response.trim()) ? 'flex' : 'hidden'} justify-center h-full`"
                         description="Nothing to display here..." />
                     <ElText v-if="isText(props.header) && !['', 'null'].includes(props.response.trim())">{{
         props.response }}</ElText>
                     <div
-                        :class="`${isText(props.header) ? 'hidden' : 'flex'} justify-center items-center h-scrollbar-full`">
+                        :class="`${isText(props.header) ? 'hidden' : 'flex'} justify-center items-center h-full`">
                         <img v-if="isImage(props.header)" :src="props.url" />
                         <audio v-if="isAudio(props.header)" :src="props.url" controls></audio>
                         <video v-if="isVideo(props.header)" :src="props.url" controls></video>

@@ -61,7 +61,7 @@ span {
 
 .pl-2 > .el-tabs__content, .pr-2 > .el-tabs__content {
     overflow-y: auto;
-    max-height: 80vh;
+    height: 80vh;
 }
 
 .is-left {
