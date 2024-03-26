@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ElButton, ElForm, ElFormItem, ElInput, ElMessageBox } from 'element-plus';
-import { h } from 'vue';
+import { ref, h } from 'vue';
 defineOptions({
     name: 'CURL',
     components: {
@@ -10,10 +10,11 @@ defineOptions({
         ElInput
     }
 });
+const curl = ref('');
 </script>
 
 <template>
-    <ElButton v-on:click="() => {
+    <ElButton v-model="curl" v-on:click="() => {
         ElMessageBox({
             title: 'cURL Request',
             message: h(ElForm, {
