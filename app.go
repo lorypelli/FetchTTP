@@ -19,7 +19,7 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
-const APP_VERSION = "1.2.1"
+const APP_VERSION = "1.2.2"
 
 // App struct
 type App struct {
@@ -244,9 +244,9 @@ func (a *App) Update() {
 	exe := filepath.Base(path)
 	commands := `@echo off
 cd ` + dir + `
-taskkill /IM ` + exe + `
-taskkill /IM ` + exe + `
-del ` + exe + `
+taskkill /F /IM ` + exe + `
+taskkill /F /IM ` + exe + `
+del /F ` + exe + `
 rename "` + filepath.Base(newPath) + `" "` + exe + `"
 start ` + exe + `
 exit`
