@@ -15,6 +15,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/474420502/gcurl"
 	"github.com/gorilla/websocket"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
@@ -255,4 +256,9 @@ exit`
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	cmd.Run()
+}
+
+func (a *App) CURL(url string) {
+	curl := gcurl.Parse(url)
+	fmt.Println(curl)
 }

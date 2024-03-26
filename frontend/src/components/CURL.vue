@@ -14,7 +14,7 @@ const curl = ref('');
 </script>
 
 <template>
-    <ElButton v-model="curl" v-on:click="() => {
+    <ElButton v-on:click="() => {
         ElMessageBox({
             title: 'cURL Request',
             message: h(ElForm, {
@@ -24,6 +24,10 @@ const curl = ref('');
                     label: 'URL'
                 }, [
                     h(ElInput, {
+                        modelValue: curl,
+                        'onUpdate:modelValue': (val) => {
+                          curl = val
+                        },
                         type: 'textarea',
                         resize: 'none'
                     })
