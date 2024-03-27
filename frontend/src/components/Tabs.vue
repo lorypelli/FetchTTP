@@ -111,6 +111,25 @@ export interface CompleteItem {
     connected: boolean
 }
 export default {
+    computed: {
+        selectedTab: {
+            get() {
+                return this.type == 'http' ? httpSelectedTab.value : wsSelectedTab.value;
+            },
+            set(value: string) {
+                if (this.type == 'http') {
+                    httpSelectedTab.value = value;
+                }
+                else {
+                    wsSelectedTab.value = value;
+                }
+                return this.type == 'http' ? httpSelectedTab.value : wsSelectedTab.value;
+            }
+        },
+        tabHandle: function () {
+            return this.type == 'http' ? httpTabHandle : wsTabHandle;
+        }
+    },
     mounted() {
         let http = localStorage.getItem('httpTab');
         let httpLen = 1;
@@ -177,36 +196,27 @@ export default {
             }
         }
     },
-    computed: {
-        selectedTab: {
-            get() {
-                return this.type == 'http' ? httpSelectedTab.value : wsSelectedTab.value;
-            },
-            set(value: string) {
-                if (this.type == 'http') {
-                    httpSelectedTab.value = value;
-                }
-                else {
-                    wsSelectedTab.value = value;
-                }
-                return this.type == 'http' ? httpSelectedTab.value : wsSelectedTab.value;
-            }
-        },
-        tabHandle: function () {
-            return this.type == 'http' ? httpTabHandle : wsTabHandle;
-        }
-    },
 };
 </script>
 
 <template>
-    <ElTabs v-model="selectedTab" tab-position="left" editable v-on:edit="tabHandle" v-on:keyup="() => {
-        key = ''
-    }" v-on:keydown.alt=keyHandle>
-        <ElTabPane :label="item.name"
-            v-for="(item, index) in (props.type == 'http' ? httpTab : props.type == 'ws' ? wsTab : null)"
-            :name="item.name" :key="index">
-            <slot :item="item as CompleteItem"></slot>
-        </ElTabPane>
-    </ElTabs>
+  <ElTabs
+    v-model="selectedTab"
+    tab-position="left"
+    editable
+    @edit="tabHandle"
+    @keyup="() => {
+      key = ''
+    }"
+    @keydown.alt="keyHandle"
+  >
+    <ElTabPane
+      v-for="(item, index) in (props.type == 'http' ? httpTab : props.type == 'ws' ? wsTab : null)"
+      :key="index"
+      :label="item.name"
+      :name="item.name"
+    >
+      <slot :item="item as CompleteItem" />
+    </ElTabPane>
+  </ElTabs>
 </template>

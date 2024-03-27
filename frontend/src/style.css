@@ -16,7 +16,7 @@ body {
     background-color: #171717;
 }
 
-span {
+span.el-text {
     white-space: pre-wrap;
 }
 

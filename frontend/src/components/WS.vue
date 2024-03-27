@@ -102,14 +102,33 @@ export default {
 </script>
 
 <template>
-    <Tabs type="ws">
-        <template #default="{ item }">
-            <div class="flex p-1 space-x-1">
-                <ElInput v-model="item.input" :disabled="item.connected" placeholder="echo.websocket.org" v-on:input="handleInput(item)" v-on:keydown.enter="sendWebsocket(item)"></ElInput>
-                <ElButton v-model="item.connected" class="w-36" v-on:click="sendWebsocket(item)">{{ item.connected ? 'Disconnect' : 'Connect' }}</ElButton>
-            </div>
-            <Split :name="item.name" :status="status" :header="header" :response="response" type='ws' v-on:headers="handleHeader"
-                v-on:query="handleQuery" />
-        </template>
-    </Tabs>
+  <Tabs type="ws">
+    <template #default="{ item }">
+      <div class="flex p-1 space-x-1">
+        <ElInput
+          v-model="item.input"
+          :disabled="item.connected"
+          placeholder="echo.websocket.org"
+          @input="handleInput(item)"
+          @keydown.enter="sendWebsocket(item)"
+        />
+        <ElButton
+          v-model="item.connected"
+          class="w-36"
+          @click="sendWebsocket(item)"
+        >
+          {{ item.connected ? 'Disconnect' : 'Connect' }}
+        </ElButton>
+      </div>
+      <Split
+        :name="item.name"
+        :status="status"
+        :header="header"
+        :response="response"
+        type="ws"
+        @headers="handleHeader"
+        @query="handleQuery"
+      />
+    </template>
+  </Tabs>
 </template>

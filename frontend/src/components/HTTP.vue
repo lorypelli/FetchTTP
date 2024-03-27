@@ -110,25 +110,48 @@ export default {
 </script>
 
 <template>
-    <Tabs type="http">
-        <template #default="{ item }">
-            <div class="flex p-1 space-x-1">
-                <ElSelect class="w-32" v-model="item.select" v-on:change="handleSelect(item)">
-                    <ElOption value="GET" />
-                    <ElOption value="HEAD" />
-                    <ElOption value="POST" />
-                    <ElOption value="PUT" />
-                    <ElOption value="DELETE" />
-                    <ElOption value="CONNECT" />
-                    <ElOption value="OPTIONS" />
-                    <ElOption value="TRACE" />
-                    <ElOption value="PATCH" />
-                </ElSelect>
-                <ElInput v-model="item.input" placeholder="echo.zuplo.io" v-on:input="handleInput(item)" v-on:keydown.enter="sendRequest(item)"></ElInput>
-                <ElButton class="w-20" v-on:click="sendRequest(item)">Send</ElButton>
-            </div>
-            <Split :name="item.name" :url="url" :status="status" :header="header" :response="response" type='http'
-                v-on:headers="handleHeader" v-on:query="handleQuery" v-on:body="handleBody" />
-        </template>
-    </Tabs>
+  <Tabs type="http">
+    <template #default="{ item }">
+      <div class="flex p-1 space-x-1">
+        <ElSelect
+          v-model="item.select"
+          class="w-32"
+          @change="handleSelect(item)"
+        >
+          <ElOption value="GET" />
+          <ElOption value="HEAD" />
+          <ElOption value="POST" />
+          <ElOption value="PUT" />
+          <ElOption value="DELETE" />
+          <ElOption value="CONNECT" />
+          <ElOption value="OPTIONS" />
+          <ElOption value="TRACE" />
+          <ElOption value="PATCH" />
+        </ElSelect>
+        <ElInput
+          v-model="item.input"
+          placeholder="echo.zuplo.io"
+          @input="handleInput(item)"
+          @keydown.enter="sendRequest(item)"
+        />
+        <ElButton
+          class="w-20"
+          @click="sendRequest(item)"
+        >
+          Send
+        </ElButton>
+      </div>
+      <Split
+        :name="item.name"
+        :url="url"
+        :status="status"
+        :header="header"
+        :response="response"
+        type="http"
+        @headers="handleHeader"
+        @query="handleQuery"
+        @body="handleBody"
+      />
+    </template>
+  </Tabs>
 </template>

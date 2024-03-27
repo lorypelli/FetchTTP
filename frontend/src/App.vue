@@ -31,6 +31,61 @@ interface Update {
 }
 const selectedTab = ref('HTTP');
 export default {
+    mounted() {
+        try {
+            CheckUpdates().then((res: Update) => {
+                if (res.Error) {
+                    ElNotification({
+                        title: 'Error while checking for updates!',
+                        message: res.Error,
+                        type: 'error',
+                        position: 'bottom-right'
+                    });
+                    return;
+                }
+                if (!res.IsLatest) {
+                    ElMessageBox({
+                        title: 'A new version is avaible!\nDo you want to update?',
+                        message: h(Updater, {
+                            version: res.Version,
+                            description: res.Description
+                        }),
+                        confirmButtonText: 'Yes',
+                        showCancelButton: true,
+                        cancelButtonText: 'No',
+                        showClose: false,
+                        closeOnClickModal: false,
+                        closeOnHashChange: false,
+                        closeOnPressEscape: false,
+                        center: true
+                    })
+                        .then(() => {
+                            ElMessageBox({
+                                title: 'Warning!',
+                                message: 'The app will now exit and will be re-opened automatically',
+                                type: 'warning',
+                                showClose: false,
+                                closeOnClickModal: false,
+                                closeOnHashChange: false,
+                                closeOnPressEscape: false,
+                                center: true
+                            })
+                                .then(() => {
+                                    U();
+                                });
+                        })
+                        .catch(() => { });
+                }
+            });
+        }
+        catch {
+            ElNotification({
+                title: 'Error while checking for updates!',
+                type: 'error',
+                position: 'bottom-right'
+            });
+        }
+    },
     methods: {
         onContextMenu(e: MouseEvent) {
             e.preventDefault();
@@ -135,86 +190,45 @@ export default {
                 ]
             });
         }
-    },
-    mounted() {
-        try {
-            CheckUpdates().then((res: Update) => {
-                if (res.Error) {
-                    ElNotification({
-                        title: 'Error while checking for updates!',
-                        message: res.Error,
-                        type: 'error',
-                        position: 'bottom-right'
-                    });
-                    return;
-                }
-                if (!res.IsLatest) {
-                    ElMessageBox({
-                        title: 'A new version is avaible!\nDo you want to update?',
-                        message: h(Updater, {
-                            version: res.Version,
-                            description: res.Description
-                        }),
-                        confirmButtonText: 'Yes',
-                        showCancelButton: true,
-                        cancelButtonText: 'No',
-                        showClose: false,
-                        closeOnClickModal: false,
-                        closeOnHashChange: false,
-                        closeOnPressEscape: false,
-                        center: true
-                    })
-                        .then(() => {
-                            ElMessageBox({
-                                title: 'Warning!',
-                                message: 'The app will now exit and will be re-opened automatically',
-                                type: 'warning',
-                                showClose: false,
-                                closeOnClickModal: false,
-                                closeOnHashChange: false,
-                                closeOnPressEscape: false,
-                                center: true
-                            })
-                                .then(() => {
-                                    U();
-                                });
-                        })
-                        .catch(() => { });
-                }
-            });
-        }
-        catch {
-            ElNotification({
-                title: 'Error while checking for updates!',
-                type: 'error',
-                position: 'bottom-right'
-            });
-        }
     }
 };
 </script>
 
 <template>
-    <ElTabs v-model="selectedTab" v-on:contextmenu="onContextMenu($event)" v-on:keydown.alt="(e: KeyboardEvent) => {
-        switch (e.key.toUpperCase()) {
-            case 'H': {
-                selectedTab = 'HTTP'
-                break
-            }
-            case 'W': {
-                selectedTab = 'WS'
-                break
-            }
-        }
-    }">
-        <ElTabPane label="HTTP" name="HTTP">
-            <HTTP />
-        </ElTabPane>
-        <ElTabPane label="WS" name="WS">
-            <WS />
-        </ElTabPane>
-        <ElTabPane class="flex justify-center items-center h-max place-items-center scale-150" label="CURL" name="CURL">
-            <CURL />
-        </ElTabPane>
-    </ElTabs>
+  <ElTabs
+    v-model="selectedTab"
+    @contextmenu="onContextMenu($event)"
+    @keydown.alt="(e: KeyboardEvent) => {
+      switch (e.key.toUpperCase()) {
+      case 'H': {
+        selectedTab = 'HTTP'
+        break
+      }
+      case 'W': {
+        selectedTab = 'WS'
+        break
+      }
+      }
+    }"
+  >
+    <ElTabPane
+      label="HTTP"
+      name="HTTP"
+    >
+      <HTTP />
+    </ElTabPane>
+    <ElTabPane
+      label="WS"
+      name="WS"
+    >
+      <WS />
+    </ElTabPane>
+    <ElTabPane
+      class="flex justify-center items-center h-max place-items-center scale-150"
+      label="CURL"
+      name="CURL"
+    >
+      <CURL />
+    </ElTabPane>
+  </ElTabs>
 </template>

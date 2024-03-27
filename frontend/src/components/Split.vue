@@ -37,6 +37,7 @@ const props = defineProps<{
 
 <script lang="ts">
 export default {
+    emits: {'query': null, 'body': null, 'headers': null, 'message': null},
     data() {
         return {
             width: 0,
@@ -201,241 +202,329 @@ export default {
 </script>
 
 <template>
-    <Splitter :layout="width < 900 ? 'vertical' : 'horizontal'">
-        <SplitterPanel :min-size="20">
-            <ElTabs class="pr-2">
-                <ElTabPane :label="`Headers (${headers.filter((h) => {
-        return h.enabled
-    }).length})`">
-                    <div class="flex space-x-1 pr-2 pt-2" v-for="(item, index) in headers" :key="index">
-                        <ElCheckbox v-model="item.enabled" v-on:change="() => {
-        if (!item.name || !item.value) {
-            item.enabled = false
-        }
-        sendHeader()
-    }" class="w-10" />
-                        <ElInput v-model="item.name" v-on:input="() => {
-        if (item.name && item.value) {
-            item.enabled = true
-        }
-        else {
-            item.enabled = false
-        }
-        sendHeader()
-    }" />
-                        <ElInput v-model="item.value" v-on:input="() => {
-        if (item.name && item.value) {
-            item.enabled = true
-        }
-        else {
-            item.enabled = false
-        }
-        sendHeader()
-    }" />
-                        <ElButton v-on:click="add('header', index)">+</ElButton>
-                        <ElButton v-on:click="remove('header', index)">-</ElButton>
-                    </div>
-                </ElTabPane>
-                <ElTabPane :label="`Query (${query.filter((q) => {
-        return q.enabled
-    }).length})`">
-                    <div class="flex space-x-1 pr-2 pt-2" v-for="(item, index) in query" :key="index">
-                        <ElCheckbox v-model="item.enabled" v-on:change="() => {
-        if (!item.name || !item.value) {
-            item.enabled = false
-        }
-        sendQuery()
-    }" class="w-10" />
-                        <ElInput v-model="item.name" v-on:input="() => {
-        if (item.name && item.value) {
-            item.enabled = true
-        }
-        else {
-            item.enabled = false
-        }
-        sendQuery()
-    }" />
-                        <ElInput v-model="item.value" v-on:input="() => {
-        if (item.name && item.value) {
-            item.enabled = true
-        }
-        else {
-            item.enabled = false
-        }
-        sendQuery()
-    }" />
-                        <ElButton v-on:click="add('query', index)">+</ElButton>
-                        <ElButton v-on:click="remove('query', index)">-</ElButton>
-                    </div>
-                </ElTabPane>
-                <ElTabPane label="Cookies" class="flex justify-center items-center h-full">
-                    <ElButton class="scale-150" v-on:click="() => {
-        const form = reactive({
-            key: '',
-            value: '',
-            domain: '',
-            path: '',
-            expires: '',
-            same_site: 'Lax',
-            secure: false,
-            http_only: false
-        });
-        ElMessageBox({
-            title: 'New Cookie',
-            message: () => h(ElForm, {
-                labelPosition: 'top'
-            }, [
-                h(ElFormItem, {
+  <Splitter :layout="width < 900 ? 'vertical' : 'horizontal'">
+    <SplitterPanel :min-size="20">
+      <ElTabs class="pr-2">
+        <ElTabPane
+          :label="`Headers (${headers.filter((h) => {
+            return h.enabled
+          }).length})`"
+        >
+          <div
+            v-for="(item, index) in headers"
+            :key="index"
+            class="flex space-x-1 pr-2 pt-2"
+          >
+            <ElCheckbox
+              v-model="item.enabled"
+              class="w-10"
+              @change="() => {
+                if (!item.name || !item.value) {
+                  item.enabled = false
+                }
+                sendHeader()
+              }"
+            />
+            <ElInput
+              v-model="item.name"
+              @input="() => {
+                if (item.name && item.value) {
+                  item.enabled = true
+                }
+                else {
+                  item.enabled = false
+                }
+                sendHeader()
+              }"
+            />
+            <ElInput
+              v-model="item.value"
+              @input="() => {
+                if (item.name && item.value) {
+                  item.enabled = true
+                }
+                else {
+                  item.enabled = false
+                }
+                sendHeader()
+              }"
+            />
+            <ElButton @click="add('header', index)">
+              +
+            </ElButton>
+            <ElButton @click="remove('header', index)">
+              -
+            </ElButton>
+          </div>
+        </ElTabPane>
+        <ElTabPane
+          :label="`Query (${query.filter((q) => {
+            return q.enabled
+          }).length})`"
+        >
+          <div
+            v-for="(item, index) in query"
+            :key="index"
+            class="flex space-x-1 pr-2 pt-2"
+          >
+            <ElCheckbox
+              v-model="item.enabled"
+              class="w-10"
+              @change="() => {
+                if (!item.name || !item.value) {
+                  item.enabled = false
+                }
+                sendQuery()
+              }"
+            />
+            <ElInput
+              v-model="item.name"
+              @input="() => {
+                if (item.name && item.value) {
+                  item.enabled = true
+                }
+                else {
+                  item.enabled = false
+                }
+                sendQuery()
+              }"
+            />
+            <ElInput
+              v-model="item.value"
+              @input="() => {
+                if (item.name && item.value) {
+                  item.enabled = true
+                }
+                else {
+                  item.enabled = false
+                }
+                sendQuery()
+              }"
+            />
+            <ElButton @click="add('query', index)">
+              +
+            </ElButton>
+            <ElButton @click="remove('query', index)">
+              -
+            </ElButton>
+          </div>
+        </ElTabPane>
+        <ElTabPane
+          label="Cookies"
+          class="flex justify-center items-center h-full"
+        >
+          <ElButton
+            class="scale-150"
+            @click="() => {
+              const form = reactive({
+                key: '',
+                value: '',
+                domain: '',
+                path: '',
+                expires: '',
+                same_site: 'Lax',
+                secure: false,
+                http_only: false
+              })
+              ElMessageBox({
+                title: 'New Cookie',
+                message: () => h(ElForm, {
+                  labelPosition: 'top'
+                }, [
+                  h(ElFormItem, {
                     label: 'Key'
-                }, [
+                  }, [
                     h(ElInput, {
-                        modelValue: form.key,
-                        'onUpdate:modelValue': (val) => {
-                            form.key = val
-                        }
+                      modelValue: form.key,
+                      'onUpdate:modelValue': (val) => {
+                        form.key = val
+                      }
                     })
-                ]),
-                h(ElFormItem, {
+                  ]),
+                  h(ElFormItem, {
                     label: 'Value'
-                }, [
+                  }, [
                     h(ElInput, {
-                        modelValue: form.value,
-                        'onUpdate:modelValue': (val) => {
-                            form.value = val
-                        }
+                      modelValue: form.value,
+                      'onUpdate:modelValue': (val) => {
+                        form.value = val
+                      }
                     })
-                ]),
-                h(ElFormItem, {
+                  ]),
+                  h(ElFormItem, {
                     label: 'Domain'
-                }, [
+                  }, [
                     h(ElInput, {
-                        modelValue: form.domain,
-                        'onUpdate:modelValue': (val) => {
-                            form.domain = val
-                        }
+                      modelValue: form.domain,
+                      'onUpdate:modelValue': (val) => {
+                        form.domain = val
+                      }
                     })
-                ]),
-                h(ElFormItem, {
+                  ]),
+                  h(ElFormItem, {
                     label: 'Path'
-                }, [
+                  }, [
                     h(ElInput, {
-                        modelValue: form.path,
-                        'onUpdate:modelValue': (val) => {
-                            form.path = val
-                        }
+                      modelValue: form.path,
+                      'onUpdate:modelValue': (val) => {
+                        form.path = val
+                      }
                     })
-                ]),
-                h(ElFormItem, {
+                  ]),
+                  h(ElFormItem, {
                     label: 'Expires'
-                }, [
+                  }, [
                     h('div', {
-                        class: 'w-full'
+                      class: 'w-full'
                     }, [
-                        h(ElDatePicker, {
-                            modelValue: form.expires,
-                            type: 'datetime',
-                            valueFormat: 'x',
-                            'onUpdate:modelValue': (val) => {
-                                form.expires = val
-                            }
-                        })
-                    ])
-                ]),
-                h(ElFormItem, {
-                    label: 'SameSite'
-                }, [
-                    h(ElSelect, {
-                        modelValue: form.same_site,
+                      h(ElDatePicker, {
+                        modelValue: form.expires,
+                        type: 'datetime',
+                        valueFormat: 'x',
                         'onUpdate:modelValue': (val) => {
-                            form.same_site = val
+                          form.expires = val
                         }
-                    }, [
-                        h(ElOption, {
-                            value: 'None'
-                        }),
-                        h(ElOption, {
-                            value: 'Lax'
-                        }),
-                        h(ElOption, {
-                            value: 'Strict'
-                        })
+                      })
                     ])
-                ]),
-                h('div', {
-                    class: 'flex justify-around'
-                }, [
-                    h(ElFormItem, {
-                        label: 'Secure'
+                  ]),
+                  h(ElFormItem, {
+                    label: 'SameSite'
+                  }, [
+                    h(ElSelect, {
+                      modelValue: form.same_site,
+                      'onUpdate:modelValue': (val) => {
+                        form.same_site = val
+                      }
                     }, [
-                        h(ElCheckbox, {
-                            modelValue: form.secure,
-                            'onUpdate:modelValue': (val) => {
-                                form.secure = !!val
-                            }
-                        })
+                      h(ElOption, {
+                        value: 'None'
+                      }),
+                      h(ElOption, {
+                        value: 'Lax'
+                      }),
+                      h(ElOption, {
+                        value: 'Strict'
+                      })
+                    ])
+                  ]),
+                  h('div', {
+                    class: 'flex justify-around'
+                  }, [
+                    h(ElFormItem, {
+                      label: 'Secure'
+                    }, [
+                      h(ElCheckbox, {
+                        modelValue: form.secure,
+                        'onUpdate:modelValue': (val) => {
+                          form.secure = !!val
+                        }
+                      })
                     ]),
                     h(ElFormItem, {
-                        label: 'HTTPOnly'
+                      label: 'HTTPOnly'
                     }, [
-                        h(ElCheckbox, {
-                            modelValue: form.http_only,
-                            'onUpdate:modelValue': (val) => {
-                                form.http_only = !!val
-                            }
-                        })
+                      h(ElCheckbox, {
+                        modelValue: form.http_only,
+                        'onUpdate:modelValue': (val) => {
+                          form.http_only = !!val
+                        }
+                      })
                     ])
-                ])
-            ]),
-            confirmButtonText: 'Add',
-            closeOnClickModal: false
-        })
-            .then(() => {
-                headers.push({
+                  ])
+                ]),
+                confirmButtonText: 'Add',
+                closeOnClickModal: false
+              })
+                .then(() => {
+                  headers.push({
                     enabled: true,
                     name: 'Set-Cookie',
                     value: `${form.key}=${form.value};${form.domain ? `Domain=${form.domain};` : ''}${form.path ? `Path=${form.path};` : ''}${form.expires ? `Expires=${new Date(form.expires).toUTCString()};` : ''}${form.same_site ? `SameSite=${form.same_site};` : ''}${form.secure ? 'Secure;' : ''}${form.http_only ? 'HTTPOnly;' : ''}`
+                  })
                 })
-            })
-            .catch(() => { })
-    }">Add Cookie</ElButton>
-                </ElTabPane>
-                <ElTabPane label="Body" v-if="props.type == 'http'">
-                    <ElInput v-model="body" v-on:input="sendBody" type="textarea" resize="none" />
-                </ElTabPane>
-                <ElTabPane label="Message" v-if="props.type == 'ws'">
-                    <div class="flex flex-col space-y-1">
-                        <ElInput v-model="message" v-on:input="sendMessage" type="textarea" resize="none" />
-                        <ElButton v-on:click="() => {
-        EventsEmit('message', message)
-    }">Send</ElButton>
-                    </div>
-                </ElTabPane>
-            </ElTabs>
-        </SplitterPanel>
-        <SplitterPanel :min-size="20">
-            <ElTabs class="pl-2">
-                <ElTabPane label="Headers">
-                    <ElEmpty
-                        :class="`${Object.keys(props.header).length == 0 ? 'flex' : 'hidden'} justify-center h-full`"
-                        description="Nothing to display here..." />
-                    <ElText class="flex justify-center">{{ props.status }}</ElText>
-                    <ElDivider v-if="props.status" />
-                    <ElText v-if="Object.keys(props.header).length > 0">{{ props.header }}</ElText>
-                </ElTabPane>
-                <ElTabPane label="Response">
-                    <ElEmpty
-                        :class="`${['', 'null'].includes(props.response.trim()) ? 'flex' : 'hidden'} justify-center h-full`"
-                        description="Nothing to display here..." />
-                    <ElText v-if="isText(props.header) && !['', 'null'].includes(props.response.trim())">{{
-        props.response }}</ElText>
-                    <div
-                        :class="`${isText(props.header) ? 'hidden' : 'flex'} justify-center items-center h-full`">
-                        <img v-if="isImage(props.header)" :src="props.url" />
-                        <audio v-if="isAudio(props.header)" :src="props.url" controls></audio>
-                        <video v-if="isVideo(props.header)" :src="props.url" controls></video>
-                    </div>
-                </ElTabPane>
-            </ElTabs>
-        </SplitterPanel>
-    </Splitter>
+                .catch(() => { })
+            }"
+          >
+            Add Cookie
+          </ElButton>
+        </ElTabPane>
+        <ElTabPane
+          v-if="props.type == 'http'"
+          label="Body"
+        >
+          <ElInput
+            v-model="body"
+            type="textarea"
+            resize="none"
+            @input="sendBody"
+          />
+        </ElTabPane>
+        <ElTabPane
+          v-if="props.type == 'ws'"
+          label="Message"
+        >
+          <div class="flex flex-col space-y-1">
+            <ElInput
+              v-model="message"
+              type="textarea"
+              resize="none"
+              @input="sendMessage"
+            />
+            <ElButton
+              @click="() => {
+                EventsEmit('message', message)
+              }"
+            >
+              Send
+            </ElButton>
+          </div>
+        </ElTabPane>
+      </ElTabs>
+    </SplitterPanel>
+    <SplitterPanel :min-size="20">
+      <ElTabs class="pl-2">
+        <ElTabPane label="Headers">
+          <ElEmpty
+            :class="`${Object.keys(props.header).length == 0 ? 'flex' : 'hidden'} justify-center h-full`"
+            description="Nothing to display here..."
+          />
+          <ElText class="flex justify-center">
+            {{ props.status }}
+          </ElText>
+          <ElDivider v-if="props.status" />
+          <ElText v-if="Object.keys(props.header).length > 0">
+            {{ props.header }}
+          </ElText>
+        </ElTabPane>
+        <ElTabPane label="Response">
+          <ElEmpty
+            :class="`${['', 'null'].includes(props.response.trim()) ? 'flex' : 'hidden'} justify-center h-full`"
+            description="Nothing to display here..."
+          />
+          <ElText v-if="isText(props.header) && !['', 'null'].includes(props.response.trim())">
+            {{
+              props.response }}
+          </ElText>
+          <div
+            :class="`${isText(props.header) ? 'hidden' : 'flex'} justify-center items-center h-full`"
+          >
+            <img
+              v-if="isImage(props.header)"
+              :src="props.url"
+            >
+            <audio
+              v-if="isAudio(props.header)"
+              :src="props.url"
+              controls
+            />
+            <video
+              v-if="isVideo(props.header)"
+              :src="props.url"
+              controls
+            />
+          </div>
+        </ElTabPane>
+      </ElTabs>
+    </SplitterPanel>
+  </Splitter>
 </template>
