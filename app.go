@@ -39,7 +39,7 @@ func (a *App) startup(ctx context.Context) {
 	path := filepath.Dir(bin)
 	bat := filepath.Join(path, "temp.bat")
 	_, err := os.Stat(bat)
-	if (!os.IsNotExist(err)) {
+	if !os.IsNotExist(err) {
 		os.Remove(bat)
 	}
 	a.ctx = ctx
@@ -70,6 +70,13 @@ type WSResponse struct {
 	Status  string
 	Header  http.Header
 	Message string
+}
+
+type CURLResponse struct {
+	Method    string
+	ParsedURL string
+	Header    http.Header
+	Cookie    []*http.Cookie
 }
 
 type Update struct {
@@ -138,7 +145,7 @@ var currentConnection *websocket.Conn
 var currentResponse *http.Response
 var currentError error
 
-func (a *App) WS(url string, headers []Header, query []Query, connected bool) {
+func (a *App) WS(url string, headers []Header, query []Query, connected bool) string {
 	for i := 0; i < len(query); i++ {
 		if query[i].Enabled && strings.TrimSpace(query[i].Name) != "" && strings.TrimSpace(query[i].Value) != "" {
 			if strings.Contains(url, "?") {
@@ -163,7 +170,10 @@ func (a *App) WS(url string, headers []Header, query []Query, connected bool) {
 	}
 	if currentError == nil {
 		go Connect(currentResponse, currentConnection, connected, a)
+	} else {
+		return currentError.Error()
 	}
+	return ""
 }
 
 func Connect(res *http.Response, ws *websocket.Conn, connected bool, a *App) {
@@ -258,7 +268,9 @@ exit`
 	cmd.Run()
 }
 
-func (a *App) CURL(url string) {
+func (a *App) CURL(url string) CURLResponse {
 	curl := gcurl.Parse(url)
-	fmt.Println(curl)
+	return CURLResponse{
+		curl.Method, curl.ParsedURL.String(), curl.Header, curl.Cookies,
+	}
 }

@@ -37,7 +37,12 @@ const props = defineProps<{
 
 <script lang="ts">
 export default {
-    emits: {'query': null, 'body': null, 'headers': null, 'message': null},
+    emits: {
+        'query': null,
+        'body': null,
+        'headers': null, 
+        'message': null
+    },
     data() {
         return {
             width: 0,

@@ -63,7 +63,17 @@ export default {
             this.header = res.Header;
             this.response += res.Message + '\n';
         },
-        sendWebsocket(item: CompleteItem) {
+        async sendWebsocket(item: CompleteItem) {
+            let error = await WS(item.input, headers, query, item.connected);
+            if (error) {
+                ElNotification({
+                    title: 'Something went wrong!',
+                    message: error,
+                    type: 'error',
+                    position: 'bottom-right'
+                });
+                return;
+            }
             item.connected = !item.connected;
             if (item.connected) {
                 this.response = '';
@@ -78,7 +88,15 @@ export default {
             }
             try {
                 EventsEmit('connected', item.connected);
-                WS(item.input, headers, query, item.connected);
+                let error = await WS(item.input, headers, query, item.connected);
+                if (error) {
+                    ElNotification({
+                        title: 'Something went wrong!',
+                        message: error,
+                        type: 'error',
+                        position: 'bottom-right'
+                    });
+                }
                 if (item.connected) {
                     EventsOn('websocket', (data: Response) => {
                         this.update(data);
