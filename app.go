@@ -282,6 +282,6 @@ func (a *App) CURL(url string) HTTPResponse {
 		resBody = body
 	}
 	return HTTPResponse{
-		url, r.Status, r.Header, string(resBody), "",
+		url, res.GetStatus(), r.Header, string(resBody), "",
 	}
 }
