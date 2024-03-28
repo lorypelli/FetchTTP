@@ -72,13 +72,6 @@ type WSResponse struct {
 	Message string
 }
 
-type CURLResponse struct {
-	Method    string
-	ParsedURL string
-	Header    http.Header
-	Cookie    []*http.Cookie
-}
-
 type Update struct {
 	IsLatest    bool
 	Version     string
@@ -268,9 +261,28 @@ exit`
 	cmd.Run()
 }
 
-func (a *App) CURL(url string) CURLResponse {
+func (a *App) CURL(url string) HTTPResponse {
 	curl := gcurl.Parse(url)
-	return CURLResponse{
-		curl.Method, curl.ParsedURL.String(), curl.Header, curl.Cookies,
+	ses := curl.CreateSession()
+	tp := curl.CreateTemporary(ses)
+	res, err := tp.Execute()
+	if err != nil {
+		return HTTPResponse{
+			url, "", http.Header{}, "", err.Error(),
+		}
+	}
+	r := res.GetResponse()
+	var resBody []byte
+	if strings.Contains(r.Header.Get("Content-Type"), "application/json") {
+		var jsonBody interface{}
+		bytes, _ := io.ReadAll(r.Body)
+		j.Unmarshal(bytes, &jsonBody)
+		resBody, _ = j.MarshalIndent(jsonBody, "", "\t")
+	} else {
+		bytes, _ := io.ReadAll(r.Body)
+		resBody = bytes
+	}
+	return HTTPResponse{
+		url, r.Status, r.Header, string(resBody), "",
 	}
 }

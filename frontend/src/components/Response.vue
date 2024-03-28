@@ -12,10 +12,10 @@ defineOptions({
     }
 });
 const props = defineProps<{
-    url?: string,
-    status: string,
-    header: object,
-    response: string
+  url?: string,
+  status: string,
+  header: object,
+  response: string
 }>();
 </script>
 
@@ -71,9 +71,7 @@ export default {
         {{
           props.response }}
       </ElText>
-      <div
-        :class="`${isText(props.header) ? 'hidden' : 'flex'} justify-center items-center h-full`"
-      >
+      <div :class="`${isText(props.header) ? 'hidden' : 'flex'} justify-center items-center h-full`">
         <img
           v-if="isImage(props.header)"
           :src="props.url"
