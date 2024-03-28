@@ -25,6 +25,10 @@ span.el-text {
     transform: none;
 }
 
+.el-overlay-message-box {
+    overflow: hidden !important;
+}
+
 .p-splitter {
     height: 100vh;
     background-color: #171717;

@@ -20,7 +20,7 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
-const APP_VERSION = "1.2.2"
+const APP_VERSION = "1.3.0"
 
 // App struct
 type App struct {
@@ -272,15 +272,14 @@ func (a *App) CURL(url string) HTTPResponse {
 		}
 	}
 	r := res.GetResponse()
+	body := res.Content()
 	var resBody []byte
 	if strings.Contains(r.Header.Get("Content-Type"), "application/json") {
 		var jsonBody interface{}
-		bytes, _ := io.ReadAll(r.Body)
-		j.Unmarshal(bytes, &jsonBody)
+		j.Unmarshal(body, &jsonBody)
 		resBody, _ = j.MarshalIndent(jsonBody, "", "\t")
 	} else {
-		bytes, _ := io.ReadAll(r.Body)
-		resBody = bytes
+		resBody = body
 	}
 	return HTTPResponse{
 		url, r.Status, r.Header, string(resBody), "",
