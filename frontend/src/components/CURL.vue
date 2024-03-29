@@ -52,7 +52,7 @@ interface Response {
         closeOnClickModal: false
       })
         .then(() => {
-          let url = curl.replace('curl', '')
+          let url = curl.replace('curl', '').trim()
           if (!url.startsWith('http://') && !url.startsWith('https://')) {
             url = 'https://' + url
           }
