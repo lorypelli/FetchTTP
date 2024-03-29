@@ -29,7 +29,7 @@ export default {
     emits: {
         'query': null,
         'body': null,
-        'headers': null, 
+        'headers': null,
         'message': null
     },
     data() {

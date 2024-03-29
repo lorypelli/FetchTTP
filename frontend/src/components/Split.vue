@@ -13,11 +13,14 @@ defineOptions({
         Response
     }
 });
+interface Header {
+    [x: string]: string[]
+}
 const props = defineProps<{
     name: string,
     url?: string,
     status: string,
-    header: object,
+    header: Header,
     response: string,
     type: 'http' | 'ws'
 }>();

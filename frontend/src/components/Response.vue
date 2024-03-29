@@ -11,11 +11,14 @@ defineOptions({
         ElDivider
     }
 });
+interface Header {
+    [x: string]: string[]
+}
 const props = defineProps<{
-  url?: string,
-  status: string,
-  header: object,
-  response: string
+    url?: string,
+    status: string,
+    header: Header,
+    response: string
 }>();
 </script>
 
@@ -58,9 +61,21 @@ export default {
         {{ props.status }}
       </ElText>
       <ElDivider v-if="props.status" />
-      <ElText v-if="Object.keys(props.header).length > 0">
-        {{ props.header }}
-      </ElText>
+      <table v-if="Object.keys(props.header).length > 0">
+        <tbody>
+          <tr
+            v-for="(item, index) in Object.keys(props.header)"
+            :key="index"
+          >
+            <th class="break-all w-1/2">
+              <ElText>{{ item }}</ElText>
+            </th>
+            <td class="break-all w-1/2">
+              <ElText>{{ props.header[item].join("") }}</ElText>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </ElTabPane>
     <ElTabPane label="Response">
       <ElEmpty

@@ -26,6 +26,7 @@ span.el-text {
 }
 
 .el-overlay-message-box {
+    padding: 0 !important;
     overflow: hidden !important;
 }
 
@@ -36,7 +37,9 @@ span.el-text {
 
 .p-splitter-gutter,
 .p-splitter-gutter-handle {
+    width: 2px;
     background-color: #232323;
+    cursor: e-resize;
 }
 
 .el-textarea__inner {

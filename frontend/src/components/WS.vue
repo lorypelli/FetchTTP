@@ -64,7 +64,15 @@ export default {
             this.response += res.Message + '\n';
         },
         async sendWebsocket(item: CompleteItem) {
-            let error = await WS(item.input, headers, query, item.connected);
+            if (item.input) {
+                if (!item.input.startsWith('ws://') && !item.input.startsWith('wss://')) {
+                    item.input = 'wss://' + item.input;
+                }
+            }
+            else {
+                item.input = 'wss://echo.websocket.org';
+            }
+            let error = await WS(item.input, headers, query, !item.connected);
             if (error) {
                 ElNotification({
                     title: 'Something went wrong!',
@@ -77,14 +85,6 @@ export default {
             item.connected = !item.connected;
             if (item.connected) {
                 this.response = '';
-            }
-            if (item.input) {
-                if (!item.input.startsWith('ws://') && !item.input.startsWith('wss://')) {
-                    item.input = 'wss://' + item.input;
-                }
-            }
-            else {
-                item.input = 'wss://echo.websocket.org';
             }
             try {
                 EventsEmit('connected', item.connected);

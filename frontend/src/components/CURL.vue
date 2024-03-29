@@ -16,10 +16,13 @@ const curl = ref('');
 </script>
 
 <script lang="ts">
+interface Header {
+    [x: string]: string[]
+}
 interface Response {
     URL: string,
     Status: string,
-    Header: [],
+    Header: Header,
     Body: string
     Error: string
 }
@@ -45,7 +48,8 @@ interface Response {
               resize: 'none'
             })
           ])
-        ])
+        ]),
+        closeOnClickModal: false
       })
         .then(() => {
           let url = curl.replace('curl', '')
@@ -70,7 +74,8 @@ interface Response {
                   status: res.Status,
                   header: res.Header,
                   response: res.Body
-                })
+                }),
+                closeOnClickModal: false
               })
                 .catch(() => { })
             })
