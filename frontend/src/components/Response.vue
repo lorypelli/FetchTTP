@@ -67,10 +67,10 @@ export default {
             v-for="(item, index) in Object.keys(props.header)"
             :key="index"
           >
-            <th class="break-all w-1/2">
+            <th class="break-all w-1/2 text-left pl-5">
               <ElText>{{ item }}</ElText>
             </th>
-            <td class="break-all w-1/2">
+            <td class="break-all w-1/2 pr-5">
               <ElText>{{ props.header[item].join("") }}</ElText>
             </td>
           </tr>

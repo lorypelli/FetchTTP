@@ -30,6 +30,10 @@ span.el-text {
     overflow: hidden !important;
 }
 
+.el-overlay-message-box[aria-label="Response"] > .el-message-box {
+    max-width: 1000px;
+}
+
 .p-splitter {
     height: 100vh;
     background-color: #171717;
