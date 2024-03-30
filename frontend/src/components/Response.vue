@@ -11,9 +11,6 @@ defineOptions({
         ElDivider
     }
 });
-interface Header {
-    [x: string]: string[]
-}
 const props = defineProps<{
     url?: string,
     status: string,
@@ -23,24 +20,32 @@ const props = defineProps<{
 </script>
 
 <script lang="ts">
+interface Header {
+    [x: string]: string[]
+}
 export default {
     methods: {
-        isText(h: object) {
-            return !this.isImage(h) && !this.isVideo(h) && !this.isAudio(h);
+        isText(h: Header) {
+            return !this.isPage(h) && !this.isImage(h) && !this.isVideo(h) && !this.isAudio(h);
         },
-        isImage(h: object) {
+        isPage(h: Header) {
+            return Object.entries(h).filter(([k, v]) => {
+                return k == 'Content-Type' && v[0].includes('text/html');
+            }).length > 0;
+        },
+        isImage(h: Header) {
             const regex = /image\/*/;
             return Object.entries(h).filter(([k, v]) => {
                 return k == 'Content-Type' && regex.test(v[0]);
             }).length > 0;
         },
-        isVideo(h: object) {
+        isVideo(h: Header) {
             const regex = /video\/*/;
             return Object.entries(h).filter(([k, v]) => {
                 return k == 'Content-Type' && regex.test(v[0]);
             }).length > 0;
         },
-        isAudio(h: object) {
+        isAudio(h: Header) {
             const regex = /audio\/*/;
             return Object.entries(h).filter(([k, v]) => {
                 return k == 'Content-Type' && regex.test(v[0]);
@@ -90,7 +95,7 @@ export default {
       </ElText>
       <div
         v-if="!isText(props.header)"
-        class="flex justify-center items-center h-full`"
+        class="flex justify-center items-center h-full"
       >
         <img
           v-if="isImage(props.header)"
@@ -105,6 +110,12 @@ export default {
           v-if="isVideo(props.header)"
           :src="props.url"
           controls
+        />
+        <iframe 
+          v-if="isPage(props.header)"
+          :srcdoc="props.response"
+          class="w-full h-full rounded-2xl"
+          sandbox="allow-forms"
         />
       </div>
     </ElTabPane>
