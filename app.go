@@ -20,7 +20,7 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
-const APP_VERSION = "1.3.3"
+const APP_VERSION = "1.3.4"
 
 // App struct
 type App struct {
@@ -112,8 +112,7 @@ func (a *App) HTTP(method string, url string, headers []Header, query []Query, b
 			req.Header.Add(headers[i].Name, headers[i].Value)
 		}
 	}
-	c := &http.Client{}
-	res, err := c.Do(req)
+	res, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return HTTPResponse{
 			url, "", http.Header{}, "", err.Error(),
@@ -263,25 +262,33 @@ exit`
 
 func (a *App) CURL(url string) HTTPResponse {
 	curl := gcurl.Parse(url)
-	ses := curl.CreateSession()
-	tp := curl.CreateTemporary(ses)
-	res, err := tp.Execute()
+	req, err := http.NewRequest(curl.Method, url, curl.Body)
+	req.Header.Add("User-Agent", "FetchTTP")
+	for k, v := range curl.Header {
+		req.Header.Add(k, strings.Join(v, ","))
+	}
 	if err != nil {
 		return HTTPResponse{
 			url, "", http.Header{}, "", err.Error(),
 		}
 	}
-	r := res.GetResponse()
-	body := res.Content()
+	res, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return HTTPResponse{
+			url, "", http.Header{}, "", err.Error(),
+		}
+	}
 	var resBody []byte
-	if strings.Contains(r.Header.Get("Content-Type"), "application/json") {
+	if strings.Contains(res.Header.Get("Content-Type"), "application/json") {
 		var jsonBody interface{}
-		j.Unmarshal(body, &jsonBody)
+		bytes, _ := io.ReadAll(res.Body)
+		j.Unmarshal(bytes, &jsonBody)
 		resBody, _ = j.MarshalIndent(jsonBody, "", "\t")
 	} else {
-		resBody = body
+		bytes, _ := io.ReadAll(res.Body)
+		resBody = bytes
 	}
 	return HTTPResponse{
-		url, res.GetStatus(), r.Header, string(resBody), "",
+		url, res.Status, res.Header, string(resBody), "",
 	}
 }
