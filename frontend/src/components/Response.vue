@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ElTabPane, ElTabs, ElEmpty, ElText, ElDivider } from 'element-plus';
+import { ElTabPane, ElTabs, ElEmpty, ElText, ElDivider, ElSwitch } from 'element-plus';
+import { ref } from 'vue';
 defineOptions({
     // eslint-disable-next-line vue/multi-word-component-names
     name: 'Response',
@@ -8,7 +9,8 @@ defineOptions({
         ElTabs,
         ElEmpty,
         ElText,
-        ElDivider
+        ElDivider,
+        ElSwitch
     }
 });
 const props = defineProps<{
@@ -17,6 +19,7 @@ const props = defineProps<{
     header: Header,
     response: string
 }>();
+const raw = ref(true);
 </script>
 
 <script lang="ts">
@@ -95,12 +98,12 @@ export default {
         class="flex justify-center h-full"
         description="Nothing to display here..."
       />
-      <ElText v-if="isText(props.header) && !['', 'null'].includes(props.response.trim())">
+      <ElText v-if="isText(props.header) && !['', 'null'].includes(props.response.trim()) || !raw">
         {{
           props.response }}
       </ElText>
       <div
-        v-if="!isText(props.header)"
+        v-if="!isText(props.header) && raw"
         class="flex justify-center items-center h-full"
       >
         <img
@@ -121,9 +124,16 @@ export default {
           v-if="isPage(props.header)"
           :srcdoc="baseURL(props.response, props.url)"
           class="w-full h-full rounded-2xl"
-          sandbox="allow-forms"
+          sandbox="allow-scripts allow-forms"
         />
       </div>
     </ElTabPane>
   </ElTabs>
+  <ElSwitch
+    v-if="!isText(props.header)"
+    v-model="raw"
+    class="pl-2"
+    inactive-text="Raw"
+    active-text="Human Readable"
+  />
 </template>
