@@ -50,6 +50,12 @@ export default {
             return Object.entries(h).filter(([k, v]) => {
                 return k == 'Content-Type' && regex.test(v[0]);
             }).length > 0;
+        },
+        baseURL(r: string, u: string | undefined) {
+            if (u) {
+                return r.replace('<head>', `<head><base href="${u}">`);
+            }
+            return r;
         }
     }
 };
@@ -113,7 +119,7 @@ export default {
         />
         <iframe 
           v-if="isPage(props.header)"
-          :srcdoc="props.response"
+          :srcdoc="baseURL(props.response, props.url)"
           class="w-full h-full rounded-2xl"
           sandbox="allow-forms"
         />
