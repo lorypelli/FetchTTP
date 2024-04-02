@@ -254,16 +254,18 @@ func (a *App) Update() {
 	bin, _ := os.Executable()
 	path, _ := filepath.Abs(bin)
 	dir := filepath.Dir(bin)
-	windows := -1
+	var windows int
 	var linux int
 	for i := 0; i < len(jsonBody.Assets); i++ {
-		if strings.HasSuffix(jsonBody.Assets[i].Browser_download_url, ".exe") {
-			windows = i
+		switch jsonBody.Assets[i].Browser_download_url {
+		case "FetchTTP": {
+			linux = i
+			break
 		}
-		if windows > -1 {
-			linux = windows + 1
-		} else {
-			linux = 0
+		case "FetchTTP.exe": {
+			windows = i
+			break
+		}
 		}
 	}
 	goos := r.GOOS
