@@ -11,6 +11,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"regexp"
+	r "runtime"
 	"strconv"
 	"strings"
 	"time"
@@ -20,7 +21,7 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
-const APP_VERSION = "1.3.7"
+const APP_VERSION = "1.3.8"
 
 // App struct
 type App struct {
@@ -37,6 +38,25 @@ func NewApp() *App {
 func (a *App) startup(ctx context.Context) {
 	bin, _ := os.Executable()
 	path := filepath.Dir(bin)
+	goos := r.GOOS
+	switch goos {
+	case "windows": {
+		bat := filepath.Join(path, "temp.bat")
+		_, err := os.Stat(bat)
+		if !os.IsNotExist(err) {
+			os.Remove(bat)
+		}
+		break
+	}
+	case "linux": {
+		sh := filepath.Join(path, "temp.sh")
+		_, err := os.Stat(sh)
+		if !os.IsNotExist(err) {
+			os.Remove(sh)
+		}
+		break
+	}
+	}
 	bat := filepath.Join(path, "temp.bat")
 	_, err := os.Stat(bat)
 	if !os.IsNotExist(err) {
@@ -147,7 +167,7 @@ func (a *App) WS(url string, headers []Header, query []Query, connected bool) st
 			}
 		}
 	}
-	header := http.Header{}
+	var header http.Header
 	for i := 0; i < len(headers); i++ {
 		regexp, _ := regexp.Compile(`^[A-Za-z\d[\]{}()<>\/@?=:";,-]*$`)
 		if headers[i].Enabled && strings.TrimSpace(headers[i].Name) != "" && regexp.MatchString(headers[i].Name) && strings.TrimSpace(headers[i].Value) != "" {
@@ -234,18 +254,34 @@ func (a *App) Update() {
 	bin, _ := os.Executable()
 	path, _ := filepath.Abs(bin)
 	dir := filepath.Dir(bin)
-	res, err = http.Get(jsonBody.Assets[0].Browser_download_url)
-	if err != nil {
-		return
+	windows := -1
+	var linux int
+	for i := 0; i < len(jsonBody.Assets); i++ {
+		if strings.HasSuffix(jsonBody.Assets[i].Browser_download_url, ".exe") {
+			windows = i
+		}
+		if windows > -1 {
+			linux = windows + 1
+		} else {
+			linux = 0
+		}
 	}
-	bytes, _ = io.ReadAll(res.Body)
-	newPath := strings.Split(path, ".exe")[0] + "1.exe"
-	file, _ := os.Create(newPath)
-	file.Write(bytes)
-	tempPath := filepath.Join(dir, "temp.bat")
-	tempFile, _ := os.Create(tempPath)
-	exe := filepath.Base(path)
-	commands := `@echo off
+	goos := r.GOOS
+	switch goos {
+	case "windows":
+		{
+			res, err = http.Get(jsonBody.Assets[windows].Browser_download_url)
+			if err != nil {
+				return
+			}
+			bytes, _ = io.ReadAll(res.Body)
+			newPath := strings.Split(path, ".exe")[0] + "1.exe"
+			file, _ := os.Create(newPath)
+			file.Write(bytes)
+			tempPath := filepath.Join(dir, "temp.bat")
+			tempFile, _ := os.Create(tempPath)
+			exe := filepath.Base(path)
+			commands := `@echo off
 cd ` + dir + `
 taskkill /F /IM ` + exe + `
 taskkill /F /IM ` + exe + `
@@ -253,11 +289,41 @@ del /F ` + exe + `
 rename "` + filepath.Base(newPath) + `" "` + exe + `"
 start ` + exe + `
 exit`
-	tempFile.WriteString(commands)
-	cmd := exec.Command("cmd.exe", "/C", tempPath)
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	cmd.Run()
+			tempFile.WriteString(commands)
+			cmd := exec.Command("cmd.exe", "/C", tempPath)
+			cmd.Stdout = os.Stdout
+			cmd.Stderr = os.Stderr
+			cmd.Run()
+			break
+		}
+	case "linux":
+		{
+			res, err = http.Get(jsonBody.Assets[linux].Browser_download_url)
+			if err != nil {
+				return
+			}
+			bytes, _ = io.ReadAll(res.Body)
+			newPath := path + "1"
+			file, _ := os.Create(newPath)
+			file.Write(bytes)
+			tempPath := filepath.Join(dir, "temp.sh")
+			tempFile, _ := os.Create(tempPath)
+			exe := filepath.Base(path)
+			commands := `cd ` + dir + `
+pkill -9 ` + exe + `
+rm -rf ` + exe + `
+mv "` + filepath.Base(newPath) + `" "` + exe + `"
+chmod +x ` + exe + `
+./` + exe + `
+exit`
+			tempFile.WriteString(commands)
+			cmd := exec.Command("bash", tempPath)
+			cmd.Stdout = os.Stdout
+			cmd.Stderr = os.Stderr
+			cmd.Run()
+			break
+		}
+	}
 }
 
 func (a *App) CURL(url string) HTTPResponse {
