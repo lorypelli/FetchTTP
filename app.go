@@ -40,22 +40,24 @@ func (a *App) startup(ctx context.Context) {
 	path := filepath.Dir(bin)
 	goos := r.GOOS
 	switch goos {
-	case "windows": {
-		bat := filepath.Join(path, "temp.bat")
-		_, err := os.Stat(bat)
-		if !os.IsNotExist(err) {
-			os.Remove(bat)
+	case "windows":
+		{
+			bat := filepath.Join(path, "temp.bat")
+			_, err := os.Stat(bat)
+			if !os.IsNotExist(err) {
+				os.Remove(bat)
+			}
+			break
 		}
-		break
-	}
-	case "linux": {
-		sh := filepath.Join(path, "temp.sh")
-		_, err := os.Stat(sh)
-		if !os.IsNotExist(err) {
-			os.Remove(sh)
+	case "linux":
+		{
+			sh := filepath.Join(path, "temp.sh")
+			_, err := os.Stat(sh)
+			if !os.IsNotExist(err) {
+				os.Remove(sh)
+			}
+			break
 		}
-		break
-	}
 	}
 	bat := filepath.Join(path, "temp.bat")
 	_, err := os.Stat(bat)
@@ -106,6 +108,7 @@ type Github struct {
 }
 
 type Download struct {
+	Name                 string
 	Browser_download_url string
 }
 
@@ -167,7 +170,7 @@ func (a *App) WS(url string, headers []Header, query []Query, connected bool) st
 			}
 		}
 	}
-	var header http.Header
+	header := http.Header{}
 	for i := 0; i < len(headers); i++ {
 		regexp, _ := regexp.Compile(`^[A-Za-z\d[\]{}()<>\/@?=:";,-]*$`)
 		if headers[i].Enabled && strings.TrimSpace(headers[i].Name) != "" && regexp.MatchString(headers[i].Name) && strings.TrimSpace(headers[i].Value) != "" {
@@ -257,15 +260,17 @@ func (a *App) Update() {
 	var windows int
 	var linux int
 	for i := 0; i < len(jsonBody.Assets); i++ {
-		switch jsonBody.Assets[i].Browser_download_url {
-		case "FetchTTP": {
-			linux = i
-			break
-		}
-		case "FetchTTP.exe": {
-			windows = i
-			break
-		}
+		switch jsonBody.Assets[i].Name {
+		case "FetchTTP":
+			{
+				linux = i
+				break
+			}
+		case "FetchTTP.exe":
+			{
+				windows = i
+				break
+			}
 		}
 	}
 	goos := r.GOOS
