@@ -72,24 +72,12 @@ export default {
             else {
                 item.input = 'wss://echo.websocket.org';
             }
-            let error = await WS(item.input, headers, query, !item.connected);
-            if (error) {
-                ElNotification({
-                    title: 'Something went wrong!',
-                    message: error,
-                    type: 'error',
-                    position: 'bottom-right'
-                });
-                return;
-            }
             item.connected = !item.connected;
-            if (item.connected) {
-                this.response = '';
-            }
             try {
                 EventsEmit('connected', item.connected);
                 let error = await WS(item.input, headers, query, item.connected);
                 if (error) {
+                    item.connected = false;
                     ElNotification({
                         title: 'Something went wrong!',
                         message: error,
@@ -98,6 +86,7 @@ export default {
                     });
                 }
                 if (item.connected) {
+                    this.response = '';
                     EventsOn('websocket', (data: Response) => {
                         this.update(data);
                     });
