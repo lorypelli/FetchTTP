@@ -19,7 +19,7 @@ const props = defineProps<{
   header: Header,
   response: string
 }>();
-const raw = ref(true);
+const readable = ref(true);
 </script>
 
 <script lang="ts">
@@ -76,7 +76,10 @@ export default {
         {{ props.status }}
       </ElText>
       <ElDivider v-if="props.status" />
-      <table v-if="Object.keys(props.header).length > 0">
+      <ElText v-if="Object.keys(props.header).length > 0 && !readable">
+        {{ props.header }}
+      </ElText>
+      <table v-if="Object.keys(props.header).length > 0 && readable">
         <tr
           v-for="(item, index) in Object.keys(props.header)"
           :key="index"
@@ -96,12 +99,12 @@ export default {
         class="flex justify-center h-full"
         description="Nothing to display here..."
       />
-      <ElText v-if="isText(props.header) && !['', 'null'].includes(props.response.trim()) || !raw">
+      <ElText v-if="isText(props.header) && !['', 'null'].includes(props.response.trim()) || !readable">
         {{
           props.response }}
       </ElText>
       <div
-        v-if="!isText(props.header) && raw"
+        v-if="!isText(props.header) && readable"
         class="flex justify-center items-center h-full"
       >
         <img
@@ -128,8 +131,7 @@ export default {
     </ElTabPane>
   </ElTabs>
   <ElSwitch
-    v-if="!isText(props.header)"
-    v-model="raw"
+    v-model="readable"
     class="pl-2"
     inactive-text="Raw"
     active-text="Human Readable"
