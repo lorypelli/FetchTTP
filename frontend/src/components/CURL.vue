@@ -17,14 +17,14 @@ const curl = ref('');
 
 <script lang="ts">
 interface Header {
-    [x: string]: string[]
+  [x: string]: string[]
 }
 interface Response {
-    URL: string,
-    Status: string,
-    Header: Header,
-    Body: string
-    Error: string
+  URL: string,
+  Status: string,
+  Header: Header,
+  Body: string
+  Error: string
 }
 </script>
 
@@ -85,7 +85,7 @@ interface Response {
               title: 'Something went wrong!',
               type: 'error',
               position: 'bottom-right'
-            });  
+            });
           }
         })
         .catch(() => { })

@@ -19,8 +19,8 @@ defineOptions({
     }
 });
 const props = defineProps<{
-    name: string,
-    type: 'http' | 'ws'
+  name: string,
+  type: 'http' | 'ws'
 }>();
 </script>
 

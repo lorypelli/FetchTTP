@@ -14,17 +14,17 @@ defineOptions({
     }
 });
 const props = defineProps<{
-    url?: string,
-    status: string,
-    header: Header,
-    response: string
+  url?: string,
+  status: string,
+  header: Header,
+  response: string
 }>();
 const raw = ref(true);
 </script>
 
 <script lang="ts">
 interface Header {
-    [x: string]: string[]
+  [x: string]: string[]
 }
 export default {
     methods: {
@@ -77,19 +77,17 @@ export default {
       </ElText>
       <ElDivider v-if="props.status" />
       <table v-if="Object.keys(props.header).length > 0">
-        <tbody>
-          <tr
-            v-for="(item, index) in Object.keys(props.header)"
-            :key="index"
-          >
-            <th class="break-all w-1/2 text-left pl-5">
-              <ElText>{{ item }}</ElText>
-            </th>
-            <td class="break-all w-1/2 pr-5">
-              <ElText>{{ props.header[item].join("") }}</ElText>
-            </td>
-          </tr>
-        </tbody>
+        <tr
+          v-for="(item, index) in Object.keys(props.header)"
+          :key="index"
+        >
+          <td class="break-all w-1/2 pl-5">
+            <ElText>{{ item }}</ElText>
+          </td>
+          <td class="break-all w-1/2 pr-5">
+            <ElText>{{ props.header[item].join("") }}</ElText>
+          </td>
+        </tr>
       </table>
     </ElTabPane>
     <ElTabPane label="Response">
@@ -120,7 +118,7 @@ export default {
           :src="props.url"
           controls
         />
-        <iframe 
+        <iframe
           v-if="isPage(props.header)"
           :srcdoc="baseURL(props.response, props.url)"
           class="w-full h-full rounded-2xl"

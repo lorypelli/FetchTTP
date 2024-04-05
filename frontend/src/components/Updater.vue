@@ -10,8 +10,8 @@ defineOptions({
     }
 });
 const props = defineProps<{
-    version: string,
-    description: string
+  version: string,
+  description: string
 }>();
 const updateVersion = ref(props.version);
 const updateDescription = ref(props.description);
