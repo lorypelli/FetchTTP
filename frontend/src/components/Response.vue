@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ElTabPane, ElTabs, ElEmpty, ElText, ElDivider, ElSwitch } from 'element-plus';
+import { ElTabPane, ElTabs, ElEmpty, ElText, ElSwitch } from 'element-plus';
 import { ref } from 'vue';
 defineOptions({
     // eslint-disable-next-line vue/multi-word-component-names
@@ -9,27 +9,49 @@ defineOptions({
         ElTabs,
         ElEmpty,
         ElText,
-        ElDivider,
         ElSwitch
     }
 });
 const props = defineProps<{
-  url?: string,
-  status: string,
-  header: Header,
-  response: string
+    url?: string,
+    status: string,
+    header: Header,
+    response: string
 }>();
 const readable = ref(true);
 </script>
 
 <script lang="ts">
 interface Header {
-  [x: string]: string[]
+    [x: string]: string[]
 }
 export default {
     methods: {
+        getColor(s: string) {
+            let status = parseInt(s.split(' ')[0]);
+            if (status >= 100 && status < 200) {
+                return 'blue';
+            }
+            else if (status >= 200 && status < 300) {
+                return 'green';
+            }
+            else if (status >= 300 && status < 400) {
+                return 'yellow';
+            }
+            else if (status >= 400 && status < 500) {
+                return 'orange';
+            }
+            else if (status >= 500 && status < 600) {
+                return 'red';
+            }
+        },
         isText(h: Header) {
-            return !this.isPage(h) && !this.isImage(h) && !this.isVideo(h) && !this.isAudio(h);
+            return !this.isPage(h) && !this.isPDF(h) && !this.isImage(h) && !this.isVideo(h) && !this.isAudio(h);
+        },
+        isPDF(h: Header) {
+            return Object.entries(h).filter(([k, v]) => {
+                return k == 'Content-Type' && v[0].includes('application/pdf');
+            }).length > 0;
         },
         isPage(h: Header) {
             return Object.entries(h).filter(([k, v]) => {
@@ -72,10 +94,12 @@ export default {
         class="flex justify-center h-full"
         description="Nothing to display here..."
       />
-      <ElText class="flex justify-center">
+      <ElText
+        class="flex justify-center sticky top-0"
+        :style="`background-color: #171717; color: ${getColor(props.status)};`"
+      >
         {{ props.status }}
       </ElText>
-      <ElDivider v-if="props.status" />
       <ElText v-if="Object.keys(props.header).length > 0 && !readable">
         {{ props.header }}
       </ElText>
@@ -127,6 +151,11 @@ export default {
           class="w-full h-full rounded-2xl"
           sandbox="allow-scripts allow-forms"
         />
+        <embed
+          v-if="isPDF(props.header)"
+          :src="props.url"
+          class="w-full h-full rounded-2xl"
+        >
       </div>
     </ElTabPane>
   </ElTabs>
