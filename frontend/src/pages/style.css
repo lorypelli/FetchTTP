@@ -4,6 +4,7 @@
 
 * {
     font-family: 'Martian Mono', monospace;
+    user-select: none;
 }
 
 :focus {
@@ -13,6 +14,11 @@
 body {
     width: 100% !important;
     background-color: #171717;
+}
+
+#app {
+    margin-left: 8px;
+    margin-right: 8px;
 }
 
 span.el-text {
@@ -29,7 +35,7 @@ span.el-text {
     overflow: hidden !important;
 }
 
-.el-overlay-message-box[aria-label="Response"] > .el-message-box {
+.el-overlay-message-box[aria-label='Response'] > .el-message-box {
     max-width: 1000px;
 }
 
@@ -68,7 +74,8 @@ span.el-text {
     margin-right: 0;
 }
 
-.pl-2 > .el-tabs__content, .pr-2 > .el-tabs__content {
+.pl-2 > .el-tabs__content,
+.pr-2 > .el-tabs__content {
     overflow-y: auto;
     height: 80vh;
 }

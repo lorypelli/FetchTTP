@@ -10,38 +10,38 @@ defineOptions({
         Splitter,
         SplitterPanel,
         Request,
-        Response
-    }
+        Response,
+    },
 });
 const props = defineProps<{
-    name: string,
-    url?: string,
-    status: string,
-    header: Header,
-    response: string,
-    type: 'http' | 'ws'
+    name: string;
+    url?: string;
+    status: string;
+    header: Header;
+    response: string;
+    type: 'http' | 'ws';
 }>();
 </script>
 
 <script lang="ts">
 interface Header {
-    [x: string]: string[]
+    [x: string]: string[];
 }
 interface Query {
-    enabled: boolean,
-    name: string,
-    value: string
+    enabled: boolean;
+    name: string;
+    value: string;
 }
 export default {
     emits: {
-        'query': null,
-        'body': null,
-        'headers': null,
-        'message': null
+        query: null,
+        body: null,
+        headers: null,
+        message: null,
     },
     data() {
         return {
-            width: 0
+            width: 0,
         };
     },
     mounted() {
@@ -76,30 +76,19 @@ export default {
         },
         handleMessage(m: string) {
             this.$emit('message', m);
-        }
-    }
+        },
+    },
 };
 </script>
 
 <template>
-  <Splitter :layout="width < 900 ? 'vertical' : 'horizontal'">
-    <SplitterPanel :min-size="20">
-      <Request
-        :name="props.name"
-        :type="props.type"
-        @headers="handleHeader"
-        @query="handleQuery"
-        @body="handleBody"
-        @message="handleMessage"
-      />
-    </SplitterPanel>
-    <SplitterPanel :min-size="20">
-      <Response
-        :url="props.url"
-        :status="props.status"
-        :header="props.header"
-        :response="props.response"
-      />
-    </SplitterPanel>
-  </Splitter>
+    <Splitter :layout="width < 900 ? 'vertical' : 'horizontal'">
+        <SplitterPanel :min-size="20">
+            <Request :name="props.name" :type="props.type" @headers="handleHeader" @query="handleQuery"
+                @body="handleBody" @message="handleMessage" />
+        </SplitterPanel>
+        <SplitterPanel :min-size="20">
+            <Response :url="props.url" :status="props.status" :header="props.header" :response="props.response" />
+        </SplitterPanel>
+    </Splitter>
 </template>

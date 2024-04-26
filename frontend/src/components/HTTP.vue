@@ -1,5 +1,11 @@
 <script setup lang="ts">
-import { ElButton, ElInput, ElNotification, ElOption, ElSelect } from 'element-plus';
+import {
+    ElButton,
+    ElInput,
+    ElNotification,
+    ElOption,
+    ElSelect,
+} from 'element-plus';
 import { HTTP } from '../../wailsjs/go/main/App.js';
 import Split from './Split.vue';
 import Tabs, { CompleteItem } from './Tabs.vue';
@@ -12,34 +18,34 @@ defineOptions({
         ElSelect,
         Split,
         Tabs,
-    }
+    },
 });
 </script>
 
 <script lang="ts">
 interface Header {
-    enabled: boolean,
-    name: string,
-    value: string
+    enabled: boolean;
+    name: string;
+    value: string;
 }
 interface Query {
-    enabled: boolean,
-    name: string,
-    value: string
+    enabled: boolean;
+    name: string;
+    value: string;
 }
 interface Response {
-    URL: string,
-    Status: string,
-    Header: [],
-    Body: string
-    Error: string
+    URL: string;
+    Status: string;
+    Header: [];
+    Body: string;
+    Error: string;
 }
 let headers: Header[] = [
     {
         enabled: true,
         name: 'User-Agent',
-        value: 'FetchTTP'
-    }
+        value: 'FetchTTP',
+    },
 ];
 let query: Query[] = [];
 let body = '';
@@ -49,7 +55,7 @@ export default {
             status: '',
             header: {},
             response: '',
-            url: ''
+            url: '',
         };
     },
     methods: {
@@ -76,82 +82,65 @@ export default {
         },
         sendRequest(item: CompleteItem) {
             if (item.input) {
-                if (!item.input.startsWith('http://') && !item.input.startsWith('https://')) {
+                if (
+                    !item.input.startsWith('http://') &&
+                    !item.input.startsWith('https://')
+                ) {
                     item.input = 'https://' + item.input;
                 }
-            }
-            else {
+            } else {
                 item.input = 'https://echo.zuplo.io';
             }
             try {
-                HTTP(item.select, item.input, headers, query, body).then((res) => {
-                    if (res.Error) {
-                        ElNotification({
-                            title: 'Something went wrong!',
-                            message: res.Error,
-                            type: 'error',
-                            position: 'bottom-right'
-                        });
-                        return;
-                    }
-                    this.update(res);
-                });
-            }
-            catch {
+                HTTP(item.select, item.input, headers, query, body).then(
+                    (res) => {
+                        if (res.Error) {
+                            ElNotification({
+                                title: 'Something went wrong!',
+                                message: res.Error,
+                                type: 'error',
+                                position: 'bottom-right',
+                            });
+                            return;
+                        }
+                        this.update(res);
+                    },
+                );
+            } catch {
                 ElNotification({
                     title: 'Something went wrong!',
                     type: 'error',
-                    position: 'bottom-right'
+                    position: 'bottom-right',
                 });
             }
-        }
-    }
+        },
+    },
 };
 </script>
 
 <template>
-  <Tabs type="http">
-    <template #default="{ item }">
-      <div class="flex p-1 space-x-1">
-        <ElSelect
-          v-model="item.select"
-          class="w-32"
-          @change="handleSelect(item)"
-        >
-          <ElOption value="GET" />
-          <ElOption value="HEAD" />
-          <ElOption value="POST" />
-          <ElOption value="PUT" />
-          <ElOption value="DELETE" />
-          <ElOption value="CONNECT" />
-          <ElOption value="OPTIONS" />
-          <ElOption value="TRACE" />
-          <ElOption value="PATCH" />
-        </ElSelect>
-        <ElInput
-          v-model="item.input"
-          placeholder="echo.zuplo.io"
-          @input="handleInput(item)"
-          @keydown.enter="sendRequest(item)"
-        />
-        <ElButton
-          class="w-20"
-          @click="sendRequest(item)"
-        >
-          Send
-        </ElButton>
-      </div>
-      <Split
-        :name="item.name"
-        :url="url"
-        :status="status"
-        :header="header"
-        :response="response"
-        type="http"
-        @headers="handleHeader"
-        @query="handleQuery"
-        @body="handleBody"
-      />
-    </template>
-  </Tabs>
+    <Tabs type="http">
+        <template #default="{ item }">
+            <div class="flex p-1 space-x-1">
+                <ElSelect v-model="item.select" class="w-32" @change="handleSelect(item)">
+                    <ElOption value="GET" />
+                    <ElOption value="HEAD" />
+                    <ElOption value="POST" />
+                    <ElOption value="PUT" />
+                    <ElOption value="DELETE" />
+                    <ElOption value="CONNECT" />
+                    <ElOption value="OPTIONS" />
+                    <ElOption value="TRACE" />
+                    <ElOption value="PATCH" />
+                </ElSelect>
+                <ElInput v-model="item.input" placeholder="echo.zuplo.io" @input="handleInput(item)"
+                    @keydown.enter="sendRequest(item)" />
+                <ElButton class="w-20" @click="sendRequest(item)">
+                    Send
+                </ElButton>
+            </div>
+            <Split :name="item.name" :url="url" :status="status" :header="header" :response="response" type="http"
+                @headers="handleHeader" @query="handleQuery" @body="handleBody" />
+        </template>
+    </Tabs>
 </template>

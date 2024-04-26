@@ -1,5 +1,11 @@
 <script setup lang="ts">
-import { ElButton, ElInput, ElNotification, ElTabs, ElTabPane } from 'element-plus';
+import {
+    ElButton,
+    ElInput,
+    ElNotification,
+    ElTabs,
+    ElTabPane,
+} from 'element-plus';
 import { WS } from '../../wailsjs/go/main/App';
 import Split from './Split.vue';
 import { EventsEmit, EventsOff, EventsOn } from '../../wailsjs/runtime/runtime';
@@ -11,33 +17,33 @@ defineOptions({
         ElInput,
         Split,
         ElTabs,
-        ElTabPane
-    }
+        ElTabPane,
+    },
 });
 </script>
 
 <script lang="ts">
 interface Header {
-    enabled: boolean,
-    name: string,
-    value: string
+    enabled: boolean;
+    name: string;
+    value: string;
 }
 interface Query {
-    enabled: boolean,
-    name: string,
-    value: string
+    enabled: boolean;
+    name: string;
+    value: string;
 }
 interface Response {
-    Status: string,
-    Header: [],
-    Message: string
+    Status: string;
+    Header: [];
+    Message: string;
 }
 let headers: Header[] = [
     {
         enabled: true,
         name: 'User-Agent',
-        value: 'FetchTTP'
-    }
+        value: 'FetchTTP',
+    },
 ];
 let query: Query[] = [];
 export default {
@@ -65,24 +71,31 @@ export default {
         },
         async sendWebsocket(item: CompleteItem) {
             if (item.input) {
-                if (!item.input.startsWith('ws://') && !item.input.startsWith('wss://')) {
+                if (
+                    !item.input.startsWith('ws://') &&
+                    !item.input.startsWith('wss://')
+                ) {
                     item.input = 'wss://' + item.input;
                 }
-            }
-            else {
+            } else {
                 item.input = 'wss://echo.websocket.org';
             }
             item.connected = !item.connected;
             try {
                 EventsEmit('connected', item.connected);
-                let error = await WS(item.input, headers, query, item.connected);
+                let error = await WS(
+                    item.input,
+                    headers,
+                    query,
+                    item.connected,
+                );
                 if (error) {
                     item.connected = false;
                     ElNotification({
                         title: 'Something went wrong!',
                         message: error,
                         type: 'error',
-                        position: 'bottom-right'
+                        position: 'bottom-right',
                     });
                 }
                 if (item.connected) {
@@ -90,52 +103,34 @@ export default {
                     EventsOn('websocket', (data: Response) => {
                         this.update(data);
                     });
-                }
-                else {
+                } else {
                     EventsOff('websocket');
                 }
-            }
-            catch {
+            } catch {
                 item.connected = false;
                 ElNotification({
                     title: 'Something went wrong!',
                     type: 'error',
-                    position: 'bottom-right'
+                    position: 'bottom-right',
                 });
             }
-        }
-    }
+        },
+    },
 };
 </script>
 
 <template>
-  <Tabs type="ws">
-    <template #default="{ item }">
-      <div class="flex p-1 space-x-1">
-        <ElInput
-          v-model="item.input"
-          :disabled="item.connected"
-          placeholder="echo.websocket.org"
-          @input="handleInput(item)"
-          @keydown.enter="sendWebsocket(item)"
-        />
-        <ElButton
-          v-model="item.connected"
-          class="w-36"
-          @click="sendWebsocket(item)"
-        >
-          {{ item.connected ? 'Disconnect' : 'Connect' }}
-        </ElButton>
-      </div>
-      <Split
-        :name="item.name"
-        :status="status"
-        :header="header"
-        :response="response"
-        type="ws"
-        @headers="handleHeader"
-        @query="handleQuery"
-      />
-    </template>
-  </Tabs>
+    <Tabs type="ws">
+        <template #default="{ item }">
+            <div class="flex p-1 space-x-1">
+                <ElInput v-model="item.input" :disabled="item.connected" placeholder="echo.websocket.org"
+                    @input="handleInput(item)" @keydown.enter="sendWebsocket(item)" />
+                <ElButton v-model="item.connected" class="w-36" @click="sendWebsocket(item)">
+                    {{ item.connected ? 'Disconnect' : 'Connect' }}
+                </ElButton>
+            </div>
+            <Split :name="item.name" :status="status" :header="header" :response="response" type="ws"
+                @headers="handleHeader" @query="handleQuery" />
+        </template>
+    </Tabs>
 </template>
