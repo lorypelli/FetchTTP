@@ -15,7 +15,7 @@ export default {
             },
             height: {
                 0.25: '1px',
-                max: '93.5vh',
+                max: '90vh',
                 full: '80vh',
                 partial: '70vh',
             },
