@@ -3,10 +3,31 @@ export default {
     content: ['./index.html', './src/**/*.{vue,js,ts,jsx,tsx}'],
     theme: {
         extend: {
+            fontFamily: {
+                custom: '\'Martian Mono\', monospace',
+            },
+            backgroundColor: {
+                primary: '#171717',
+                secondary: '#232323',
+            },
+            maxWidth: {
+                container: '1000px',
+            },
             height: {
+                0.25: '1px',
                 max: '93.5vh',
                 full: '80vh',
+                partial: '70vh',
             },
+            borderColor: {
+                primary: '#171717',
+            },
+            borderRadius: {
+                custom: '10px',
+            },
+            borderWidth: {
+                custom: '5px',
+            }
         },
     },
     plugins: [],

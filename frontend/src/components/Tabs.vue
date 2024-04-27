@@ -52,22 +52,27 @@ export function httpTabHandle(
         }
         case 'remove': {
             const t = httpTab.value;
-            if (t.length > 1) {
-                let activeTab = httpSelectedTab.value;
-                if (activeTab == targetName) {
-                    t.forEach((tab, index) => {
-                        if (tab.name == targetName) {
-                            const nextTab = t[index + 1] || t[index - 1];
-                            if (nextTab) {
-                                activeTab = nextTab.name;
-                            }
+            let activeTab = httpSelectedTab.value;
+            if (activeTab == targetName) {
+                t.forEach((tab, index) => {
+                    if (tab.name == targetName) {
+                        const nextTab = t[index + 1] || t[index - 1];
+                        if (nextTab) {
+                            activeTab = nextTab.name;
                         }
-                    });
-                }
-                httpSelectedTab.value = activeTab;
-                httpTab.value = t.filter((tab) => tab.name != targetName);
+                    }
+                });
             }
+            httpSelectedTab.value = activeTab;
+            httpTab.value = t.filter((tab) => tab.name != targetName);
             localStorage.setItem('httpTab', JSON.stringify(httpTab.value));
+            if (t.length == 1) {
+                localStorage.removeItem(`${t[0].name}-select`)
+                localStorage.removeItem(`${t[0].name}-input-http`)
+                localStorage.removeItem('httpTab');
+                httpTabIndex = 0;
+                httpTabHandle(undefined, 'add');
+            }
             break;
         }
     }
@@ -90,22 +95,26 @@ export function wsTabHandle(
         }
         case 'remove': {
             const t = wsTab.value;
-            if (t.length > 1) {
-                let activeTab = wsSelectedTab.value;
-                if (activeTab == targetName) {
-                    t.forEach((tab, index) => {
-                        if (tab.name == targetName) {
-                            const nextTab = t[index + 1] || t[index - 1];
-                            if (nextTab) {
-                                activeTab = nextTab.name;
-                            }
+            let activeTab = wsSelectedTab.value;
+            if (activeTab == targetName) {
+                t.forEach((tab, index) => {
+                    if (tab.name == targetName) {
+                        const nextTab = t[index + 1] || t[index - 1];
+                        if (nextTab) {
+                            activeTab = nextTab.name;
                         }
-                    });
-                }
-                wsSelectedTab.value = activeTab;
-                wsTab.value = t.filter((tab) => tab.name != targetName);
+                    }
+                });
             }
+            wsSelectedTab.value = activeTab;
+            wsTab.value = t.filter((tab) => tab.name != targetName);
             localStorage.setItem('wsTab', JSON.stringify(wsTab.value));
+            if (t.length == 1) {
+                localStorage.removeItem(`${t[0].name}-input-ws`)
+                localStorage.removeItem('wsTab');
+                wsTabIndex = 0;
+                wsTabHandle(undefined, 'add');
+            }
             break;
         }
     }
@@ -225,8 +234,8 @@ export default {
 
 <template>
     <ElTabs v-model="selectedTab" tab-position="left" editable @edit="tabHandle" @keyup="() => {
-            key = '';
-        }
+        key = '';
+    }
         " @keydown.alt="keyHandle">
         <ElTabPane v-for="(item, index) in props.type == 'http'
             ? httpTab

@@ -3,102 +3,92 @@
 @tailwind utilities;
 
 * {
-    font-family: 'Martian Mono', monospace;
-    user-select: none;
+    @apply select-none font-custom;
 }
 
-:focus {
-    outline: none !important;
+:focus,
+.el-button:focus-visible {
+    @apply outline-none;
 }
 
 body {
-    width: 100% !important;
-    background-color: #171717;
+    @apply w-full bg-primary;
 }
 
 #app {
-    margin-left: 8px;
-    margin-right: 8px;
+    @apply mx-2;
 }
 
 span.el-text {
-    white-space: pre-wrap;
+    @apply whitespace-pre-wrap;
 }
 
 .el-select__placeholder {
-    position: relative;
-    transform: none;
+    @apply relative transform-none;
 }
 
 .el-overlay-message-box {
-    padding: 0 !important;
-    overflow: hidden !important;
+    @apply overflow-hidden p-0;
 }
 
 .el-overlay-message-box[aria-label='Response'] > .el-message-box {
-    max-width: 1000px;
+    @apply max-w-container;
 }
 
 .p-splitter {
-    background-color: #171717;
+    @apply bg-primary;
 }
 
 .p-splitter-gutter,
 .p-splitter-gutter-handle {
-    width: 2px;
-    background-color: #232323;
-    cursor: e-resize;
+    @apply w-0.5 cursor-e-resize bg-secondary;
 }
 
 .el-textarea__inner {
-    height: 70vh;
+    @apply h-partial;
 }
 
 .el-form-item__content {
-    justify-content: center;
+    @apply justify-center;
 }
 
 .el-message-box__container {
-    display: block;
+    @apply block;
 }
 
-.el-date-editor {
-    width: 100% !important;
+.el-date-editor.el-input {
+    @apply w-full;
 }
 
 .el-tabs__nav-wrap::after {
-    height: 1px;
+    @apply h-0.25;
 }
 
 .el-tabs--left .el-tabs__nav-wrap.is-left {
-    margin-right: 0;
+    @apply mr-0;
 }
 
 .pl-2 > .el-tabs__content,
 .pr-2 > .el-tabs__content {
-    overflow-y: auto;
-    height: 80vh;
+    @apply h-full overflow-y-auto;
 }
 
 .el-tabs__nav.is-left {
-    height: 93.5vh;
+    @apply h-max;
 }
 
 .el-tabs__nav-scroll {
-    overflow-y: auto;
+    @apply overflow-y-auto;
 }
 
 ::-webkit-scrollbar {
-    width: 20px;
+    @apply w-5;
 }
 
 ::-webkit-scrollbar-track {
-    background: #171717;
+    @apply bg-primary;
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #232323;
-    border: 5px solid;
-    border-color: #171717;
-    border-radius: 10px;
+    @apply rounded-custom border-custom border-solid border-primary bg-secondary;
 }
