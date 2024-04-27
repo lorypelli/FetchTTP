@@ -2,7 +2,6 @@
 import { ElInput, ElText } from 'element-plus';
 import { ref } from 'vue';
 defineOptions({
-    // eslint-disable-next-line vue/multi-word-component-names
     name: 'Updater',
     components: {
         ElText,

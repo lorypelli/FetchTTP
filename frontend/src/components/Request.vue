@@ -15,7 +15,6 @@ import {
 import { reactive, h } from 'vue';
 import { EventsEmit } from '../../wailsjs/runtime/runtime';
 defineOptions({
-    // eslint-disable-next-line vue/multi-word-component-names
     name: 'Request',
     components: {
         ElButton,

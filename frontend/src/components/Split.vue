@@ -4,7 +4,6 @@ import SplitterPanel from 'primevue/splitterpanel';
 import Request from './Request.vue';
 import Response from './Response.vue';
 defineOptions({
-    // eslint-disable-next-line vue/multi-word-component-names
     name: 'Split',
     components: {
         Splitter,

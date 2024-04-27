@@ -2,7 +2,6 @@
 import { ElTabs, ElTabPane, TabPaneName } from 'element-plus';
 import { ref } from 'vue';
 defineOptions({
-    // eslint-disable-next-line vue/multi-word-component-names
     name: 'Tabs',
     components: {
         ElTabs,
