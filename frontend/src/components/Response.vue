@@ -168,7 +168,7 @@ export default {
     </ElTabs>
     <ElSwitch
         v-model="readable"
-        class="pl-2"
+        class="pl-2 absolute top-11 right-1"
         inactive-text="Raw"
         active-text="Human Readable"
     />

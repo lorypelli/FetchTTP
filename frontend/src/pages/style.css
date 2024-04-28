@@ -68,6 +68,10 @@ span.el-text {
     @apply mr-0;
 }
 
+.el-tabs__header {
+    @apply mb-2;
+}
+
 .pl-2 > .el-tabs__content,
 .pr-2 > .el-tabs__content {
     @apply h-full overflow-y-auto;
