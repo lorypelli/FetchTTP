@@ -100,6 +100,12 @@ export default {
 </script>
 
 <template>
+    <ElSwitch
+        v-model="readable"
+        class="pt-2 absolute right-1"
+        inactive-text="Raw"
+        active-text="Human Readable"
+    />
     <ElTabs class="pl-2">
         <ElTabPane label="Headers">
             <ElEmpty
@@ -166,10 +172,4 @@ export default {
             </div>
         </ElTabPane>
     </ElTabs>
-    <ElSwitch
-        v-model="readable"
-        class="pl-2 absolute top-11 right-1"
-        inactive-text="Raw"
-        active-text="Human Readable"
-    />
 </template>

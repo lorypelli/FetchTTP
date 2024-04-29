@@ -81,12 +81,12 @@ export default {
 </script>
 
 <template>
-    <Splitter :layout="width < 900 ? 'vertical' : 'horizontal'">
-        <SplitterPanel :min-size="20">
+    <Splitter :layout="width < 1050 ? 'vertical' : 'horizontal'">
+        <SplitterPanel :min-size="25">
             <Request :name="props.name" :type="props.type" @headers="handleHeader" @query="handleQuery"
                 @body="handleBody" @message="handleMessage" />
         </SplitterPanel>
-        <SplitterPanel :min-size="20">
+        <SplitterPanel :min-size="25">
             <Response :url="props.url" :status="props.status" :header="props.header" :response="props.response" />
         </SplitterPanel>
     </Splitter>

@@ -113,6 +113,12 @@ export default {
                                     WSTab(undefined, 'add');
                                 },
                             },
+                            {
+                                label: 'CURL',
+                                onClick: () => {
+                                    selectedTab.value = 'CURL';
+                                },
+                            },
                         ],
                     },
                     {

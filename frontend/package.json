@@ -14,7 +14,7 @@
     "element-plus": "^2.7.2",
     "primevue": "^3.52.0",
     "vite-plugin-multip": "^1.1.5",
-    "vue": "^3.4.25"
+    "vue": "^3.4.26"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.0.4",
