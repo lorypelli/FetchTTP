@@ -336,14 +336,14 @@ exit`
 func (a *App) CURL(url string) HTTPResponse {
 	curl := gcurl.Parse(url)
 	req, err := http.NewRequest(curl.Method, url, curl.Body)
-	req.Header.Add("User-Agent", "FetchTTP")
-	for k, v := range curl.Header {
-		req.Header.Add(k, strings.Join(v, ","))
-	}
 	if err != nil {
 		return HTTPResponse{
 			url, "", http.Header{}, "", err.Error(),
 		}
+	}
+	req.Header.Add("User-Agent", "FetchTTP")
+	for k, v := range curl.Header {
+		req.Header.Add(k, strings.Join(v, ","))
 	}
 	res, err := http.DefaultClient.Do(req)
 	if err != nil {
