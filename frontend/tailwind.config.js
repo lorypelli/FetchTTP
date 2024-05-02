@@ -19,6 +19,9 @@ export default {
                 full: '80vh',
                 partial: '70vh',
             },
+            zIndex: {
+                1: 1,
+            },
             borderColor: {
                 primary: '#171717',
             },
