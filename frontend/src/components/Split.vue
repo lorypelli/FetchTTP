@@ -81,7 +81,7 @@ export default {
 </script>
 
 <template>
-    <Splitter :layout="width < 1050 ? 'vertical' : 'horizontal'">
+    <Splitter :layout="width <= 1024 ? 'vertical' : 'horizontal'">
         <SplitterPanel :min-size="25">
             <Request :name="props.name" :type="props.type" @headers="handleHeader" @query="handleQuery"
                 @body="handleBody" @message="handleMessage" />

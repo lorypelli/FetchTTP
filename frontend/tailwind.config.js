@@ -15,9 +15,12 @@ export default {
             },
             height: {
                 0.25: '1px',
+                '1/4': '25vh',
+                '1/2': '50vh',
                 max: '90vh',
                 full: '80vh',
                 partial: '70vh',
+                fit: '20vh',
             },
             zIndex: {
                 1: 1,

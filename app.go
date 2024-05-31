@@ -21,7 +21,7 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
-const APP_VERSION = "1.3.14"
+const APP_VERSION = "1.4.0"
 
 // App struct
 type App struct {
@@ -334,7 +334,12 @@ exit`
 }
 
 func (a *App) CURL(url string) HTTPResponse {
-	curl := gcurl.Parse(url)
+	curl, err := gcurl.Parse(url)
+	if err != nil {
+		return HTTPResponse{
+			url, "", http.Header{}, "", err.Error(),
+		}
+	}
 	req, err := http.NewRequest(curl.Method, url, curl.Body)
 	if err != nil {
 		return HTTPResponse{

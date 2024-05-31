@@ -103,7 +103,7 @@ export default {
     <ElSwitch v-model="readable" class="pt-2 absolute right-1 z-1" inactive-text="Raw" active-text="Human Readable" />
     <ElTabs class="pl-2">
         <ElTabPane label="Headers">
-            <ElEmpty v-if="Object.keys(props.header).length == 0" class="flex justify-center h-full"
+            <ElEmpty v-if="Object.keys(props.header).length == 0" class="flex justify-center h-1/2 lg:h-full"
                 description="Nothing to display here..." />
             <ElText class="flex justify-center sticky top-0"
                 :style="`background-color: #171717; color: ${getColor(props.status)};`">

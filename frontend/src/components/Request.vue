@@ -266,7 +266,7 @@ export default {
                 <ElButton @click="remove('query', index)"> - </ElButton>
             </div>
         </ElTabPane>
-        <ElTabPane label="Cookies" class="flex justify-center items-center h-full">
+        <ElTabPane label="Cookies" class="flex justify-center items-center h-1/4 lg:h-full">
             <ElButton class="scale-150" @click="() => {
                 const form = reactive({
                     key: '',

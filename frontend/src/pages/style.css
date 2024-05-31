@@ -96,3 +96,17 @@ span.el-text {
 ::-webkit-scrollbar-thumb {
     @apply rounded-custom border-custom border-solid border-primary bg-secondary;
 }
+
+@media only screen and (max-width: 1024px) {
+    .pr-2 > .el-tabs__content {
+        @apply h-1/4;
+    }
+
+    .pl-2 > .el-tabs__content {
+        @apply h-1/2;
+    }
+
+    .el-textarea__inner {
+        @apply h-fit;
+    }
+}
