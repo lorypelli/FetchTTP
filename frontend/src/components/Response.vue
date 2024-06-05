@@ -124,7 +124,7 @@ export default {
             </table>
         </ElTabPane>
         <ElTabPane label="Response">
-            <ElEmpty v-if="['', 'null'].includes(props.response.trim())" class="flex justify-center h-full"
+            <ElEmpty v-if="['', 'null'].includes(props.response.trim())" class="flex justify-center h-1/2 lg:h-full"
                 description="Nothing to display here..." />
             <ElText v-if="
                 (isText(props.header) &&
@@ -133,13 +133,13 @@ export default {
             ">
                 {{ props.response }}
             </ElText>
-            <div v-if="!isText(props.header) && readable" class="flex justify-center items-center h-full">
+            <div v-if="!isText(props.header) && readable" class="flex justify-center items-center h-1/2 lg:h-full">
                 <img v-if="isImage(props.header)" :src="props.url" />
                 <audio v-if="isAudio(props.header)" :src="props.url" controls />
                 <video v-if="isVideo(props.header)" :src="props.url" controls />
                 <iframe v-if="isPage(props.header)" :srcdoc="baseURL(props.response, props.url)"
-                    class="w-full h-full rounded-2xl" sandbox="allow-scripts allow-forms" />
-                <embed v-if="isPDF(props.header)" :src="props.url" class="w-full h-full rounded-2xl" />
+                    class="w-full rounded-2xl h-1/2 lg:h-full" sandbox="allow-scripts allow-forms" />
+                <embed v-if="isPDF(props.header)" :src="props.url" class="w-full rounded-2xl h-1/2 lg:h-full" />
             </div>
         </ElTabPane>
     </ElTabs>
