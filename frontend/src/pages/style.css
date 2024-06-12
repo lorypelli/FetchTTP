@@ -44,10 +44,6 @@ span.el-text {
     @apply w-0.5 cursor-e-resize bg-secondary;
 }
 
-.el-textarea__inner {
-    @apply h-partial;
-}
-
 .el-form-item__content {
     @apply justify-center;
 }
@@ -64,6 +60,10 @@ span.el-text {
     @apply h-0.25;
 }
 
+.el-tabs--left .el-tabs__nav-wrap.is-left:after {
+    @apply w-0.25;
+}
+
 .el-tabs--left .el-tabs__nav-wrap.is-left {
     @apply mr-0;
 }
@@ -72,8 +72,8 @@ span.el-text {
     @apply mb-2;
 }
 
-.pl-2 > .el-tabs__content,
-.pr-2 > .el-tabs__content {
+.pl-2 > .el-tabs__content > .el-tab-pane,
+.pr-2 > .el-tabs__content > .el-tab-pane {
     @apply h-full overflow-y-auto;
 }
 
@@ -98,15 +98,11 @@ span.el-text {
 }
 
 @media only screen and (max-width: 1024px) {
-    .pr-2 > .el-tabs__content {
+    .pr-2 > .el-tabs__content > .el-tab-pane {
         @apply h-1/4;
     }
 
-    .pl-2 > .el-tabs__content {
+    .pl-2 > .el-tabs__content > .el-tab-pane {
         @apply h-1/2;
-    }
-
-    .el-textarea__inner {
-        @apply h-fit;
     }
 }

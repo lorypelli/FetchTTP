@@ -66,6 +66,7 @@ export function httpTabHandle(
             httpTab.value = t.filter((tab) => tab.name != targetName);
             localStorage.setItem('httpTab', JSON.stringify(httpTab.value));
             if (t.length == 1) {
+                localStorage.clear()
                 localStorage.removeItem(`${t[0].name}-select`)
                 localStorage.removeItem(`${t[0].name}-input-http`)
                 localStorage.removeItem('httpTab');

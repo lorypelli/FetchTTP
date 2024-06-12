@@ -5,6 +5,7 @@ import {
     ElNotification,
     ElOption,
     ElSelect,
+    ElMessageBox,
 } from 'element-plus';
 import { HTTP } from '../../wailsjs/go/main/App.js';
 import Split from './Split.vue';
@@ -49,6 +50,8 @@ let headers: Header[] = [
 ];
 let query: Query[] = [];
 let body = '';
+let previousRequestTime = 0;
+let requestTime = Date.now();
 export default {
     data() {
         return {
@@ -59,6 +62,9 @@ export default {
         };
     },
     methods: {
+        getRequest() {
+            return previousRequestTime - requestTime;
+        },
         handleSelect(item: CompleteItem) {
             localStorage.setItem(`${item.name}-select`, item.select);
         },
@@ -104,6 +110,7 @@ export default {
                             return;
                         }
                         this.update(res);
+                        requestTime = Date.now();
                     },
                 );
             } catch {
@@ -133,9 +140,28 @@ export default {
                     <ElOption value="TRACE" />
                     <ElOption value="PATCH" />
                 </ElSelect>
-                <ElInput v-model="item.input" placeholder="echo.zuplo.io" @input="handleInput(item)"
-                    @keydown.enter="sendRequest(item)" />
-                <ElButton class="w-20" @click="sendRequest(item)">
+                <ElInput v-model="item.input" placeholder="echo.zuplo.io" @input="handleInput(item)" @keydown.enter="() => {
+                    previousRequestTime = Date.now();
+                    const res = getRequest();
+                    if (res <= 175) {
+                        requestTime = Date.now();
+                        return;
+                    }
+                    else {
+                        sendRequest(item)
+                    }
+                }" />
+                <ElButton class="w-20" @click="() => {
+                    previousRequestTime = Date.now();
+                    const res = getRequest();
+                    if (res <= 175) {
+                        requestTime = Date.now();
+                        return;
+                    }
+                    else {
+                        sendRequest(item)
+                    }
+                }">
                     Send
                 </ElButton>
             </div>

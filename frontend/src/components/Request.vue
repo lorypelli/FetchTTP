@@ -12,7 +12,8 @@ import {
     ElSelect,
     ElOption,
 } from 'element-plus';
-import { reactive, h } from 'vue';
+import { VueMonacoEditor } from '@guolao/vue-monaco-editor';
+import { ref, reactive, h } from 'vue';
 import { EventsEmit } from '../../wailsjs/runtime/runtime';
 defineOptions({
     name: 'Request',
@@ -27,12 +28,14 @@ defineOptions({
         ElDatePicker,
         ElSelect,
         ElOption,
+        VueMonacoEditor,
     },
 });
 const props = defineProps<{
     name: string;
     type: 'http' | 'ws';
 }>();
+const bodyType = ref('JSON');
 </script>
 
 <script lang="ts">
@@ -471,11 +474,23 @@ export default {
             </ElButton>
         </ElTabPane>
         <ElTabPane v-if="props.type == 'http'" label="Body">
-            <ElInput v-model="body" type="textarea" resize="none" @input="sendBody" />
+            <VueMonacoEditor class="editor" v-model:value="body" :language="bodyType.toLowerCase()" :options="{
+                automaticLayout: true,
+                minimap: { enabled: false, },
+                maxTokenizationLineLength: Infinity,
+            }" theme="vs-dark" @change="sendBody" />
+            <ElSelect v-model="bodyType" class="pt-2">
+                <ElOption value="JSON" />
+                <ElOption value="TXT" />
+            </ElSelect>
         </ElTabPane>
         <ElTabPane v-if="props.type == 'ws'" label="Message">
             <div class="flex flex-col space-y-1">
-                <ElInput v-model="message" type="textarea" resize="none" @input="sendMessage" />
+                <VueMonacoEditor v-model:value="message" style="height: 70vh" :options="{
+                    automaticLayout: true,
+                    minimap: { enabled: false, },
+                    maxTokenizationLineLength: Infinity,
+                }" theme="vs-dark" @change="sendMessage" />
                 <ElButton @click="() => {
                     EventsEmit('message', message);
                 }
@@ -486,3 +501,15 @@ export default {
         </ElTabPane>
     </ElTabs>
 </template>
+
+<style>
+.editor {
+    height: 70vh !important;
+}
+
+@media only screen and (max-width: 1024px) {
+    .editor {
+        height: 20vh !important;
+    }
+}
+</style>

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ElTabPane, ElTabs, ElEmpty, ElText, ElSwitch } from 'element-plus';
+import { VueMonacoEditor } from '@guolao/vue-monaco-editor';
 import { ref } from 'vue';
 defineOptions({
     name: 'Response',
@@ -9,6 +10,7 @@ defineOptions({
         ElEmpty,
         ElText,
         ElSwitch,
+        VueMonacoEditor,
     },
 });
 const props = defineProps<{
@@ -105,8 +107,7 @@ export default {
         <ElTabPane label="Headers">
             <ElEmpty v-if="Object.keys(props.header).length == 0" class="flex justify-center h-1/2 lg:h-full"
                 description="Nothing to display here..." />
-            <ElText class="flex justify-center sticky top-0"
-                :style="`background-color: #171717; color: ${getColor(props.status)};`">
+            <ElText class="flex justify-center sticky top-0 bg-primary" :style="`color: ${getColor(props.status)};`">
                 {{ props.status }}
             </ElText>
             <ElText v-if="Object.keys(props.header).length > 0 && !readable">
@@ -126,13 +127,17 @@ export default {
         <ElTabPane label="Response">
             <ElEmpty v-if="['', 'null'].includes(props.response.trim())" class="flex justify-center h-1/2 lg:h-full"
                 description="Nothing to display here..." />
-            <ElText v-if="
+            <VueMonacoEditor v-if="
                 (isText(props.header) &&
                     !['', 'null'].includes(props.response.trim())) ||
                 !readable
-            ">
-                {{ props.response }}
-            </ElText>
+            " :language="props.header['Content-Type'] ? props.header['Content-Type'][0].split(';')[0].split('/')[1] : undefined"
+                :options="{
+                    automaticLayout: true,
+                    minimap: { enabled: false, },
+                    maxTokenizationLineLength: Infinity,
+                    readOnly: true,
+                }" :value=props.response theme="vs-dark" />
             <div v-if="!isText(props.header) && readable" class="flex justify-center items-center h-1/2 lg:h-full">
                 <img v-if="isImage(props.header)" :src="props.url" />
                 <audio v-if="isAudio(props.header)" :src="props.url" controls />

@@ -36,7 +36,10 @@ func NewApp() *App {
 // startup is called when the app starts. The context is saved
 // so we can call the runtime methods
 func (a *App) startup(ctx context.Context) {
-	bin, _ := os.Executable()
+	bin, err := os.Executable()
+	if err != nil {
+		return
+	}
 	path := filepath.Dir(bin)
 	goos := r.GOOS
 	switch goos {
@@ -60,7 +63,7 @@ func (a *App) startup(ctx context.Context) {
 		}
 	}
 	bat := filepath.Join(path, "temp.bat")
-	_, err := os.Stat(bat)
+	_, err = os.Stat(bat)
 	if !os.IsNotExist(err) {
 		os.Remove(bat)
 	}
@@ -77,6 +80,11 @@ type Query struct {
 	Enabled bool
 	Name    string
 	Value   string
+}
+
+type BaseResponse struct {
+	Res *http.Response
+	Err error
 }
 
 type HTTPResponse struct {
@@ -130,29 +138,59 @@ func (a *App) HTTP(method string, url string, headers []Header, query []Query, b
 		}
 	}
 	for i := 0; i < len(headers); i++ {
-		regexp, _ := regexp.Compile(`^[A-Za-z\d[\]{}()<>\/@?=:";,-]*$`)
+		regexp, err := regexp.Compile(`^[A-Za-z\d[\]{}()<>\/@?=:";,-]*$`)
+		if err != nil {
+			return HTTPResponse{
+				url, "", http.Header{}, "", err.Error(),
+			}
+		}
 		if headers[i].Enabled && strings.TrimSpace(headers[i].Name) != "" && regexp.MatchString(headers[i].Name) && strings.TrimSpace(headers[i].Value) != "" {
 			req.Header.Add(headers[i].Name, headers[i].Value)
 		}
 	}
-	res, err := http.DefaultClient.Do(req)
-	if err != nil {
+	ch := make(chan BaseResponse)
+	go func() {
+		res, err := http.DefaultClient.Do(req)
+		ch <- BaseResponse{
+			Res: res,
+			Err: err,
+		}
+	}()
+	baseResponse := <-ch
+	close(ch)
+	if baseResponse.Err != nil {
 		return HTTPResponse{
-			url, "", http.Header{}, "", err.Error(),
+			url, "", http.Header{}, "", baseResponse.Err.Error(),
 		}
 	}
+	defer baseResponse.Res.Body.Close()
 	var resBody []byte
-	if strings.Contains(res.Header.Get("Content-Type"), "application/json") {
+	if strings.Contains(baseResponse.Res.Header.Get("Content-Type"), "application/json") {
 		var jsonBody interface{}
-		bytes, _ := io.ReadAll(res.Body)
+		bytes, err := io.ReadAll(baseResponse.Res.Body)
+		if err != nil {
+			return HTTPResponse{
+				url, "", http.Header{}, "", err.Error(),
+			}
+		}
 		j.Unmarshal(bytes, &jsonBody)
-		resBody, _ = j.MarshalIndent(jsonBody, "", "\t")
+		resBody, err = j.MarshalIndent(jsonBody, "", "\t")
+		if err != nil {
+			return HTTPResponse{
+				url, "", http.Header{}, "", err.Error(),
+			}
+		}
 	} else {
-		bytes, _ := io.ReadAll(res.Body)
+		bytes, err := io.ReadAll(baseResponse.Res.Body)
+		if err != nil {
+			return HTTPResponse{
+				url, "", http.Header{}, "", err.Error(),
+			}
+		}
 		resBody = bytes
 	}
 	return HTTPResponse{
-		url, res.Status, res.Header, string(resBody), "",
+		url, baseResponse.Res.Status, baseResponse.Res.Header, string(resBody), "",
 	}
 }
 
@@ -172,7 +210,10 @@ func (a *App) WS(url string, headers []Header, query []Query, connected bool) st
 	}
 	header := http.Header{}
 	for i := 0; i < len(headers); i++ {
-		regexp, _ := regexp.Compile(`^[A-Za-z\d[\]{}()<>\/@?=:";,-]*$`)
+		regexp, err := regexp.Compile(`^[A-Za-z\d[\]{}()<>\/@?=:";,-]*$`)
+		if err != nil {
+			return err.Error()
+		}
 		if headers[i].Enabled && strings.TrimSpace(headers[i].Name) != "" && regexp.MatchString(headers[i].Name) && strings.TrimSpace(headers[i].Value) != "" {
 			header.Add(headers[i].Name, headers[i].Value)
 		}
@@ -211,10 +252,15 @@ func Connect(res *http.Response, ws *websocket.Conn, connected bool, a *App) {
 				runtime.EventsEmit(a.ctx, "websocket", WSResponse{
 					ws, res.Status, res.Header, string(msg),
 				})
+			} else {
+				ws.Close()
+				connected = false
+				break
 			}
 		} else {
 			ws.Close()
-			return
+			connected = false
+			break
 		}
 		time.Sleep(1 * time.Second)
 	}
@@ -227,15 +273,31 @@ func (a *App) CheckUpdates() Update {
 			true, "", "", err.Error(),
 		}
 	}
+	defer res.Body.Close()
 	jsonBody := Github{}
-	bytes, _ := io.ReadAll(res.Body)
+	bytes, err := io.ReadAll(res.Body)
+	if err != nil {
+		return Update{
+			true, "", "", err.Error(),
+		}
+	}
 	j.Unmarshal(bytes, &jsonBody)
 	tag := jsonBody.Tag_name
 	description := jsonBody.Body
 	version := strings.ReplaceAll(tag, ".", "")
 	currentVersion := strings.ReplaceAll(APP_VERSION, ".", "")
-	version_int, _ := strconv.Atoi(version)
-	currentVersion_int, _ := strconv.Atoi(currentVersion)
+	version_int, err := strconv.Atoi(version)
+	if err != nil {
+		return Update{
+			true, "", "", err.Error(),
+		}
+	}
+	currentVersion_int, err := strconv.Atoi(currentVersion)
+	if err != nil {
+		return Update{
+			true, "", "", err.Error(),
+		}
+	}
 	if version_int > currentVersion_int {
 		return Update{
 			false, tag, description, "",
@@ -251,11 +313,21 @@ func (a *App) Update() {
 	if err != nil {
 		return
 	}
+	defer res.Body.Close()
 	jsonBody := Github{}
-	bytes, _ := io.ReadAll(res.Body)
+	bytes, err := io.ReadAll(res.Body)
+	if err != nil {
+		return
+	}
 	j.Unmarshal(bytes, &jsonBody)
-	bin, _ := os.Executable()
-	path, _ := filepath.Abs(bin)
+	bin, err := os.Executable()
+	if err != nil {
+		return
+	}
+	path, err := filepath.Abs(bin)
+	if err != nil {
+		return
+	}
 	dir := filepath.Dir(bin)
 	var windows int
 	var linux int
@@ -281,12 +353,21 @@ func (a *App) Update() {
 			if err != nil {
 				return
 			}
+			defer res.Body.Close()
 			bytes, _ = io.ReadAll(res.Body)
 			newPath := strings.Split(path, ".exe")[0] + "1.exe"
-			file, _ := os.Create(newPath)
+			file, err := os.Create(newPath)
+			if err != nil {
+				return
+			}
+			defer file.Close()
 			file.Write(bytes)
 			tempPath := filepath.Join(dir, "temp.bat")
-			tempFile, _ := os.Create(tempPath)
+			tempFile, err := os.Create(tempPath)
+			if err != nil {
+				return
+			}
+			defer tempFile.Close()
 			exe := filepath.Base(path)
 			commands := `@echo off
 cd ` + dir + `
@@ -309,12 +390,24 @@ exit`
 			if err != nil {
 				return
 			}
-			bytes, _ = io.ReadAll(res.Body)
+			defer res.Body.Close()
+			bytes, err = io.ReadAll(res.Body)
+			if err != nil {
+				return
+			}
 			newPath := path + "1"
-			file, _ := os.Create(newPath)
+			file, err := os.Create(newPath)
+			if err != nil {
+				return
+			}
+			defer file.Close()
 			file.Write(bytes)
 			tempPath := filepath.Join(dir, "temp.sh")
-			tempFile, _ := os.Create(tempPath)
+			tempFile, err := os.Create(tempPath)
+			if err != nil {
+				return
+			}
+			defer tempFile.Close()
 			exe := filepath.Base(path)
 			commands := `cd ` + dir + `
 pkill -9 ` + exe + `

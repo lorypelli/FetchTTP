@@ -10,6 +10,9 @@ export default {
                 primary: '#171717',
                 secondary: '#232323',
             },
+            width: {
+                0.25: '1px',
+            },
             maxWidth: {
                 container: '1000px',
             },
