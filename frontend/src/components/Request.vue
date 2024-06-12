@@ -173,6 +173,34 @@ export default {
                 }
             }
         },
+        getCorrectType(s: string) {
+            switch (s) {
+                case 'JSON':
+                    return 'application/json; charset=utf-8';
+                case 'YAML':
+                    return 'application/yaml; charset=utf-8';
+                case 'XML':
+                    return 'text/xml; charset=utf-8';
+                case 'TXT':
+                    return 'text/plain; charset=utf-8';
+            }
+        },
+        setCorrectType(s: string) {
+            let found = false;
+                this.headers.forEach((h) => {
+                    if (h.name == 'Content-Type') {
+                        h.value = this.getCorrectType(s) || 'text/plain';
+                        found = true;
+                    }
+                });
+                if (!found) {
+                    this.headers.push({
+                        name: 'Content-Type',
+                        value: this.getCorrectType(s) || 'text/plain',
+                        enabled: true,
+                    });
+                }
+        },
         sendHeader() {
             localStorage.setItem(
                 `${this.name}-headers-${this.type}`,
@@ -478,9 +506,14 @@ export default {
                 automaticLayout: true,
                 minimap: { enabled: false, },
                 maxTokenizationLineLength: Infinity,
-            }" theme="vs-dark" @change="sendBody" />
-            <ElSelect v-model="bodyType" class="pt-2">
+            }" theme="vs-dark" @change="() => {
+                setCorrectType(bodyType);
+                sendBody();
+            }" />
+            <ElSelect v-model="bodyType" class="pt-2" @change="setCorrectType">
                 <ElOption value="JSON" />
+                <ElOption value="YAML" />
+                <ElOption value="XML" />
                 <ElOption value="TXT" />
             </ElSelect>
         </ElTabPane>
