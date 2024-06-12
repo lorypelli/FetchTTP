@@ -5,7 +5,6 @@ import {
     ElNotification,
     ElOption,
     ElSelect,
-    ElMessageBox,
 } from 'element-plus';
 import { HTTP } from '../../wailsjs/go/main/App.js';
 import Split from './Split.vue';

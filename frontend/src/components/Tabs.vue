@@ -39,13 +39,20 @@ export function httpTabHandle(
 ) {
     switch (action) {
         case 'add': {
-            const newTabIndex = `${++httpTabIndex}`;
+            let newTabIndex = ++httpTabIndex;
+            const http = localStorage.getItem('httpTab');
+            const tabs = http ? JSON.parse(http) : [];
+            tabs.forEach((t: { name: string }) => {
+                if (t.name == newTabIndex.toString()) {
+                    newTabIndex++;
+                }
+            });
             httpTab.value.push({
-                name: newTabIndex,
+                name: newTabIndex.toString(),
                 select: 'GET',
                 input: '',
             });
-            httpSelectedTab.value = newTabIndex;
+            httpSelectedTab.value = newTabIndex.toString();
             localStorage.setItem('httpTab', JSON.stringify(httpTab.value));
             break;
         }
@@ -83,13 +90,20 @@ export function wsTabHandle(
 ) {
     switch (action) {
         case 'add': {
-            const newTabIndex = `${++wsTabIndex}`;
+            let newTabIndex = ++wsTabIndex;
+            const ws = localStorage.getItem('wsTab');
+            const tabs = ws ? JSON.parse(ws) : [];
+            tabs.forEach((t: { name: string }) => {
+                if (t.name == newTabIndex.toString()) {
+                    newTabIndex++;
+                }
+            });
             wsTab.value.push({
-                name: newTabIndex,
+                name: newTabIndex.toString(),
                 input: '',
                 connected: false,
             });
-            wsSelectedTab.value = newTabIndex;
+            wsSelectedTab.value = newTabIndex.toString();
             localStorage.setItem('wsTab', JSON.stringify(wsTab.value));
             break;
         }
