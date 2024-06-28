@@ -11,8 +11,8 @@
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.1",
     "@imengyu/vue3-context-menu": "^1.4.1",
-    "element-plus": "^2.7.5",
-    "primevue": "^3.52.0",
+    "element-plus": "^2.7.6",
+    "primevue": "^3.53.0",
     "vite-plugin-multip": "^1.1.6"
   },
   "devDependencies": {
@@ -25,8 +25,8 @@
     "prettier-plugin-tailwindcss": "^0.5.14",
     "prettier-plugin-vue": "^1.1.6",
     "tailwindcss": "^3.4.4",
-    "typescript": "^5.4.5",
-    "vite": "^5.3.1",
-    "vue": "^3.4.29"
+    "typescript": "^5.5.2",
+    "vite": "^5.3.2",
+    "vue": "^3.4.31"
   }
 }

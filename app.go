@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	u "net/url"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -21,7 +22,7 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
-const APP_VERSION = "1.5.1"
+const APP_VERSION = "1.5.2"
 
 // App struct
 type App struct {
@@ -125,23 +126,29 @@ func (a *App) HTTP(method string, url string, headers []Header, query []Query, b
 	for i := 0; i < len(query); i++ {
 		if query[i].Enabled && strings.TrimSpace(query[i].Name) != "" && strings.TrimSpace(query[i].Value) != "" {
 			if strings.Contains(url, "?") {
-				url += fmt.Sprintf("&%s=%s", query[i].Name, query[i].Value)
+				url += fmt.Sprintf("&%s=%s", query[i].Name, u.QueryEscape(query[i].Value))
 			} else {
-				url += fmt.Sprintf("?%s=%s", query[i].Name, query[i].Value)
+				url += fmt.Sprintf("?%s=%s", query[i].Name, u.QueryEscape(query[i].Value))
 			}
 		}
 	}
-	req, err := http.NewRequest(method, url, bytes.NewReader(data))
+	uri, err := u.Parse(url)
 	if err != nil {
 		return HTTPResponse{
 			url, "", http.Header{}, "", err.Error(),
+		}
+	}
+	req, err := http.NewRequest(method, uri.String(), bytes.NewReader(data))
+	if err != nil {
+		return HTTPResponse{
+			uri.String(), "", http.Header{}, "", err.Error(),
 		}
 	}
 	for i := 0; i < len(headers); i++ {
 		regexp, err := regexp.Compile(`^[A-Za-z\d[\]{}()<>\/@?=:";,-]*$`)
 		if err != nil {
 			return HTTPResponse{
-				url, "", http.Header{}, "", err.Error(),
+				uri.String(), "", http.Header{}, "", err.Error(),
 			}
 		}
 		if headers[i].Enabled && strings.TrimSpace(headers[i].Name) != "" && regexp.MatchString(headers[i].Name) && strings.TrimSpace(headers[i].Value) != "" {
@@ -160,7 +167,7 @@ func (a *App) HTTP(method string, url string, headers []Header, query []Query, b
 	close(ch)
 	if baseResponse.Err != nil {
 		return HTTPResponse{
-			url, "", http.Header{}, "", baseResponse.Err.Error(),
+			uri.String(), "", http.Header{}, "", baseResponse.Err.Error(),
 		}
 	}
 	defer baseResponse.Res.Body.Close()
@@ -170,27 +177,27 @@ func (a *App) HTTP(method string, url string, headers []Header, query []Query, b
 		bytes, err := io.ReadAll(baseResponse.Res.Body)
 		if err != nil {
 			return HTTPResponse{
-				url, "", http.Header{}, "", err.Error(),
+				uri.String(), "", http.Header{}, "", err.Error(),
 			}
 		}
 		j.Unmarshal(bytes, &jsonBody)
 		resBody, err = j.MarshalIndent(jsonBody, "", "\t")
 		if err != nil {
 			return HTTPResponse{
-				url, "", http.Header{}, "", err.Error(),
+				uri.String(), "", http.Header{}, "", err.Error(),
 			}
 		}
 	} else {
 		bytes, err := io.ReadAll(baseResponse.Res.Body)
 		if err != nil {
 			return HTTPResponse{
-				url, "", http.Header{}, "", err.Error(),
+				uri.String(), "", http.Header{}, "", err.Error(),
 			}
 		}
 		resBody = bytes
 	}
 	return HTTPResponse{
-		url, baseResponse.Res.Status, baseResponse.Res.Header, string(resBody), "",
+		uri.String(), baseResponse.Res.Status, baseResponse.Res.Header, string(resBody), "",
 	}
 }
 
@@ -202,11 +209,15 @@ func (a *App) WS(url string, headers []Header, query []Query, connected bool) st
 	for i := 0; i < len(query); i++ {
 		if query[i].Enabled && strings.TrimSpace(query[i].Name) != "" && strings.TrimSpace(query[i].Value) != "" {
 			if strings.Contains(url, "?") {
-				url += fmt.Sprintf("&%s=%s", query[i].Name, query[i].Value)
+				url += fmt.Sprintf("&%s=%s", query[i].Name, u.QueryEscape(query[i].Value))
 			} else {
-				url += fmt.Sprintf("?%s=%s", query[i].Name, query[i].Value)
+				url += fmt.Sprintf("?%s=%s", query[i].Name, u.QueryEscape(query[i].Value))
 			}
 		}
+	}
+	uri, err := u.Parse(url)
+	if err != nil {
+		return err.Error()
 	}
 	header := http.Header{}
 	for i := 0; i < len(headers); i++ {
@@ -219,7 +230,7 @@ func (a *App) WS(url string, headers []Header, query []Query, connected bool) st
 		}
 	}
 	if connected {
-		ws, res, err := websocket.DefaultDialer.Dial(url, header)
+		ws, res, err := websocket.DefaultDialer.Dial(uri.String(), header)
 		currentConnection = ws
 		currentResponse = res
 		currentError = err
