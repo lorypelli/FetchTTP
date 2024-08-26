@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import Splitter from 'primevue/splitter';
 import SplitterPanel from 'primevue/splitterpanel';
+import { GenericHeader as Header, Query } from '../types';
 import Request from './Request.vue';
 import Response from './Response.vue';
 defineOptions({
@@ -23,14 +24,6 @@ const props = defineProps<{
 </script>
 
 <script lang="ts">
-interface Header {
-    [x: string]: string[];
-}
-interface Query {
-    enabled: boolean;
-    name: string;
-    value: string;
-}
 export default {
     emits: {
         query: null,
@@ -83,11 +76,22 @@ export default {
 <template>
     <Splitter :layout="width <= 1024 ? 'vertical' : 'horizontal'">
         <SplitterPanel :min-size="25">
-            <Request :name="props.name" :type="props.type" @headers="handleHeader" @query="handleQuery"
-                @body="handleBody" @message="handleMessage" />
+            <Request
+                :name="props.name"
+                :type="props.type"
+                @headers="handleHeader"
+                @query="handleQuery"
+                @body="handleBody"
+                @message="handleMessage"
+            />
         </SplitterPanel>
         <SplitterPanel :min-size="25">
-            <Response :url="props.url" :status="props.status" :header="props.header" :response="props.response" />
+            <Response
+                :url="props.url"
+                :status="props.status"
+                :header="props.header"
+                :response="props.response"
+            />
         </SplitterPanel>
     </Splitter>
 </template>

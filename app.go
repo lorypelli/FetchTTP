@@ -285,7 +285,7 @@ func (a *App) CheckUpdates() Update {
 		}
 	}
 	defer res.Body.Close()
-	jsonBody := Github{}
+	var jsonBody Github
 	bytes, err := io.ReadAll(res.Body)
 	if err != nil {
 		return Update{

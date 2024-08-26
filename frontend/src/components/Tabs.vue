@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ElTabs, ElTabPane, TabPaneName } from 'element-plus';
+import { ElTabPane, ElTabs, TabPaneName } from 'element-plus';
 import { ref } from 'vue';
 defineOptions({
     name: 'Tabs',
@@ -215,8 +215,8 @@ export default {
                 this.type == 'http'
                     ? httpTab.value.length
                     : this.type == 'ws'
-                        ? wsTab.value.length
-                        : null;
+                      ? wsTab.value.length
+                      : null;
             if (tab) {
                 switch (this.type) {
                     case 'http': {
@@ -243,15 +243,28 @@ export default {
 </script>
 
 <template>
-    <ElTabs v-model="selectedTab" tab-position="left" editable @edit="tabHandle" @keyup="() => {
-        key = '';
-    }
-        " @keydown.alt="keyHandle">
-        <ElTabPane v-for="(item, index) in props.type == 'http'
-            ? httpTab
-            : props.type == 'ws'
-                ? wsTab
-                : null" :key="index" :label="item.name" :name="item.name">
+    <ElTabs
+        v-model="selectedTab"
+        tab-position="left"
+        editable
+        @edit="tabHandle"
+        @keyup="
+            () => {
+                key = '';
+            }
+        "
+        @keydown.alt="keyHandle"
+    >
+        <ElTabPane
+            v-for="(item, index) in props.type == 'http'
+                ? httpTab
+                : props.type == 'ws'
+                  ? wsTab
+                  : null"
+            :key="index"
+            :label="item.name"
+            :name="item.name"
+        >
             <slot :item="item as CompleteItem" />
         </ElTabPane>
     </ElTabs>

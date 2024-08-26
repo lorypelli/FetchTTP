@@ -4,7 +4,7 @@ export default {
     theme: {
         extend: {
             fontFamily: {
-                custom: '\'Martian Mono\', monospace',
+                custom: "'Martian Mono', monospace",
             },
             backgroundColor: {
                 primary: '#171717',
@@ -36,7 +36,7 @@ export default {
             },
             borderWidth: {
                 custom: '5px',
-            }
+            },
         },
     },
     plugins: [],

@@ -3,12 +3,13 @@ import {
     ElButton,
     ElInput,
     ElNotification,
-    ElTabs,
     ElTabPane,
+    ElTabs,
 } from 'element-plus';
 import { WS } from '../../wailsjs/go/main/App';
-import Split from './Split.vue';
 import { EventsEmit, EventsOff, EventsOn } from '../../wailsjs/runtime/runtime';
+import { Header, Query, Response } from '../types';
+import Split from './Split.vue';
 import Tabs, { CompleteItem } from './Tabs.vue';
 defineOptions({
     name: 'WS',
@@ -23,21 +24,6 @@ defineOptions({
 </script>
 
 <script lang="ts">
-interface Header {
-    enabled: boolean;
-    name: string;
-    value: string;
-}
-interface Query {
-    enabled: boolean;
-    name: string;
-    value: string;
-}
-interface Response {
-    Status: string;
-    Header: [];
-    Message: string;
-}
 let headers: Header[] = [
     {
         enabled: true,
@@ -71,7 +57,7 @@ export default {
         },
         async sendWebsocket(item: CompleteItem) {
             if (item.input) {
-                if (!/http?s/.test(item.input)) {
+                if (!/ws?s/.test(item.input)) {
                     item.input = 'wss://' + item.input;
                 }
             } else {
@@ -120,14 +106,30 @@ export default {
     <Tabs type="ws">
         <template #default="{ item }">
             <div class="flex p-1 space-x-1">
-                <ElInput v-model="item.input" :disabled="item.connected" placeholder="echo.websocket.org"
-                    @input="handleInput(item)" @keydown.enter="sendWebsocket(item)" />
-                <ElButton v-model="item.connected" class="w-36" @click="sendWebsocket(item)">
+                <ElInput
+                    v-model="item.input"
+                    :disabled="item.connected"
+                    placeholder="echo.websocket.org"
+                    @input="handleInput(item)"
+                    @keydown.enter="sendWebsocket(item)"
+                />
+                <ElButton
+                    v-model="item.connected"
+                    class="w-36"
+                    @click="sendWebsocket(item)"
+                >
                     {{ item.connected ? 'Disconnect' : 'Connect' }}
                 </ElButton>
             </div>
-            <Split :name="item.name" :status="status" :header="header" :response="response" type="ws"
-                @headers="handleHeader" @query="handleQuery" />
+            <Split
+                :name="item.name"
+                :status="status"
+                :header="header"
+                :response="response"
+                type="ws"
+                @headers="handleHeader"
+                @query="handleQuery"
+            />
         </template>
     </Tabs>
 </template>

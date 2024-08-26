@@ -7,6 +7,7 @@ import {
     ElSelect,
 } from 'element-plus';
 import { HTTP } from '../../wailsjs/go/main/App.js';
+import { Header, Query, Response } from '../types';
 import Split from './Split.vue';
 import Tabs, { CompleteItem } from './Tabs.vue';
 defineOptions({
@@ -23,23 +24,6 @@ defineOptions({
 </script>
 
 <script lang="ts">
-interface Header {
-    enabled: boolean;
-    name: string;
-    value: string;
-}
-interface Query {
-    enabled: boolean;
-    name: string;
-    value: string;
-}
-interface Response {
-    URL: string;
-    Status: string;
-    Header: [];
-    Body: string;
-    Error: string;
-}
 let headers: Header[] = [
     {
         enabled: true,
@@ -125,7 +109,11 @@ export default {
     <Tabs type="http">
         <template #default="{ item }">
             <div class="flex p-1 space-x-1">
-                <ElSelect v-model="item.select" class="w-32" @change="handleSelect(item)">
+                <ElSelect
+                    v-model="item.select"
+                    class="w-32"
+                    @change="handleSelect(item)"
+                >
                     <ElOption value="GET" />
                     <ElOption value="HEAD" />
                     <ElOption value="POST" />
@@ -136,33 +124,52 @@ export default {
                     <ElOption value="TRACE" />
                     <ElOption value="PATCH" />
                 </ElSelect>
-                <ElInput v-model="item.input" placeholder="echo.zuplo.io" @input="handleInput(item)" @keydown.enter="() => {
-                    previousRequestTime = Date.now();
-                    const res = getRequest();
-                    if (res <= 175) {
-                        requestTime = Date.now();
-                        return;
-                    }
-                    else {
-                        sendRequest(item)
-                    }
-                }" />
-                <ElButton class="w-20" @click="() => {
-                    previousRequestTime = Date.now();
-                    const res = getRequest();
-                    if (res <= 175) {
-                        requestTime = Date.now();
-                        return;
-                    }
-                    else {
-                        sendRequest(item)
-                    }
-                }">
+                <ElInput
+                    v-model="item.input"
+                    placeholder="echo.zuplo.io"
+                    @input="handleInput(item)"
+                    @keydown.enter="
+                        () => {
+                            previousRequestTime = Date.now();
+                            const res = getRequest();
+                            if (res <= 175) {
+                                requestTime = Date.now();
+                                return;
+                            } else {
+                                sendRequest(item);
+                            }
+                        }
+                    "
+                />
+                <ElButton
+                    class="w-20"
+                    @click="
+                        () => {
+                            previousRequestTime = Date.now();
+                            const res = getRequest();
+                            if (res <= 175) {
+                                requestTime = Date.now();
+                                return;
+                            } else {
+                                sendRequest(item);
+                            }
+                        }
+                    "
+                >
                     Send
                 </ElButton>
             </div>
-            <Split :name="item.name" :url="url" :status="status" :header="header" :response="response" type="http"
-                @headers="handleHeader" @query="handleQuery" @body="handleBody" />
+            <Split
+                :name="item.name"
+                :url="url"
+                :status="status"
+                :header="header"
+                :response="response"
+                type="http"
+                @headers="handleHeader"
+                @query="handleQuery"
+                @body="handleBody"
+            />
         </template>
     </Tabs>
 </template>
