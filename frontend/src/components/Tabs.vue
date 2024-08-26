@@ -73,10 +73,7 @@ export function httpTabHandle(
             httpTab.value = t.filter((tab) => tab.name != targetName);
             localStorage.setItem('httpTab', JSON.stringify(httpTab.value));
             if (t.length == 1) {
-                localStorage.clear()
-                localStorage.removeItem(`${t[0].name}-select`)
-                localStorage.removeItem(`${t[0].name}-input-http`)
-                localStorage.removeItem('httpTab');
+                localStorage.clear();
                 httpTabIndex = 0;
                 httpTabHandle(undefined, 'add');
             }
@@ -124,8 +121,7 @@ export function wsTabHandle(
             wsTab.value = t.filter((tab) => tab.name != targetName);
             localStorage.setItem('wsTab', JSON.stringify(wsTab.value));
             if (t.length == 1) {
-                localStorage.removeItem(`${t[0].name}-input-ws`)
-                localStorage.removeItem('wsTab');
+                localStorage.clear();
                 wsTabIndex = 0;
                 wsTabHandle(undefined, 'add');
             }

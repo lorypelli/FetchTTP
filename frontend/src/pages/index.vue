@@ -26,17 +26,11 @@ defineOptions({
 </script>
 
 <script lang="ts">
-interface Update {
-    IsLatest: boolean;
-    Version: string;
-    Description: string;
-    Error: string;
-}
 const selectedTab = ref('HTTP');
 export default {
     mounted() {
         try {
-            CheckUpdates().then((res: Update) => {
+            CheckUpdates().then((res: any) => {
                 if (res.Error) {
                     ElNotification({
                         title: 'Error while checking for updates!',
@@ -122,10 +116,17 @@ export default {
                         ],
                     },
                     {
+                        label: 'Duplicate',
+                        onClick: () => {
+                            selectedTab.value == 'HTTP' ? HTTPTab(undefined, 'add') : WSTab(undefined, 'add')
+                            localStorage.getItem(`${selectedTab}`)
+                        },
+                    },
+                    {
                         label: 'Check for Updates',
                         onClick: () => {
                             try {
-                                CheckUpdates().then((res: Update) => {
+                                CheckUpdates().then((res: any) => {
                                     if (res.Error) {
                                         ElNotification({
                                             title: 'Error while checking for updates!',

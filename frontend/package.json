@@ -10,23 +10,23 @@
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.1",
-    "@imengyu/vue3-context-menu": "^1.4.1",
-    "element-plus": "^2.7.6",
+    "@imengyu/vue3-context-menu": "^1.4.2",
+    "element-plus": "^2.8.1",
     "primevue": "^3.53.0",
-    "vite-plugin-multip": "^1.1.6"
+    "vite-plugin-multip": "^1.1.7"
   },
   "devDependencies": {
-    "@guolao/vue-monaco-editor": "^1.5.1",
-    "@vitejs/plugin-vue": "^5.0.5",
-    "autoprefixer": "^10.4.19",
-    "postcss": "^8.4.38",
-    "prettier": "^3.3.2",
-    "prettier-plugin-organize-imports": "^3.2.4",
-    "prettier-plugin-tailwindcss": "^0.5.14",
+    "@guolao/vue-monaco-editor": "^1.5.4",
+    "@vitejs/plugin-vue": "^5.1.2",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.41",
+    "prettier": "^3.3.3",
+    "prettier-plugin-organize-imports": "^4.0.0",
+    "prettier-plugin-tailwindcss": "^0.6.6",
     "prettier-plugin-vue": "^1.1.6",
-    "tailwindcss": "^3.4.4",
-    "typescript": "^5.5.2",
-    "vite": "^5.3.2",
-    "vue": "^3.4.31"
+    "tailwindcss": "^3.4.10",
+    "typescript": "^5.5.4",
+    "vite": "^5.4.2",
+    "vue": "^3.4.38"
   }
 }

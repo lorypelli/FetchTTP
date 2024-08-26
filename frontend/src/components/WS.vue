@@ -71,10 +71,7 @@ export default {
         },
         async sendWebsocket(item: CompleteItem) {
             if (item.input) {
-                if (
-                    !item.input.startsWith('ws://') &&
-                    !item.input.startsWith('wss://')
-                ) {
+                if (!/http?s/.test(item.input)) {
                     item.input = 'wss://' + item.input;
                 }
             } else {

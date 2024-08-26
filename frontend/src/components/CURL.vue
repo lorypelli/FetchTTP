@@ -22,19 +22,6 @@ defineOptions({
 const curl = ref('');
 </script>
 
-<script lang="ts">
-interface Header {
-    [x: string]: string[];
-}
-interface Response {
-    URL: string;
-    Status: string;
-    Header: Header;
-    Body: string;
-    Error: string;
-}
-</script>
-
 <template>
     <ElButton @click="() => {
             ElMessageBox({
@@ -68,14 +55,11 @@ interface Response {
             })
                 .then(() => {
                     let url = curl.replace('curl', '').trim();
-                    if (
-                        !url.startsWith('http://') &&
-                        !url.startsWith('https://')
-                    ) {
+                    if (!/http?s/.test(url)) {
                         url = 'https://' + url;
                     }
                     try {
-                        CURL(url).then((res: Response) => {
+                        CURL(url).then((res: any) => {
                             if (res.Error) {
                                 ElNotification({
                                     title: 'Something went wrong!',

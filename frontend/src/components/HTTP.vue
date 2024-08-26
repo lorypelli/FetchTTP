@@ -87,10 +87,7 @@ export default {
         },
         sendRequest(item: CompleteItem) {
             if (item.input) {
-                if (
-                    !item.input.startsWith('http://') &&
-                    !item.input.startsWith('https://')
-                ) {
+                if (!/http?s/.test(item.input)) {
                     item.input = 'https://' + item.input;
                 }
             } else {
@@ -98,7 +95,7 @@ export default {
             }
             try {
                 HTTP(item.select, item.input, headers, query, body).then(
-                    (res) => {
+                    (res: any) => {
                         if (res.Error) {
                             ElNotification({
                                 title: 'Something went wrong!',

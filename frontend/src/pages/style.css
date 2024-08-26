@@ -31,7 +31,7 @@ span.el-text {
     @apply overflow-hidden p-0;
 }
 
-.el-overlay-message-box[aria-label='Response'] > .el-message-box {
+.el-overlay-message-box[aria-label='Response']>.el-message-box {
     @apply max-w-container;
 }
 
@@ -72,13 +72,20 @@ span.el-text {
     @apply mb-2;
 }
 
-.pl-2 > .el-tabs__content > .el-tab-pane,
-.pr-2 > .el-tabs__content > .el-tab-pane {
-    @apply h-full overflow-y-auto;
+.pl-2>.el-tabs__content>.el-tab-pane {
+    @apply h-1/2 lg:h-full overflow-y-auto;
+}
+
+.pr-2>.el-tabs__content>.el-tab-pane {
+    @apply h-1/4 lg:h-full overflow-y-auto;
 }
 
 .el-tabs__nav.is-left {
     @apply h-max;
+}
+
+.el-tabs__new-tab {
+    @apply fixed bottom-0;
 }
 
 .el-tabs__nav-scroll {
@@ -95,14 +102,4 @@ span.el-text {
 
 ::-webkit-scrollbar-thumb {
     @apply rounded-custom border-custom border-solid border-primary bg-secondary;
-}
-
-@media only screen and (max-width: 1024px) {
-    .pr-2 > .el-tabs__content > .el-tab-pane {
-        @apply h-1/4;
-    }
-
-    .pl-2 > .el-tabs__content > .el-tab-pane {
-        @apply h-1/2;
-    }
 }
