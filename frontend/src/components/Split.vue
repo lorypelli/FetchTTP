@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Splitter from 'primevue/splitter';
 import SplitterPanel from 'primevue/splitterpanel';
-import { GenericHeader as Header, Query } from '../types';
+import type { GenericHeader as Header, Query } from '../types';
 import Request from './Request.vue';
 import Response from './Response.vue';
 defineOptions({

@@ -7,7 +7,7 @@ import {
     ElSelect,
 } from 'element-plus';
 import { HTTP } from '../../wailsjs/go/main/App.js';
-import { Header, Query, Response } from '../types';
+import type { Header, Query, Response } from '../types';
 import Split from './Split.vue';
 import Tabs, { CompleteItem } from './Tabs.vue';
 defineOptions({

@@ -8,7 +8,7 @@ import {
 } from 'element-plus';
 import { WS } from '../../wailsjs/go/main/App';
 import { EventsEmit, EventsOff, EventsOn } from '../../wailsjs/runtime/runtime';
-import { Header, Query, Response } from '../types';
+import type { Header, Query, Response } from '../types';
 import Split from './Split.vue';
 import Tabs, { CompleteItem } from './Tabs.vue';
 defineOptions({

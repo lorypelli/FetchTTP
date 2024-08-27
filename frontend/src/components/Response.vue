@@ -2,7 +2,7 @@
 import { VueMonacoEditor } from '@guolao/vue-monaco-editor';
 import { ElEmpty, ElSwitch, ElTabPane, ElTabs, ElText } from 'element-plus';
 import { ref } from 'vue';
-import { GenericHeader as Header } from '../types';
+import type { GenericHeader as Header } from '../types';
 defineOptions({
     name: 'Response',
     components: {
