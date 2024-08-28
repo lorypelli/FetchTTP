@@ -63,15 +63,6 @@ export default {
                         ],
                     },
                     {
-                        label: 'Duplicate',
-                        onClick: () => {
-                            selectedTab.value == 'HTTP'
-                                ? HTTPTab(undefined, 'add')
-                                : WSTab(undefined, 'add');
-                            localStorage.getItem(`${selectedTab}`);
-                        },
-                    },
-                    {
                         label: 'Check for Updates',
                         onClick: () => checkUpdates('menu'),
                     },

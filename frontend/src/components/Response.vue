@@ -27,7 +27,7 @@ const readable = ref(true);
 export default {
     methods: {
         getColor(s: string) {
-            let status = parseInt(s.split(' ')[0]);
+            const status = parseInt(s.split(' ')[0]);
             if (status >= 100 && status < 200) {
                 return 'blue';
             } else if (status >= 200 && status < 300) {
