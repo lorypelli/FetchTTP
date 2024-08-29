@@ -11,8 +11,10 @@ import {
     ElSelect,
     ElTabPane,
     ElTabs,
+    ElMessageBox
 } from 'element-plus';
-import { h, ref } from 'vue';
+import { h, ref, reactive } from 'vue';
+import { EventsEmit } from '../../wailsjs/runtime/runtime';
 defineOptions({
     name: 'Request',
     components: {

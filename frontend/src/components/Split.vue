@@ -37,11 +37,11 @@ export default {
         };
     },
     mounted() {
-        let headers = localStorage.getItem(`${this.name}-headers-${this.type}`);
+        const headers = localStorage.getItem(`${this.name}-headers-${this.type}`);
         if (headers) {
             this.handleHeader(JSON.parse(headers));
         }
-        let query = localStorage.getItem(`${this.name}-query-${this.type}`);
+        const query = localStorage.getItem(`${this.name}-query-${this.type}`);
         if (query) {
             this.handleQuery(JSON.parse(query));
         }

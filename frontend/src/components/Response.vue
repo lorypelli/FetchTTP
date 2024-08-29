@@ -111,7 +111,7 @@ export default {
             <ElEmpty
                 v-if="Object.keys(props.header).length == 0"
                 class="flex justify-center h-1/2 lg:h-full"
-                description="Nothing to display here..."
+                description="Nothing to show here..."
             />
             <ElText
                 class="flex justify-center sticky top-0 bg-primary"
@@ -140,7 +140,7 @@ export default {
             <ElEmpty
                 v-if="['', 'null'].includes(props.response.trim())"
                 class="flex justify-center h-1/2 lg:h-full"
-                description="Nothing to display here..."
+                description="Nothing to show here..."
             />
             <VueMonacoEditor
                 v-if="
