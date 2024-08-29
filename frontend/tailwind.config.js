@@ -4,28 +4,13 @@ export default {
     theme: {
         extend: {
             backgroundColor: {
-                primary: '#E7E5E4',
-                primary_dark: '#181A1B',
-            },
-            textColor: {
-                primary: '#E7E5E4',
-                primary_dark: '#181A1B',
+                primary: '#171717',
+                secondary: '#232323',
             },
             fontFamily: {
                 custom: "'Martian Mono', monospace",
             },
-            width: {
-                container: '85vw',
-                container_fit: 'calc(100% - 8rem)',
-            },
-            height: {
-                container: '85vh',
-            },
-            maxHeight: {
-                container_fit: 'calc(85vh - 11rem)',
-            },
         },
     },
-    darkMode: 'media',
     plugins: [],
 };
