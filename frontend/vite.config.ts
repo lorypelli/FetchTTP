@@ -1,12 +1,8 @@
-import vue from '@vitejs/plugin-vue';
+import { svelte } from '@sveltejs/vite-plugin-svelte';
 import { defineConfig } from 'vite';
 import { multip } from 'vite-plugin-multip';
+
+// https://vitejs.dev/config/
 export default defineConfig({
-    plugins: [vue(), multip()],
-    optimizeDeps: {
-        include: ['vue'],
-    },
-    server: {
-        host: '127.0.0.1',
-    },
+    plugins: [svelte(), multip()],
 });

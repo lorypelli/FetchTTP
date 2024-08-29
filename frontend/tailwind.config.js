@@ -1,43 +1,31 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-    content: ['./index.html', './src/**/*.{vue,js,ts,jsx,tsx}'],
+    content: ['./index.html', './src/**/*.{svelte,js,ts,jsx,tsx}'],
     theme: {
         extend: {
+            backgroundColor: {
+                primary: '#E7E5E4',
+                primary_dark: '#181A1B',
+            },
+            textColor: {
+                primary: '#E7E5E4',
+                primary_dark: '#181A1B',
+            },
             fontFamily: {
                 custom: "'Martian Mono', monospace",
             },
-            backgroundColor: {
-                primary: '#171717',
-                secondary: '#232323',
-            },
             width: {
-                0.25: '1px',
-            },
-            maxWidth: {
-                container: '1000px',
+                container: '85vw',
+                container_fit: 'calc(100% - 8rem)',
             },
             height: {
-                0.25: '1px',
-                '1/4': '25vh',
-                '1/2': '50vh',
-                max: '90vh',
-                full: '80vh',
-                partial: '70vh',
-                fit: '20vh',
+                container: '85vh',
             },
-            zIndex: {
-                1: 1,
-            },
-            borderColor: {
-                primary: '#171717',
-            },
-            borderRadius: {
-                custom: '10px',
-            },
-            borderWidth: {
-                custom: '5px',
+            maxHeight: {
+                container_fit: 'calc(85vh - 11rem)',
             },
         },
     },
+    darkMode: 'media',
     plugins: [],
 };
