@@ -5,7 +5,7 @@
     import CURL from '../components/CURL.svelte';
 </script>
 
-<Tabs>
+<Tabs grow>
     <Tabs.Tab label="HTTP">
         <HTTP />
     </Tabs.Tab>
