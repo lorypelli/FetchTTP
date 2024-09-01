@@ -29,22 +29,22 @@
     }
 </script>
 
-<div class="flex justify-between">
+<div class="grid grid-cols-3 gap-x-2">
     <div class="flex flex-col">
-        <button on:click={() => enable('http')}>HTTP</button>
-        <div class="{isHTTP ? 'flex' : 'hidden'} flex-col">
+        <button class="border-2 rounded-md" on:click={() => enable('http')}>HTTP</button>
+        <div class="{isHTTP ? 'flex' : 'hidden'} flex-col w-full absolute left-0 top-8">
             <HTTP />
         </div>
     </div>
     <div class="flex flex-col">
-        <button on:click={() => enable('ws')}>WS</button>
-        <div class="{isWS ? 'flex' : 'hidden'} flex-col">
+        <button class="border-2 rounded-md" on:click={() => enable('ws')}>WS</button>
+        <div class="{isWS ? 'flex' : 'hidden'} flex-col w-full absolute left-0 top-8">
             <WS />
         </div>
     </div>
     <div class="flex flex-col">
-        <button on:click={() => enable('curl')}>CURL</button>
-        <div class="{isCURL ? 'flex' : 'hidden'} flex-col">
+        <button class="border-2 rounded-md" on:click={() => enable('curl')}>CURL</button>
+        <div class="{isCURL ? 'flex' : 'hidden'} flex-col w-full absolute left-0 top-8">
             <CURL />
         </div>
     </div>

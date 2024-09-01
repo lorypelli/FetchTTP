@@ -3,14 +3,15 @@
     let tabs = [1];
 </script>
 
-<div class="flex">
-    {#each tabs as t}
-        <div>
-            {t}
-            <slot />
+{#each tabs as t}
+    <div class="flex">
+        <div class="grid grid-cols-1">
+            <button>{t}</button>
         </div>
-    {/each}
-</div>
+        <slot />
+    </div>
+{/each}
 <button
-    class="mt-0.5"
-    on:click={() => (tabs = [...tabs, tabs.length + 1])}>+</button>
+    class="fixed bottom-0 mt-0.5"
+    on:click={() => (tabs = [...tabs, tabs.length + 1])}>+</button
+>

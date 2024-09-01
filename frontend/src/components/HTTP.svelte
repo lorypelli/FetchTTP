@@ -14,7 +14,7 @@
 </script>
 
 <Tabs type="http">
-    <div class="flex gap-1 justify-center">
+    <div class="flex px-8 w-full gap-1 justify-center">
         <select class="w-24">
             {#each http_methods as method}
                 <option>{method}</option>
