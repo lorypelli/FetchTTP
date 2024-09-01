@@ -1,5 +1,4 @@
 <script lang="ts">
-    import { NativeSelect } from '@svelteuidev/core';
     import Tabs from './Tabs.svelte';
     const http_methods = [
         'GET',
@@ -15,5 +14,13 @@
 </script>
 
 <Tabs type="http">
-    <NativeSelect class="w-20" data={http_methods} />
+    <div class="flex gap-1 justify-center">
+        <select class="w-24">
+            {#each http_methods as method}
+                <option>{method}</option>
+            {/each}
+        </select>
+        <input class="w-full" />
+        <button>Send</button>
+    </div>
 </Tabs>

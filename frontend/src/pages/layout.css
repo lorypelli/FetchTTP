@@ -1,16 +1,3 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-* {
-    @apply overflow-y-hidden;
-}
-
-.svelteui-Tab-label {
-    @apply text-white;
-}
-
-.__svelteui-ref-tabs[aria-orientation='vertical'] {
-    @apply block max-h-[70vh] overflow-y-auto;
-    margin-right: 0 !important;
-}

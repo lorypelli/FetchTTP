@@ -10,6 +10,10 @@ export default {
             fontFamily: {
                 custom: "'Martian Mono', monospace",
             },
+            height: {
+                max: '90vh',
+                full: '85vh',
+            },
         },
     },
     plugins: [],
