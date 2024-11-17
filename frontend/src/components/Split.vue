@@ -5,15 +5,6 @@ import type { GenericHeader as Header, Query } from '../types';
 import Request from './Request.vue';
 import Response from './Response.vue';
 import { onBeforeUnmount, onMounted, ref } from 'vue';
-defineOptions({
-    name: 'Split',
-    components: {
-        Splitter,
-        SplitterPanel,
-        Request,
-        Response,
-    },
-});
 const props = defineProps<{
     name: string;
     url?: string;

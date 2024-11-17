@@ -10,15 +10,6 @@ import {
 import { h, ref } from 'vue';
 import { CURL } from '../../wailsjs/go/main/App.js';
 import { default as R } from './Response.vue';
-defineOptions({
-    name: 'CURL',
-    components: {
-        ElButton,
-        ElForm,
-        ElFormItem,
-        ElInput,
-    },
-});
 const curl = ref('');
 </script>
 

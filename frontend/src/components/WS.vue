@@ -12,16 +12,6 @@ import type { Header, Query, Response, CompleteItem } from '../types';
 import Split from './Split.vue';
 import Tabs from './Tabs.vue';
 import { reactive, ref } from 'vue';
-defineOptions({
-    name: 'WS',
-    components: {
-        ElButton,
-        ElInput,
-        Split,
-        ElTabs,
-        ElTabPane,
-    },
-});
 let headers: Header[] = reactive([
     {
         enabled: true,

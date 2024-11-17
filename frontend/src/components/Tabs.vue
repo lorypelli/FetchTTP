@@ -2,13 +2,6 @@
 import { ElTabPane, ElTabs, TabPaneName } from 'element-plus';
 import type { CompleteItem } from '../types';
 import { computed, onMounted, ref } from 'vue';
-defineOptions({
-    name: 'Tabs',
-    components: {
-        ElTabs,
-        ElTabPane,
-    },
-});
 const props = defineProps<{
     type: 'http' | 'ws';
 }>();
