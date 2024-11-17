@@ -19,6 +19,13 @@ export interface Response {
     Status: string;
     Header: Header[];
     Body: string;
-    Message: string;
+    Message?: string;
     Error: string;
+}
+
+export interface CompleteItem {
+    name: string;
+    select: string;
+    input: string;
+    connected: boolean;
 }

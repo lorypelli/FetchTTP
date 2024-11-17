@@ -4,6 +4,7 @@ import SplitterPanel from 'primevue/splitterpanel';
 import type { GenericHeader as Header, Query } from '../types';
 import Request from './Request.vue';
 import Response from './Response.vue';
+import { onBeforeUnmount, onMounted, ref } from 'vue';
 defineOptions({
     name: 'Split',
     components: {
@@ -21,77 +22,55 @@ const props = defineProps<{
     response: string;
     type: 'http' | 'ws';
 }>();
-</script>
-
-<script lang="ts">
-export default {
-    emits: {
-        query: null,
-        body: null,
-        headers: null,
-        message: null,
-    },
-    data() {
-        return {
-            width: 0,
-        };
-    },
-    mounted() {
-        const headers = localStorage.getItem(`${this.name}-headers-${this.type}`);
-        if (headers) {
-            this.handleHeader(JSON.parse(headers));
-        }
-        const query = localStorage.getItem(`${this.name}-query-${this.type}`);
-        if (query) {
-            this.handleQuery(JSON.parse(query));
-        }
-        this.handleBody(localStorage.getItem(`${this.name}-body`) || '');
-        this.handleMessage(localStorage.getItem(`${this.name}-message`) || '');
-        this.update();
-        window.addEventListener('resize', this.update);
-    },
-    beforeUnmount() {
-        window.removeEventListener('resize', this.update);
-    },
-    methods: {
-        update() {
-            this.width = window.innerWidth;
-        },
-        handleHeader(h: Header) {
-            this.$emit('headers', h);
-        },
-        handleQuery(q: Query) {
-            this.$emit('query', q);
-        },
-        handleBody(b: string) {
-            this.$emit('body', b);
-        },
-        handleMessage(m: string) {
-            this.$emit('message', m);
-        },
-    },
-};
+const emit = defineEmits<{
+    header: [value: Header[]];
+    query: [value: Query[]];
+    body: [value: string];
+    message: [value: string];
+}>();
+const width = ref(0);
+onMounted(() => {
+    const headers = localStorage.getItem(`${props.name}-headers-${props.type}`);
+    if (headers) {
+        handleHeader(JSON.parse(headers));
+    }
+    const query = localStorage.getItem(`${props.name}-query-${props.type}`);
+    if (query) {
+        handleQuery(JSON.parse(query));
+    }
+    handleBody(localStorage.getItem(`${props.name}-body`) || '');
+    handleMessage(localStorage.getItem(`${props.name}-message`) || '');
+    update();
+    window.addEventListener('resize', update);
+})
+onBeforeUnmount(() => {
+    window.removeEventListener('resize', update);
+})
+function update() {
+    width.value = window.innerWidth;
+}
+function handleHeader(h: Header[]) {
+    emit('header', h);
+}
+function handleQuery(q: Query[]) {
+    emit('query', q);
+}
+function handleBody(b: string) {
+    emit('body', b);
+}
+function handleMessage(m: string) {
+    emit('message', m);
+}
 </script>
 
 <template>
     <Splitter :layout="width <= 1024 ? 'vertical' : 'horizontal'">
         <SplitterPanel :min-size="25">
-            <Request
-                :name="props.name"
-                :type="props.type"
-                @headers="handleHeader"
-                @query="handleQuery"
-                @body="handleBody"
-                @message="handleMessage"
-            />
+            <Request :name="props.name" :type="props.type" @headers="handleHeader" @query="handleQuery"
+                @body="handleBody" @message="handleMessage" />
         </SplitterPanel>
         <SplitterPanel :min-size="25">
-            <Response
-                :url="props.url"
-                :status="props.status"
-                :header="props.header"
-                :response="props.response"
-            />
+            <Response :url="props.url" :status="props.status" :header="props.header" :response="props.response" />
         </SplitterPanel>
     </Splitter>
 </template>
