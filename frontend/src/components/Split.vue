@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import Splitter from 'primevue/splitter';
 import SplitterPanel from 'primevue/splitterpanel';
+import { onBeforeUnmount, onMounted, ref } from 'vue';
 import type { GenericHeader as Header, Query } from '../types';
 import Request from './Request.vue';
 import Response from './Response.vue';
-import { onBeforeUnmount, onMounted, ref } from 'vue';
 const props = defineProps<{
     name: string;
     url?: string;
@@ -33,10 +33,10 @@ onMounted(() => {
     handleMessage(localStorage.getItem(`${props.name}-message`) || '');
     update();
     window.addEventListener('resize', update);
-})
+});
 onBeforeUnmount(() => {
     window.removeEventListener('resize', update);
-})
+});
 function update() {
     width.value = window.innerWidth;
 }
@@ -57,11 +57,22 @@ function handleMessage(m: string) {
 <template>
     <Splitter :layout="width <= 1024 ? 'vertical' : 'horizontal'">
         <SplitterPanel :min-size="25">
-            <Request :name="props.name" :type="props.type" @headers="handleHeader" @query="handleQuery"
-                @body="handleBody" @message="handleMessage" />
+            <Request
+                :name="props.name"
+                :type="props.type"
+                @headers="handleHeader"
+                @query="handleQuery"
+                @body="handleBody"
+                @message="handleMessage"
+            />
         </SplitterPanel>
         <SplitterPanel :min-size="25">
-            <Response :url="props.url" :status="props.status" :header="props.header" :response="props.response" />
+            <Response
+                :url="props.url"
+                :status="props.status"
+                :header="props.header"
+                :response="props.response"
+            />
         </SplitterPanel>
     </Splitter>
 </template>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ElInput, ElText } from 'element-plus';
+import { ElInput } from 'element-plus';
 import { ref } from 'vue';
 const props = defineProps<{
     version: string;

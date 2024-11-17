@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ElTabPane, ElTabs, TabPaneName } from 'element-plus';
-import type { CompleteItem } from '../types';
 import { computed, onMounted, ref } from 'vue';
+import type { CompleteItem } from '../types';
 const props = defineProps<{
     type: 'http' | 'ws';
 }>();
@@ -136,8 +136,10 @@ const selectedTab = computed({
             ? httpSelectedTab.value
             : wsSelectedTab.value;
     },
-})
-const tabHandle = computed(() => props.type == 'http' ? httpTabHandle : wsTabHandle)
+});
+const tabHandle = computed(() =>
+    props.type == 'http' ? httpTabHandle : wsTabHandle,
+);
 onMounted(() => {
     let http = localStorage.getItem('httpTab');
     let httpLen = 1;
@@ -149,9 +151,7 @@ onMounted(() => {
         httpSelectedTab.value = httpJson[0].name.toString();
     }
     for (let i = 0; i < httpLen; i++) {
-        const select = localStorage.getItem(
-            `${httpTab.value[i].name}-select`,
-        );
+        const select = localStorage.getItem(`${httpTab.value[i].name}-select`);
         if (select) {
             httpTab.value[i].select = select;
         }
@@ -172,14 +172,12 @@ onMounted(() => {
         wsSelectedTab.value = wsJson[0].name.toString();
     }
     for (let i = 0; i < wsLen; i++) {
-        const wsInput = localStorage.getItem(
-            `${wsTab.value[i].name}-input-ws`,
-        );
+        const wsInput = localStorage.getItem(`${wsTab.value[i].name}-input-ws`);
         if (wsInput) {
             wsTab.value[i].input = wsInput;
         }
     }
-})
+});
 function keyHandle(e: KeyboardEvent) {
     setTimeout(() => {
         if (/^[0-9]$/.test(e.key)) {
@@ -190,8 +188,8 @@ function keyHandle(e: KeyboardEvent) {
         props.type == 'http'
             ? httpTab.value.length
             : props.type == 'ws'
-                ? wsTab.value.length
-                : null;
+              ? wsTab.value.length
+              : null;
     if (tab) {
         switch (props.type) {
             case 'http': {
@@ -216,15 +214,28 @@ function keyHandle(e: KeyboardEvent) {
 </script>
 
 <template>
-    <ElTabs v-model="selectedTab" tab-position="left" editable @edit="tabHandle" @keyup="() => {
-        key = '';
-    }
-        " @keydown.alt="keyHandle">
-        <ElTabPane v-for="(item, index) in props.type == 'http'
-            ? httpTab
-            : props.type == 'ws'
-                ? wsTab
-                : null" :key="index" :label="item.name" :name="item.name">
+    <ElTabs
+        v-model="selectedTab"
+        tab-position="left"
+        editable
+        @edit="tabHandle"
+        @keyup="
+            () => {
+                key = '';
+            }
+        "
+        @keydown.alt="keyHandle"
+    >
+        <ElTabPane
+            v-for="(item, index) in props.type == 'http'
+                ? httpTab
+                : props.type == 'ws'
+                  ? wsTab
+                  : null"
+            :key="index"
+            :label="item.name"
+            :name="item.name"
+        >
             <slot :item="item as CompleteItem" />
         </ElTabPane>
     </ElTabs>

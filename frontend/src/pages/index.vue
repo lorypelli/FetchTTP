@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import ContextMenu from '@imengyu/vue3-context-menu';
 import { ElNotification, ElTabPane, ElTabs } from 'element-plus';
 import 'element-plus/dist/index.css';
 import 'primevue/resources/themes/aura-light-green/theme.css';
@@ -12,7 +13,6 @@ import {
 import Updater from '../components/Updater.vue';
 import WS from '../components/WS.vue';
 import { checkUpdates } from '../functions/checkUpdates';
-import ContextMenu from '@imengyu/vue3-context-menu';
 defineOptions({
     name: 'App',
     components: {
@@ -27,7 +27,7 @@ defineOptions({
 const selectedTab = ref('HTTP');
 onMounted(() => {
     import.meta.env.PROD && checkUpdates('load');
-})
+});
 function onContextMenu(e: MouseEvent) {
     e.preventDefault();
     ContextMenu.showContextMenu({
@@ -67,8 +67,7 @@ function onContextMenu(e: MouseEvent) {
                 onClick: () =>
                     ElNotification({
                         title: 'Devtools',
-                        message:
-                            'To open devtools use CMD/CTRL + SHIFT + F12',
+                        message: 'To open devtools use CMD/CTRL + SHIFT + F12',
                         type: 'info',
                         position: 'bottom-right',
                     }),
@@ -79,26 +78,35 @@ function onContextMenu(e: MouseEvent) {
 </script>
 
 <template>
-    <ElTabs v-model="selectedTab" @contextmenu="onContextMenu($event)" @keydown.alt="(e: KeyboardEvent) => {
-        switch (e.key.toUpperCase()) {
-            case 'H': {
-                selectedTab = 'HTTP';
-                break;
+    <ElTabs
+        v-model="selectedTab"
+        @contextmenu="onContextMenu($event)"
+        @keydown.alt="
+            (e: KeyboardEvent) => {
+                switch (e.key.toUpperCase()) {
+                    case 'H': {
+                        selectedTab = 'HTTP';
+                        break;
+                    }
+                    case 'W': {
+                        selectedTab = 'WS';
+                        break;
+                    }
+                }
             }
-            case 'W': {
-                selectedTab = 'WS';
-                break;
-            }
-        }
-    }
-        ">
+        "
+    >
         <ElTabPane label="HTTP" name="HTTP">
             <HTTP />
         </ElTabPane>
         <ElTabPane label="WS" name="WS">
             <WS />
         </ElTabPane>
-        <ElTabPane class="flex justify-center items-center h-max place-items-center scale-150" label="CURL" name="CURL">
+        <ElTabPane
+            class="flex justify-center items-center h-max place-items-center scale-150"
+            label="CURL"
+            name="CURL"
+        >
             <CURL />
         </ElTabPane>
     </ElTabs>

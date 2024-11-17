@@ -7,13 +7,13 @@ import {
     ElForm,
     ElFormItem,
     ElInput,
+    ElMessageBox,
     ElOption,
     ElSelect,
     ElTabPane,
     ElTabs,
-    ElMessageBox
 } from 'element-plus';
-import { h, ref, reactive } from 'vue';
+import { h, reactive, ref } from 'vue';
 import { EventsEmit } from '../../wailsjs/runtime/runtime';
 const props = defineProps<{
     name: string;
