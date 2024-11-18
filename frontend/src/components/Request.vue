@@ -13,202 +13,172 @@ import {
     ElTabPane,
     ElTabs,
 } from 'element-plus';
-import { h, reactive, ref } from 'vue';
+import { h, onMounted, reactive, ref } from 'vue';
 import { EventsEmit } from '../../wailsjs/runtime/runtime';
+import type { Header, Query } from '../types';
 const props = defineProps<{
     name: string;
     type: 'http' | 'ws';
 }>();
+const emit = defineEmits<{
+    headers: [value: Header[]];
+    query: [value: Query[]];
+    body: [value: string];
+    message: [value: string];
+}>();
 const bodyType = ref('JSON');
-</script>
-
-<script lang="ts">
-export default {
-    emits: {
-        query: null,
-        body: null,
-        headers: null,
-        message: null,
+let headers: Header[] = reactive([
+    {
+        enabled: true,
+        name: 'User-Agent',
+        value: 'FetchTTP',
     },
-    data() {
-        return {
-            headers: [
-                {
-                    enabled: true,
-                    name: 'User-Agent',
-                    value: 'FetchTTP',
-                },
-            ],
-            query: [
-                {
-                    enabled: false,
-                    name: '',
-                    value: '',
-                },
-            ],
-            body: '',
-            message: '',
-        };
-    },
-    mounted() {
-        let headers = localStorage.getItem(`${this.name}-headers-${this.type}`);
-        if (headers) {
-            this.headers = JSON.parse(headers);
-        } else {
-            this.headers = [
-                {
-                    enabled: true,
-                    name: 'User-Agent',
-                    value: 'FetchTTP',
-                },
-            ];
+]);
+let query: Query[] = reactive([]);
+const body = ref('');
+const message = ref('');
+onMounted(() => {
+    let localHeaders = localStorage.getItem(
+        `${props.name}-headers-${props.type}`,
+    );
+    if (localHeaders) {
+        headers = JSON.parse(localHeaders);
+    }
+    let localQuery = localStorage.getItem(`${props.name}-query-${props.type}`);
+    if (localQuery) {
+        query = JSON.parse(localQuery);
+    }
+    body.value = localStorage.getItem(`${props.name}-body`) || '';
+    message.value = localStorage.getItem(`${props.name}-message`) || '';
+});
+function add(type: 'header' | 'query', index: number) {
+    switch (type) {
+        case 'header': {
+            for (let i = 0; i < headers.length; i++) {
+                if (i == index) {
+                    headers.splice(i + 1, 0, {
+                        enabled: false,
+                        name: '',
+                        value: '',
+                    });
+                }
+            }
+            break;
         }
-        let query = localStorage.getItem(`${this.name}-query-${this.type}`);
-        if (query) {
-            this.query = JSON.parse(query);
-        } else {
-            this.query = [
-                {
-                    enabled: false,
-                    name: '',
-                    value: '',
-                },
-            ];
+        case 'query': {
+            for (let i = 0; i < query.length; i++) {
+                if (i == index) {
+                    query.splice(i + 1, 0, {
+                        enabled: false,
+                        name: '',
+                        value: '',
+                    });
+                }
+            }
+            break;
         }
-        this.body = localStorage.getItem(`${this.name}-body`) || '';
-        this.message = localStorage.getItem(`${this.name}-message`) || '';
-    },
-    methods: {
-        add(type: 'header' | 'query', index: number) {
-            switch (type) {
-                case 'header': {
-                    for (let i = 0; i < this.headers.length; i++) {
-                        if (i == index) {
-                            this.headers.splice(i + 1, 0, {
-                                enabled: false,
-                                name: '',
-                                value: '',
-                            });
-                        }
+    }
+}
+function remove(type: 'header' | 'query', index: number) {
+    switch (type) {
+        case 'header': {
+            for (let i = 0; i < headers.length; i++) {
+                if (i == index) {
+                    if (i == 0) {
+                        headers[0] = {
+                            enabled: false,
+                            name: '',
+                            value: '',
+                        };
+                        localStorage.removeItem(
+                            `${props.name}-headers-${props.type}`,
+                        );
+                    } else {
+                        headers.splice(i, 1);
+                        localStorage.setItem(
+                            `${props.name}-headers-${props.type}`,
+                            JSON.stringify(headers),
+                        );
                     }
-                    break;
-                }
-                case 'query': {
-                    for (let i = 0; i < this.query.length; i++) {
-                        if (i == index) {
-                            this.query.splice(i + 1, 0, {
-                                enabled: false,
-                                name: '',
-                                value: '',
-                            });
-                        }
-                    }
-                    break;
                 }
             }
-        },
-        remove(type: 'header' | 'query', index: number) {
-            switch (type) {
-                case 'header': {
-                    for (let i = 0; i < this.headers.length; i++) {
-                        if (i == index) {
-                            if (i == 0) {
-                                this.headers[0] = {
-                                    enabled: false,
-                                    name: '',
-                                    value: '',
-                                };
-                                localStorage.removeItem(
-                                    `${this.name}-headers-${this.type}`,
-                                );
-                            } else {
-                                this.headers.splice(i, 1);
-                                localStorage.setItem(
-                                    `${this.name}-headers-${this.type}`,
-                                    JSON.stringify(this.headers),
-                                );
-                            }
-                        }
+            break;
+        }
+        case 'query': {
+            for (let i = 0; i < query.length; i++) {
+                if (i == index) {
+                    if (i == 0) {
+                        query[0] = {
+                            enabled: false,
+                            name: '',
+                            value: '',
+                        };
+                        localStorage.removeItem(
+                            `${props.name}-query-${props.type}`,
+                        );
+                    } else {
+                        query.splice(i, 1);
+                        localStorage.setItem(
+                            `${props.name}-query-${props.type}`,
+                            JSON.stringify(query),
+                        );
                     }
-                    break;
-                }
-                case 'query': {
-                    for (let i = 0; i < this.query.length; i++) {
-                        if (i == index) {
-                            if (i == 0) {
-                                this.query[0] = {
-                                    enabled: false,
-                                    name: '',
-                                    value: '',
-                                };
-                                localStorage.removeItem(
-                                    `${this.name}-query-${this.type}`,
-                                );
-                            } else {
-                                this.query.splice(i, 1);
-                                localStorage.setItem(
-                                    `${this.name}-query-${this.type}`,
-                                    JSON.stringify(this.query),
-                                );
-                            }
-                        }
-                    }
-                    break;
                 }
             }
-        },
-        getCorrectType(s: string) {
-            switch (s) {
-                case 'JSON':
-                    return 'application/json; charset=utf-8';
-                case 'YAML':
-                    return 'application/yaml; charset=utf-8';
-                case 'XML':
-                    return 'text/xml; charset=utf-8';
-                case 'TXT':
-                    return 'text/plain; charset=utf-8';
-            }
-        },
-        setCorrectType(s: string) {
-            let found = false;
-            this.headers.forEach((h) => {
-                if (h.name == 'Content-Type') {
-                    h.value = this.getCorrectType(s) || 'text/plain';
-                    found = true;
-                }
-            });
-            if (!found) {
-                this.headers.push({
-                    name: 'Content-Type',
-                    value: this.getCorrectType(s) || 'text/plain',
-                    enabled: true,
-                });
-            }
-        },
-        sendHeader() {
-            localStorage.setItem(
-                `${this.name}-headers-${this.type}`,
-                JSON.stringify(this.headers),
-            );
-            this.$emit('headers', this.headers);
-        },
-        sendQuery() {
-            localStorage.setItem(
-                `${this.name}-query-${this.type}`,
-                JSON.stringify(this.query),
-            );
-            this.$emit('query', this.query);
-        },
-        sendBody() {
-            localStorage.setItem(`${this.name}-body`, this.body);
-            this.$emit('body', this.body);
-        },
-        sendMessage() {
-            localStorage.setItem(`${this.name}-message`, this.message);
-            this.$emit('message', this.message);
-        },
-    },
-};
+            break;
+        }
+    }
+}
+function getCorrectType(s: string) {
+    switch (s) {
+        case 'JSON':
+            return 'application/json; charset=utf-8';
+        case 'YAML':
+            return 'application/yaml; charset=utf-8';
+        case 'XML':
+            return 'text/xml; charset=utf-8';
+        case 'TXT':
+            return 'text/plain; charset=utf-8';
+    }
+}
+function setCorrectType(s: string) {
+    let found = false;
+    headers.forEach((h) => {
+        if (h.name == 'Content-Type') {
+            h.value = getCorrectType(s) || 'text/plain';
+            found = true;
+        }
+    });
+    if (!found) {
+        headers.push({
+            name: 'Content-Type',
+            value: getCorrectType(s) || 'text/plain',
+            enabled: true,
+        });
+    }
+}
+function sendHeader() {
+    localStorage.setItem(
+        `${props.name}-headers-${props.type}`,
+        JSON.stringify(headers),
+    );
+    emit('headers', headers);
+}
+function sendQuery() {
+    localStorage.setItem(
+        `${props.name}-query-${props.type}`,
+        JSON.stringify(query),
+    );
+    emit('query', query);
+}
+function sendBody() {
+    localStorage.setItem(`${props.name}-body`, body.value);
+    emit('body', body.value);
+}
+function sendMessage() {
+    localStorage.setItem(`${props.name}-message`, message.value);
+    emit('message', message.value);
+}
 </script>
 
 <template>

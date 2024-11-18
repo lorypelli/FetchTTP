@@ -18,14 +18,14 @@ let headers: Header[] = reactive([
         value: 'FetchTTP',
     },
 ]);
-let status = ref('');
-let header: Header[] = reactive([]);
-let response = ref('');
-let url = ref('');
+const status = ref('');
+let responseHeaders: Header[] = reactive([]);
+const response = ref('');
+const url = ref('');
 let query: Query[] = reactive([]);
-let body = ref('');
-let previousRequestTime = ref(0);
-let requestTime = ref(Date.now());
+const body = ref('');
+const previousRequestTime = ref(0);
+const requestTime = ref(Date.now());
 function getRequest() {
     return previousRequestTime.value - requestTime.value;
 }
@@ -35,7 +35,7 @@ function handleSelect(item: CompleteItem) {
 function handleInput(item: CompleteItem) {
     localStorage.setItem(`${item.name}-input-http`, item.input);
 }
-function handleHeader(h: Header[]) {
+function handleHeaders(h: Header[]) {
     headers = h;
 }
 function handleQuery(q: Query[]) {
@@ -46,7 +46,7 @@ function handleBody(b: string) {
 }
 function update(res: Response) {
     status.value = res.Status;
-    header = res.Header;
+    responseHeaders = res.Header;
     response.value = res.Body;
     url.value = res.URL;
 }
@@ -140,10 +140,10 @@ function sendRequest(item: CompleteItem) {
                 :name="item.name"
                 :url="url"
                 :status="status"
-                :header="header"
+                :headers="responseHeaders"
                 :response="response"
                 type="http"
-                @headers="handleHeader"
+                @headers="handleHeaders"
                 @query="handleQuery"
                 @body="handleBody"
             />

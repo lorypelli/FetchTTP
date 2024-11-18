@@ -2,19 +2,19 @@
 import Splitter from 'primevue/splitter';
 import SplitterPanel from 'primevue/splitterpanel';
 import { onBeforeUnmount, onMounted, ref } from 'vue';
-import type { GenericHeader as Header, Query } from '../types';
+import type { GenericHeader, Header, Query } from '../types';
 import Request from './Request.vue';
 import Response from './Response.vue';
 const props = defineProps<{
     name: string;
     url?: string;
     status: string;
-    header: Header;
+    header: GenericHeader;
     response: string;
     type: 'http' | 'ws';
 }>();
 const emit = defineEmits<{
-    header: [value: Header[]];
+    headers: [value: Header[]];
     query: [value: Query[]];
     body: [value: string];
     message: [value: string];
@@ -23,7 +23,7 @@ const width = ref(0);
 onMounted(() => {
     const headers = localStorage.getItem(`${props.name}-headers-${props.type}`);
     if (headers) {
-        handleHeader(JSON.parse(headers));
+        handleHeaders(JSON.parse(headers));
     }
     const query = localStorage.getItem(`${props.name}-query-${props.type}`);
     if (query) {
@@ -40,8 +40,8 @@ onBeforeUnmount(() => {
 function update() {
     width.value = window.innerWidth;
 }
-function handleHeader(h: Header[]) {
-    emit('header', h);
+function handleHeaders(h: Header[]) {
+    emit('headers', h);
 }
 function handleQuery(q: Query[]) {
     emit('query', q);
@@ -60,7 +60,7 @@ function handleMessage(m: string) {
             <Request
                 :name="props.name"
                 :type="props.type"
-                @headers="handleHeader"
+                @headers="handleHeaders"
                 @query="handleQuery"
                 @body="handleBody"
                 @message="handleMessage"
