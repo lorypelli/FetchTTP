@@ -25,9 +25,7 @@ defineOptions({
     },
 });
 const selectedTab = ref('HTTP');
-onMounted(() => {
-    import.meta.env.PROD && checkUpdates('load');
-});
+onMounted(() => import.meta.env.PROD && checkUpdates('load'));
 function onContextMenu(e: MouseEvent) {
     e.preventDefault();
     ContextMenu.showContextMenu({

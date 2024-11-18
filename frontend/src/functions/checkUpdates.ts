@@ -46,9 +46,7 @@ export function checkUpdates(type: 'load' | 'menu') {
                             closeOnHashChange: false,
                             closeOnPressEscape: false,
                             center: true,
-                        }).then(() => {
-                            U();
-                        });
+                        }).then(() => U());
                     })
                     .catch(() => {});
             }

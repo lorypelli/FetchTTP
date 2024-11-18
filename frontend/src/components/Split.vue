@@ -34,9 +34,7 @@ onMounted(() => {
     update();
     window.addEventListener('resize', update);
 });
-onBeforeUnmount(() => {
-    window.removeEventListener('resize', update);
-});
+onBeforeUnmount(() => window.removeEventListener('resize', update));
 function update() {
     width.value = window.innerWidth;
 }
