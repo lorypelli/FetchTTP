@@ -1,3 +1,35 @@
+<template>
+    <Tabs type="ws">
+        <template #default="{ item }">
+            <div class="flex p-1 space-x-1">
+                <ElInput
+                    v-model="item.input"
+                    :disabled="item.connected"
+                    placeholder="echo.websocket.org"
+                    @input="handleInput(item)"
+                    @keydown.enter="sendWebsocket(item)"
+                />
+                <ElButton
+                    v-model="item.connected"
+                    class="w-36"
+                    @click="sendWebsocket(item)"
+                >
+                    {{ item.connected ? 'Disconnect' : 'Connect' }}
+                </ElButton>
+            </div>
+            <Split
+                :name="item.name"
+                :status="status"
+                :headers="responseHeaders"
+                :response="response"
+                type="ws"
+                @headers="handleHeader"
+                @query="handleQuery"
+            />
+        </template>
+    </Tabs>
+</template>
+
 <script setup lang="ts">
 import { ElButton, ElInput, ElNotification } from 'element-plus';
 import { reactive, ref } from 'vue';
@@ -14,7 +46,7 @@ let headers: Header[] = reactive([
     },
 ]);
 let status = ref('');
-let header: Header[] = reactive([]);
+let responseHeaders: Header[] = reactive([]);
 let response = ref('');
 let query: Query[] = reactive([]);
 function handleInput(item: CompleteItem) {
@@ -28,7 +60,7 @@ function handleQuery(q: Query[]) {
 }
 function update(res: Response) {
     status.value = res.Status;
-    header = res.Header;
+    responseHeaders = res.Header;
     response.value += res.Message + '\n';
 }
 async function sendWebsocket(item: CompleteItem) {
@@ -70,35 +102,3 @@ async function sendWebsocket(item: CompleteItem) {
     }
 }
 </script>
-
-<template>
-    <Tabs type="ws">
-        <template #default="{ item }">
-            <div class="flex p-1 space-x-1">
-                <ElInput
-                    v-model="item.input"
-                    :disabled="item.connected"
-                    placeholder="echo.websocket.org"
-                    @input="handleInput(item)"
-                    @keydown.enter="sendWebsocket(item)"
-                />
-                <ElButton
-                    v-model="item.connected"
-                    class="w-36"
-                    @click="sendWebsocket(item)"
-                >
-                    {{ item.connected ? 'Disconnect' : 'Connect' }}
-                </ElButton>
-            </div>
-            <Split
-                :name="item.name"
-                :status="status"
-                :header="header"
-                :response="response"
-                type="ws"
-                @headers="handleHeader"
-                @query="handleQuery"
-            />
-        </template>
-    </Tabs>
-</template>

@@ -1,3 +1,72 @@
+<template>
+    <Tabs type="http">
+        <template #default="{ item }">
+            <div class="flex p-1 space-x-1">
+                <ElSelect
+                    v-model="item.select"
+                    class="w-32"
+                    @change="handleSelect(item)"
+                >
+                    <ElOption value="GET" />
+                    <ElOption value="HEAD" />
+                    <ElOption value="POST" />
+                    <ElOption value="PUT" />
+                    <ElOption value="DELETE" />
+                    <ElOption value="CONNECT" />
+                    <ElOption value="OPTIONS" />
+                    <ElOption value="TRACE" />
+                    <ElOption value="PATCH" />
+                </ElSelect>
+                <ElInput
+                    v-model="item.input"
+                    placeholder="echo.zuplo.io"
+                    @input="handleInput(item)"
+                    @keydown.enter="
+                        () => {
+                            previousRequestTime = Date.now();
+                            const res = getRequest();
+                            if (res <= 175) {
+                                requestTime = Date.now();
+                                return;
+                            } else {
+                                sendRequest(item);
+                            }
+                        }
+                    "
+                />
+                <ElButton
+                    class="w-20"
+                    @click="
+                        () => {
+                            previousRequestTime = Date.now();
+                            const res = getRequest();
+                            if (res <= 175) {
+                                requestTime = Date.now();
+                                return;
+                            } else {
+                                sendRequest(item);
+                            }
+                        }
+                    "
+                >
+                    Send
+                </ElButton>
+            </div>
+            <Split
+                :name="item.name"
+                :url="url"
+                :status="status"
+                :headers="responseHeaders"
+                :response="response"
+                type="http"
+                @headers="handleHeaders"
+                @query="handleQuery"
+                @body="handleBody"
+            />
+        </template>
+    </Tabs>
+</template>
+
 <script setup lang="ts">
 import {
     ElButton,
@@ -81,72 +150,3 @@ function sendRequest(item: CompleteItem) {
     }
 }
 </script>
-
-<template>
-    <Tabs type="http">
-        <template #default="{ item }">
-            <div class="flex p-1 space-x-1">
-                <ElSelect
-                    v-model="item.select"
-                    class="w-32"
-                    @change="handleSelect(item)"
-                >
-                    <ElOption value="GET" />
-                    <ElOption value="HEAD" />
-                    <ElOption value="POST" />
-                    <ElOption value="PUT" />
-                    <ElOption value="DELETE" />
-                    <ElOption value="CONNECT" />
-                    <ElOption value="OPTIONS" />
-                    <ElOption value="TRACE" />
-                    <ElOption value="PATCH" />
-                </ElSelect>
-                <ElInput
-                    v-model="item.input"
-                    placeholder="echo.zuplo.io"
-                    @input="handleInput(item)"
-                    @keydown.enter="
-                        () => {
-                            previousRequestTime = Date.now();
-                            const res = getRequest();
-                            if (res <= 175) {
-                                requestTime = Date.now();
-                                return;
-                            } else {
-                                sendRequest(item);
-                            }
-                        }
-                    "
-                />
-                <ElButton
-                    class="w-20"
-                    @click="
-                        () => {
-                            previousRequestTime = Date.now();
-                            const res = getRequest();
-                            if (res <= 175) {
-                                requestTime = Date.now();
-                                return;
-                            } else {
-                                sendRequest(item);
-                            }
-                        }
-                    "
-                >
-                    Send
-                </ElButton>
-            </div>
-            <Split
-                :name="item.name"
-                :url="url"
-                :status="status"
-                :headers="responseHeaders"
-                :response="response"
-                type="http"
-                @headers="handleHeaders"
-                @query="handleQuery"
-                @body="handleBody"
-            />
-        </template>
-    </Tabs>
-</template>

@@ -1,18 +1,3 @@
-<script setup lang="ts">
-import {
-    ElButton,
-    ElForm,
-    ElFormItem,
-    ElInput,
-    ElMessageBox,
-    ElNotification,
-} from 'element-plus';
-import { h, ref } from 'vue';
-import { CURL } from '../../wailsjs/go/main/App.js';
-import { default as R } from './Response.vue';
-const curl = ref('');
-</script>
-
 <template>
     <ElButton
         @click="
@@ -89,3 +74,18 @@ const curl = ref('');
         Open cURL
     </ElButton>
 </template>
+
+<script setup lang="ts">
+import {
+    ElButton,
+    ElForm,
+    ElFormItem,
+    ElInput,
+    ElMessageBox,
+    ElNotification,
+} from 'element-plus';
+import { h, ref } from 'vue';
+import { CURL } from '../../wailsjs/go/main/App.js';
+import { default as R } from './Response.vue';
+const curl = ref('');
+</script>

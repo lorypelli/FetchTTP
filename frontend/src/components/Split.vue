@@ -1,3 +1,26 @@
+<template>
+    <Splitter :layout="width <= 1024 ? 'vertical' : 'horizontal'">
+        <SplitterPanel :min-size="25">
+            <Request
+                :name="props.name"
+                :type="props.type"
+                @headers="handleHeaders"
+                @query="handleQuery"
+                @body="handleBody"
+                @message="handleMessage"
+            />
+        </SplitterPanel>
+        <SplitterPanel :min-size="25">
+            <Response
+                :url="props.url"
+                :status="props.status"
+                :header="props.header || {}"
+                :response="props.response"
+            />
+        </SplitterPanel>
+    </Splitter>
+</template>
+
 <script setup lang="ts">
 import Splitter from 'primevue/splitter';
 import SplitterPanel from 'primevue/splitterpanel';
@@ -9,7 +32,7 @@ const props = defineProps<{
     name: string;
     url?: string;
     status: string;
-    header: GenericHeader;
+    header?: GenericHeader;
     response: string;
     type: 'http' | 'ws';
 }>();
@@ -51,26 +74,3 @@ function handleMessage(m: string) {
     emit('message', m);
 }
 </script>
-
-<template>
-    <Splitter :layout="width <= 1024 ? 'vertical' : 'horizontal'">
-        <SplitterPanel :min-size="25">
-            <Request
-                :name="props.name"
-                :type="props.type"
-                @headers="handleHeaders"
-                @query="handleQuery"
-                @body="handleBody"
-                @message="handleMessage"
-            />
-        </SplitterPanel>
-        <SplitterPanel :min-size="25">
-            <Response
-                :url="props.url"
-                :status="props.status"
-                :header="props.header"
-                :response="props.response"
-            />
-        </SplitterPanel>
-    </Splitter>
-</template>

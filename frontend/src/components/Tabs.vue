@@ -1,3 +1,31 @@
+<template>
+    <ElTabs
+        v-model="selectedTab"
+        tab-position="left"
+        editable
+        @edit="tabHandle"
+        @keyup="
+            () => {
+                key = '';
+            }
+        "
+        @keydown.alt="keyHandle"
+    >
+        <ElTabPane
+            v-for="(item, index) in props.type == 'http'
+                ? httpTab
+                : props.type == 'ws'
+                  ? wsTab
+                  : null"
+            :key="index"
+            :label="item.name"
+            :name="item.name"
+        >
+            <slot :item="item as CompleteItem" />
+        </ElTabPane>
+    </ElTabs>
+</template>
+
 <script setup lang="ts">
 import { ElTabPane, ElTabs, TabPaneName } from 'element-plus';
 import { computed, onMounted, ref } from 'vue';
@@ -212,31 +240,3 @@ function keyHandle(e: KeyboardEvent) {
     }
 }
 </script>
-
-<template>
-    <ElTabs
-        v-model="selectedTab"
-        tab-position="left"
-        editable
-        @edit="tabHandle"
-        @keyup="
-            () => {
-                key = '';
-            }
-        "
-        @keydown.alt="keyHandle"
-    >
-        <ElTabPane
-            v-for="(item, index) in props.type == 'http'
-                ? httpTab
-                : props.type == 'ws'
-                  ? wsTab
-                  : null"
-            :key="index"
-            :label="item.name"
-            :name="item.name"
-        >
-            <slot :item="item as CompleteItem" />
-        </ElTabPane>
-    </ElTabs>
-</template>

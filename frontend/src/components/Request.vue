@@ -1,186 +1,3 @@
-<script setup lang="ts">
-import { VueMonacoEditor } from '@guolao/vue-monaco-editor';
-import {
-    ElButton,
-    ElCheckbox,
-    ElDatePicker,
-    ElForm,
-    ElFormItem,
-    ElInput,
-    ElMessageBox,
-    ElOption,
-    ElSelect,
-    ElTabPane,
-    ElTabs,
-} from 'element-plus';
-import { h, onMounted, reactive, ref } from 'vue';
-import { EventsEmit } from '../../wailsjs/runtime/runtime';
-import type { Header, Query } from '../types';
-const props = defineProps<{
-    name: string;
-    type: 'http' | 'ws';
-}>();
-const emit = defineEmits<{
-    headers: [value: Header[]];
-    query: [value: Query[]];
-    body: [value: string];
-    message: [value: string];
-}>();
-const bodyType = ref('JSON');
-let headers: Header[] = reactive([
-    {
-        enabled: true,
-        name: 'User-Agent',
-        value: 'FetchTTP',
-    },
-]);
-let query: Query[] = reactive([]);
-const body = ref('');
-const message = ref('');
-onMounted(() => {
-    let localHeaders = localStorage.getItem(
-        `${props.name}-headers-${props.type}`,
-    );
-    if (localHeaders) {
-        headers = JSON.parse(localHeaders);
-    }
-    let localQuery = localStorage.getItem(`${props.name}-query-${props.type}`);
-    if (localQuery) {
-        query = JSON.parse(localQuery);
-    }
-    body.value = localStorage.getItem(`${props.name}-body`) || '';
-    message.value = localStorage.getItem(`${props.name}-message`) || '';
-});
-function add(type: 'header' | 'query', index: number) {
-    switch (type) {
-        case 'header': {
-            for (let i = 0; i < headers.length; i++) {
-                if (i == index) {
-                    headers.splice(i + 1, 0, {
-                        enabled: false,
-                        name: '',
-                        value: '',
-                    });
-                }
-            }
-            break;
-        }
-        case 'query': {
-            for (let i = 0; i < query.length; i++) {
-                if (i == index) {
-                    query.splice(i + 1, 0, {
-                        enabled: false,
-                        name: '',
-                        value: '',
-                    });
-                }
-            }
-            break;
-        }
-    }
-}
-function remove(type: 'header' | 'query', index: number) {
-    switch (type) {
-        case 'header': {
-            for (let i = 0; i < headers.length; i++) {
-                if (i == index) {
-                    if (i == 0) {
-                        headers[0] = {
-                            enabled: false,
-                            name: '',
-                            value: '',
-                        };
-                        localStorage.removeItem(
-                            `${props.name}-headers-${props.type}`,
-                        );
-                    } else {
-                        headers.splice(i, 1);
-                        localStorage.setItem(
-                            `${props.name}-headers-${props.type}`,
-                            JSON.stringify(headers),
-                        );
-                    }
-                }
-            }
-            break;
-        }
-        case 'query': {
-            for (let i = 0; i < query.length; i++) {
-                if (i == index) {
-                    if (i == 0) {
-                        query[0] = {
-                            enabled: false,
-                            name: '',
-                            value: '',
-                        };
-                        localStorage.removeItem(
-                            `${props.name}-query-${props.type}`,
-                        );
-                    } else {
-                        query.splice(i, 1);
-                        localStorage.setItem(
-                            `${props.name}-query-${props.type}`,
-                            JSON.stringify(query),
-                        );
-                    }
-                }
-            }
-            break;
-        }
-    }
-}
-function getCorrectType(s: string) {
-    switch (s) {
-        case 'JSON':
-            return 'application/json; charset=utf-8';
-        case 'YAML':
-            return 'application/yaml; charset=utf-8';
-        case 'XML':
-            return 'text/xml; charset=utf-8';
-        case 'TXT':
-            return 'text/plain; charset=utf-8';
-    }
-}
-function setCorrectType(s: string) {
-    let found = false;
-    headers.forEach((h) => {
-        if (h.name == 'Content-Type') {
-            h.value = getCorrectType(s) || 'text/plain';
-            found = true;
-        }
-    });
-    if (!found) {
-        headers.push({
-            name: 'Content-Type',
-            value: getCorrectType(s) || 'text/plain',
-            enabled: true,
-        });
-    }
-}
-function sendHeader() {
-    localStorage.setItem(
-        `${props.name}-headers-${props.type}`,
-        JSON.stringify(headers),
-    );
-    emit('headers', headers);
-}
-function sendQuery() {
-    localStorage.setItem(
-        `${props.name}-query-${props.type}`,
-        JSON.stringify(query),
-    );
-    emit('query', query);
-}
-function sendBody() {
-    localStorage.setItem(`${props.name}-body`, body.value);
-    emit('body', body.value);
-}
-function sendMessage() {
-    localStorage.setItem(`${props.name}-message`, message.value);
-    emit('message', message.value);
-}
-</script>
-
 <template>
     <ElTabs class="pr-2">
         <ElTabPane
@@ -540,19 +357,196 @@ function sendMessage() {
                     theme="vs-dark"
                     @change="sendMessage"
                 />
-                <ElButton
-                    @click="
-                        () => {
-                            EventsEmit('message', message);
-                        }
-                    "
-                >
+                <ElButton @click="() => EventsEmit('message', message)">
                     Send
                 </ElButton>
             </div>
         </ElTabPane>
     </ElTabs>
 </template>
+
+<script setup lang="ts">
+import { VueMonacoEditor } from '@guolao/vue-monaco-editor';
+import {
+    ElButton,
+    ElCheckbox,
+    ElDatePicker,
+    ElForm,
+    ElFormItem,
+    ElInput,
+    ElMessageBox,
+    ElOption,
+    ElSelect,
+    ElTabPane,
+    ElTabs,
+} from 'element-plus';
+import { h, onMounted, reactive, ref } from 'vue';
+import { EventsEmit } from '../../wailsjs/runtime/runtime';
+import type { Header, Query } from '../types';
+const props = defineProps<{
+    name: string;
+    type: 'http' | 'ws';
+}>();
+const emit = defineEmits<{
+    headers: [value: Header[]];
+    query: [value: Query[]];
+    body: [value: string];
+    message: [value: string];
+}>();
+const bodyType = ref('JSON');
+let headers: Header[] = reactive([
+    {
+        enabled: true,
+        name: 'User-Agent',
+        value: 'FetchTTP',
+    },
+]);
+let query: Query[] = reactive([]);
+const body = ref('');
+const message = ref('');
+onMounted(() => {
+    let localHeaders = localStorage.getItem(
+        `${props.name}-headers-${props.type}`,
+    );
+    if (localHeaders) {
+        headers = JSON.parse(localHeaders);
+    }
+    let localQuery = localStorage.getItem(`${props.name}-query-${props.type}`);
+    if (localQuery) {
+        query = JSON.parse(localQuery);
+    }
+    body.value = localStorage.getItem(`${props.name}-body`) || '';
+    message.value = localStorage.getItem(`${props.name}-message`) || '';
+});
+function add(type: 'header' | 'query', index: number) {
+    switch (type) {
+        case 'header': {
+            for (let i = 0; i < headers.length; i++) {
+                if (i == index) {
+                    headers.splice(i + 1, 0, {
+                        enabled: false,
+                        name: '',
+                        value: '',
+                    });
+                }
+            }
+            break;
+        }
+        case 'query': {
+            for (let i = 0; i < query.length; i++) {
+                if (i == index) {
+                    query.splice(i + 1, 0, {
+                        enabled: false,
+                        name: '',
+                        value: '',
+                    });
+                }
+            }
+            break;
+        }
+    }
+}
+function remove(type: 'header' | 'query', index: number) {
+    switch (type) {
+        case 'header': {
+            for (let i = 0; i < headers.length; i++) {
+                if (i == index) {
+                    if (i == 0) {
+                        headers[0] = {
+                            enabled: false,
+                            name: '',
+                            value: '',
+                        };
+                        localStorage.removeItem(
+                            `${props.name}-headers-${props.type}`,
+                        );
+                    } else {
+                        headers.splice(i, 1);
+                        localStorage.setItem(
+                            `${props.name}-headers-${props.type}`,
+                            JSON.stringify(headers),
+                        );
+                    }
+                }
+            }
+            break;
+        }
+        case 'query': {
+            for (let i = 0; i < query.length; i++) {
+                if (i == index) {
+                    if (i == 0) {
+                        query[0] = {
+                            enabled: false,
+                            name: '',
+                            value: '',
+                        };
+                        localStorage.removeItem(
+                            `${props.name}-query-${props.type}`,
+                        );
+                    } else {
+                        query.splice(i, 1);
+                        localStorage.setItem(
+                            `${props.name}-query-${props.type}`,
+                            JSON.stringify(query),
+                        );
+                    }
+                }
+            }
+            break;
+        }
+    }
+}
+function getCorrectType(s: string) {
+    switch (s) {
+        case 'JSON':
+            return 'application/json; charset=utf-8';
+        case 'YAML':
+            return 'application/yaml; charset=utf-8';
+        case 'XML':
+            return 'text/xml; charset=utf-8';
+        case 'TXT':
+            return 'text/plain; charset=utf-8';
+    }
+}
+function setCorrectType(s: string) {
+    let found = false;
+    headers.forEach((h) => {
+        if (h.name == 'Content-Type') {
+            h.value = getCorrectType(s) || 'text/plain';
+            found = true;
+        }
+    });
+    if (!found) {
+        headers.push({
+            name: 'Content-Type',
+            value: getCorrectType(s) || 'text/plain',
+            enabled: true,
+        });
+    }
+}
+function sendHeader() {
+    localStorage.setItem(
+        `${props.name}-headers-${props.type}`,
+        JSON.stringify(headers),
+    );
+    emit('headers', headers);
+}
+function sendQuery() {
+    localStorage.setItem(
+        `${props.name}-query-${props.type}`,
+        JSON.stringify(query),
+    );
+    emit('query', query);
+}
+function sendBody() {
+    localStorage.setItem(`${props.name}-body`, body.value);
+    emit('body', body.value);
+}
+function sendMessage() {
+    localStorage.setItem(`${props.name}-message`, message.value);
+    emit('message', message.value);
+}
+</script>
 
 <style>
 .editor {

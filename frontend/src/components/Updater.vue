@@ -1,14 +1,3 @@
-<script setup lang="ts">
-import { ElInput } from 'element-plus';
-import { ref } from 'vue';
-const props = defineProps<{
-    version: string;
-    description: string;
-}>();
-const updateVersion = ref(props.version);
-const updateDescription = ref(props.description);
-</script>
-
 <template>
     <div class="space-y-1">
         <ElInput
@@ -25,3 +14,14 @@ const updateDescription = ref(props.description);
         />
     </div>
 </template>
+
+<script setup lang="ts">
+import { ElInput } from 'element-plus';
+import { ref } from 'vue';
+const props = defineProps<{
+    version: string;
+    description: string;
+}>();
+const updateVersion = ref(props.version);
+const updateDescription = ref(props.description);
+</script>

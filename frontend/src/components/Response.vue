@@ -1,78 +1,3 @@
-<script setup lang="ts">
-import { VueMonacoEditor } from '@guolao/vue-monaco-editor';
-import { ElEmpty, ElSwitch, ElTabPane, ElTabs, ElText } from 'element-plus';
-import { ref } from 'vue';
-import type { GenericHeader as Header } from '../types';
-const props = defineProps<{
-    url?: string;
-    status: string;
-    header: Header;
-    response: string;
-}>();
-const readable = ref(true);
-function getColor(s: string) {
-    const status = parseInt(s.split(' ')[0]);
-    if (status >= 100 && status < 200) {
-        return 'blue';
-    } else if (status >= 200 && status < 300) {
-        return 'green';
-    } else if (status >= 300 && status < 400) {
-        return 'yellow';
-    } else if (status >= 400 && status < 500) {
-        return 'orange';
-    } else if (status >= 500 && status < 600) {
-        return 'red';
-    }
-}
-function isText(h: Header) {
-    return !isPage(h) && !isPDF(h) && !isImage(h) && !isVideo(h) && !isAudio(h);
-}
-function isPDF(h: Header) {
-    return (
-        Object.entries(h).filter(([k, v]) => {
-            return k == 'Content-Type' && v[0].includes('application/pdf');
-        }).length > 0
-    );
-}
-function isPage(h: Header) {
-    return (
-        Object.entries(h).filter(([k, v]) => {
-            return k == 'Content-Type' && v[0].includes('text/html');
-        }).length > 0
-    );
-}
-function isImage(h: Header) {
-    const regex = /image\/*/;
-    return (
-        Object.entries(h).filter(([k, v]) => {
-            return k == 'Content-Type' && regex.test(v[0]);
-        }).length > 0
-    );
-}
-function isVideo(h: Header) {
-    const regex = /video\/*/;
-    return (
-        Object.entries(h).filter(([k, v]) => {
-            return k == 'Content-Type' && regex.test(v[0]);
-        }).length > 0
-    );
-}
-function isAudio(h: Header) {
-    const regex = /audio\/*/;
-    return (
-        Object.entries(h).filter(([k, v]) => {
-            return k == 'Content-Type' && regex.test(v[0]);
-        }).length > 0
-    );
-}
-function baseURL(r: string, u: string | undefined) {
-    if (u) {
-        return r.replace('<head>', `<head><base href="${u}">`);
-    }
-    return r;
-}
-</script>
-
 <template>
     <ElSwitch
         v-model="readable"
@@ -160,3 +85,78 @@ function baseURL(r: string, u: string | undefined) {
         </ElTabPane>
     </ElTabs>
 </template>
+
+<script setup lang="ts">
+import { VueMonacoEditor } from '@guolao/vue-monaco-editor';
+import { ElEmpty, ElSwitch, ElTabPane, ElTabs, ElText } from 'element-plus';
+import { ref } from 'vue';
+import type { GenericHeader as Header } from '../types';
+const props = defineProps<{
+    url?: string;
+    status: string;
+    header: Header;
+    response: string;
+}>();
+const readable = ref(true);
+function getColor(s: string) {
+    const status = parseInt(s.split(' ')[0]);
+    if (status >= 100 && status < 200) {
+        return 'blue';
+    } else if (status >= 200 && status < 300) {
+        return 'green';
+    } else if (status >= 300 && status < 400) {
+        return 'yellow';
+    } else if (status >= 400 && status < 500) {
+        return 'orange';
+    } else if (status >= 500 && status < 600) {
+        return 'red';
+    }
+}
+function isText(h: Header) {
+    return !isPage(h) && !isPDF(h) && !isImage(h) && !isVideo(h) && !isAudio(h);
+}
+function isPDF(h: Header) {
+    return (
+        Object.entries(h).filter(([k, v]) => {
+            return k == 'Content-Type' && v[0].includes('application/pdf');
+        }).length > 0
+    );
+}
+function isPage(h: Header) {
+    return (
+        Object.entries(h).filter(([k, v]) => {
+            return k == 'Content-Type' && v[0].includes('text/html');
+        }).length > 0
+    );
+}
+function isImage(h: Header) {
+    const regex = /image\/*/;
+    return (
+        Object.entries(h).filter(([k, v]) => {
+            return k == 'Content-Type' && regex.test(v[0]);
+        }).length > 0
+    );
+}
+function isVideo(h: Header) {
+    const regex = /video\/*/;
+    return (
+        Object.entries(h).filter(([k, v]) => {
+            return k == 'Content-Type' && regex.test(v[0]);
+        }).length > 0
+    );
+}
+function isAudio(h: Header) {
+    const regex = /audio\/*/;
+    return (
+        Object.entries(h).filter(([k, v]) => {
+            return k == 'Content-Type' && regex.test(v[0]);
+        }).length > 0
+    );
+}
+function baseURL(r: string, u: string | undefined) {
+    if (u) {
+        return r.replace('<head>', `<head><base href="${u}">`);
+    }
+    return r;
+}
+</script>
