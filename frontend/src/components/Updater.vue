@@ -17,11 +17,10 @@
 
 <script setup lang="ts">
 import { ElInput } from 'element-plus';
-import { ref } from 'vue';
 const props = defineProps<{
     version: string;
     description: string;
 }>();
-const updateVersion = ref(props.version);
-const updateDescription = ref(props.description);
+const updateVersion = props.version;
+const updateDescription = props.description;
 </script>

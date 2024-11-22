@@ -550,12 +550,12 @@ function sendMessage() {
 
 <style>
 .editor {
-    height: 70vh !important;
+    height: 20vh !important;
 }
 
-@media only screen and (max-width: 1024px) {
+@media (min-width: 1024px) {
     .editor {
-        height: 20vh !important;
+        height: 70vh !important;
     }
 }
 </style>
