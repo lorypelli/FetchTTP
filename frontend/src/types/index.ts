@@ -15,17 +15,32 @@ export interface Query {
 }
 
 export interface Response {
-    URL: string;
-    Status: string;
-    Header: Header[];
     Body: string;
-    Message?: string;
     Error: string;
+    Header: GenericHeader[];
+    Message?: string;
+    Status: string;
+    URL: string;
 }
 
 export interface CompleteItem {
+    connected: boolean;
+    input: string;
     name: string;
     select: string;
-    input: string;
-    connected: boolean;
+}
+
+export interface GenericItem {
+    headers: Header[];
+    query: Query[];
+    url: string;
+}
+
+export interface HTTPItem extends GenericItem {
+    body: string;
+    select: string;
+}
+
+export interface WSItem extends GenericItem {
+    message: string;
 }

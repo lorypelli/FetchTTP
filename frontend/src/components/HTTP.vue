@@ -77,7 +77,13 @@ import {
 } from 'element-plus';
 import { reactive, ref } from 'vue';
 import { HTTP } from '../../wailsjs/go/main/App.js';
-import type { CompleteItem, GenericHeader, Header, Query, Response } from '../types';
+import type {
+    CompleteItem,
+    GenericHeader,
+    Header,
+    Query,
+    Response,
+} from '../types';
 import Split from './Split.vue';
 import Tabs from './Tabs.vue';
 let headers: Header[] = reactive([

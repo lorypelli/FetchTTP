@@ -35,7 +35,13 @@ import { ElButton, ElInput, ElNotification } from 'element-plus';
 import { reactive, ref } from 'vue';
 import { WS } from '../../wailsjs/go/main/App';
 import { EventsEmit, EventsOff, EventsOn } from '../../wailsjs/runtime/runtime';
-import type { CompleteItem, GenericHeader, Header, Query, Response } from '../types';
+import type {
+    CompleteItem,
+    GenericHeader,
+    Header,
+    Query,
+    Response,
+} from '../types';
 import Split from './Split.vue';
 import Tabs from './Tabs.vue';
 let headers: Header[] = reactive([
