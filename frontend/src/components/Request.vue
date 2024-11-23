@@ -322,7 +322,7 @@
         <ElTabPane v-if="props.type == 'http'" label="Body">
             <VueMonacoEditor
                 class="editor"
-                v-model:value="body"
+                v-model="body"
                 :language="bodyType.toLowerCase()"
                 :options="{
                     automaticLayout: true,
@@ -347,8 +347,8 @@
         <ElTabPane v-if="props.type == 'ws'" label="Message">
             <div class="flex flex-col space-y-1">
                 <VueMonacoEditor
-                    v-model:value="message"
-                    style="height: 70vh"
+                    class="editor"
+                    v-model="message"
                     :options="{
                         automaticLayout: true,
                         minimap: { enabled: false },
@@ -414,6 +414,12 @@ const body = ref('');
 const message = ref('');
 const isHTTP = props.type == 'http';
 onMounted(() => {
+    if (!httpTabItem.value[props.index]) {
+        httpTabItem.value[props.index] = {};
+    }
+    if (!wsTabItem.value[props.index]) {
+        wsTabItem.value[props.index] = {};
+    }
     headers = isHTTP
         ? httpTabItem.value[props.index]?.headers || headers
         : wsTabItem.value[props.index]?.headers || headers;

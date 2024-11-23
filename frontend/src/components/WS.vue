@@ -6,7 +6,7 @@
                     v-model="item.input"
                     :disabled="item.connected"
                     placeholder="echo.websocket.org"
-                    @input="handleInput(item)"
+                    @input="handleInput(item, index)"
                     @keydown.enter="sendWebsocket(item)"
                 />
                 <ElButton
@@ -36,6 +36,7 @@ import { ElButton, ElInput, ElNotification } from 'element-plus';
 import { reactive, ref } from 'vue';
 import { WS } from '../../wailsjs/go/main/App';
 import { EventsEmit, EventsOff, EventsOn } from '../../wailsjs/runtime/runtime';
+import { wsTabItem } from '../functions/useStorage';
 import type {
     CompleteItem,
     GenericHeader,
@@ -56,8 +57,11 @@ let status = ref('');
 let responseHeaders: GenericHeader[] = reactive([]);
 let response = ref('');
 let query: Query[] = reactive([]);
-function handleInput(item: CompleteItem) {
-    localStorage.setItem(`${item.name}-input-ws`, item.input);
+function handleInput(item: CompleteItem, key: number) {
+    if (!wsTabItem.value[key]) {
+        wsTabItem.value[key] = {};
+    }
+    wsTabItem.value[key].url = item.input;
 }
 function handleHeader(h: Header[]) {
     headers = h;

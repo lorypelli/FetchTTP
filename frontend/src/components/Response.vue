@@ -90,11 +90,11 @@
 import { VueMonacoEditor } from '@guolao/vue-monaco-editor';
 import { ElEmpty, ElSwitch, ElTabPane, ElTabs, ElText } from 'element-plus';
 import { ref } from 'vue';
-import type { GenericHeader as Header } from '../types';
+import type { GenericHeader } from '../types';
 const props = defineProps<{
     url?: string;
     status: string;
-    header: Header;
+    header: GenericHeader;
     response: string;
 }>();
 const readable = ref(true);
@@ -112,24 +112,24 @@ function getColor(s: string) {
         return 'red';
     }
 }
-function isText(h: Header) {
+function isText(h: GenericHeader) {
     return !isPage(h) && !isPDF(h) && !isImage(h) && !isVideo(h) && !isAudio(h);
 }
-function isPDF(h: Header) {
+function isPDF(h: GenericHeader) {
     return (
         Object.entries(h).filter(([k, v]) => {
             return k == 'Content-Type' && v[0].includes('application/pdf');
         }).length > 0
     );
 }
-function isPage(h: Header) {
+function isPage(h: GenericHeader) {
     return (
         Object.entries(h).filter(([k, v]) => {
             return k == 'Content-Type' && v[0].includes('text/html');
         }).length > 0
     );
 }
-function isImage(h: Header) {
+function isImage(h: GenericHeader) {
     const regex = /image\/*/;
     return (
         Object.entries(h).filter(([k, v]) => {
@@ -137,7 +137,7 @@ function isImage(h: Header) {
         }).length > 0
     );
 }
-function isVideo(h: Header) {
+function isVideo(h: GenericHeader) {
     const regex = /video\/*/;
     return (
         Object.entries(h).filter(([k, v]) => {
@@ -145,7 +145,7 @@ function isVideo(h: Header) {
         }).length > 0
     );
 }
-function isAudio(h: Header) {
+function isAudio(h: GenericHeader) {
     const regex = /audio\/*/;
     return (
         Object.entries(h).filter(([k, v]) => {

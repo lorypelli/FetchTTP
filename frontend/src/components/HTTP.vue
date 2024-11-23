@@ -107,9 +107,15 @@ function getRequest() {
     return previousRequestTime.value - requestTime.value;
 }
 function handleSelect(item: CompleteItem, key: number) {
+    if (!httpTabItem.value[key]) {
+        httpTabItem.value[key] = {};
+    }
     httpTabItem.value[key].select = item.select;
 }
 function handleInput(item: CompleteItem, key: number) {
+    if (!httpTabItem.value[key]) {
+        httpTabItem.value[key] = {};
+    }
     httpTabItem.value[key].url = item.input;
 }
 function handleHeaders(h: Header[]) {
@@ -136,19 +142,21 @@ function sendRequest(item: CompleteItem) {
         item.input = 'https://echo.zuplo.io';
     }
     try {
-        HTTP(item.select, item.input, headers, query, body.value).then((res: any) => {
-            if (res.Error) {
-                ElNotification({
-                    title: 'Something went wrong!',
-                    message: res.Error,
-                    type: 'error',
-                    position: 'bottom-right',
-                });
-                return;
-            }
-            update(res);
-            requestTime.value = Date.now();
-        });
+        HTTP(item.select, item.input, headers, query, body.value).then(
+            (res: any) => {
+                if (res.Error) {
+                    ElNotification({
+                        title: 'Something went wrong!',
+                        message: res.Error,
+                        type: 'error',
+                        position: 'bottom-right',
+                    });
+                    return;
+                }
+                update(res);
+                requestTime.value = Date.now();
+            },
+        );
     } catch (err: any) {
         ElNotification({
             title: 'Something went wrong!',

@@ -47,6 +47,12 @@ const emit = defineEmits<{
 }>();
 const width = ref(0);
 onMounted(() => {
+    if (!httpTabItem.value[props.index]) {
+        httpTabItem.value[props.index] = {};
+    }
+    if (!wsTabItem.value[props.index]) {
+        wsTabItem.value[props.index] = {};
+    }
     const headers = httpTabItem.value[props.index]?.headers || [];
     if (headers) {
         handleHeaders(headers);

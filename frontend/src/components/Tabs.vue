@@ -17,7 +17,10 @@
             :label="item.name"
             :name="item.name"
         >
-            <slot :item="item as CompleteItem" :index="parseInt(item.name)" />
+            <slot
+                :item="item as CompleteItem"
+                :index="parseInt(item.name) - 1"
+            />
         </ElTabPane>
     </ElTabs>
 </template>
