@@ -14,7 +14,7 @@
         "@imengyu/vue3-context-menu": "^1.4.3",
         "@vueuse/core": "^11.3.0",
         "element-plus": "^2.8.8",
-        "primevue": "^4.2.2",
+        "primevue": "^3.53.0",
         "vite-plugin-multip": "^1.1.7"
     },
     "devDependencies": {

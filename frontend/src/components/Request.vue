@@ -9,7 +9,7 @@
         >
             <div
                 v-for="(item, index) in headers"
-                :key="index"
+                :index="index"
                 class="flex space-x-1 pr-2 pt-2"
             >
                 <ElCheckbox
@@ -63,7 +63,7 @@
         >
             <div
                 v-for="(item, index) in query"
-                :key="index"
+                :index="index"
                 class="flex space-x-1 pr-2 pt-2"
             >
                 <ElCheckbox
@@ -382,9 +382,11 @@ import {
 } from 'element-plus';
 import { h, onMounted, reactive, ref } from 'vue';
 import { EventsEmit } from '../../wailsjs/runtime/runtime';
+import { httpTabItem, wsTabItem } from '../functions/useStorage';
 import type { Header, Query } from '../types';
 const props = defineProps<{
     name: string;
+    index: number;
     type: 'http' | 'ws';
 }>();
 const emit = defineEmits<{
@@ -401,22 +403,25 @@ let headers: Header[] = reactive([
         value: 'FetchTTP',
     },
 ]);
-let query: Query[] = reactive([]);
+let query: Query[] = reactive([
+    {
+        enabled: false,
+        name: '',
+        value: '',
+    },
+]);
 const body = ref('');
 const message = ref('');
+const isHTTP = props.type == 'http';
 onMounted(() => {
-    let localHeaders = localStorage.getItem(
-        `${props.name}-headers-${props.type}`,
-    );
-    if (localHeaders) {
-        headers = JSON.parse(localHeaders);
-    }
-    let localQuery = localStorage.getItem(`${props.name}-query-${props.type}`);
-    if (localQuery) {
-        query = JSON.parse(localQuery);
-    }
-    body.value = localStorage.getItem(`${props.name}-body`) || '';
-    message.value = localStorage.getItem(`${props.name}-message`) || '';
+    headers = isHTTP
+        ? httpTabItem.value[props.index]?.headers || headers
+        : wsTabItem.value[props.index]?.headers || headers;
+    query = isHTTP
+        ? httpTabItem.value[props.index]?.query || query
+        : wsTabItem.value[props.index]?.query || query;
+    body.value = httpTabItem.value[props.index]?.body || '';
+    message.value = wsTabItem.value[props.index]?.message || '';
 });
 function add(type: 'header' | 'query', index: number) {
     switch (type) {
@@ -457,16 +462,12 @@ function remove(type: 'header' | 'query', index: number) {
                             name: '',
                             value: '',
                         };
-                        localStorage.removeItem(
-                            `${props.name}-headers-${props.type}`,
-                        );
                     } else {
                         headers.splice(i, 1);
-                        localStorage.setItem(
-                            `${props.name}-headers-${props.type}`,
-                            JSON.stringify(headers),
-                        );
                     }
+                    isHTTP
+                        ? (httpTabItem.value[props.index].headers = headers)
+                        : (wsTabItem.value[props.index].headers = headers);
                 }
             }
             break;
@@ -480,16 +481,12 @@ function remove(type: 'header' | 'query', index: number) {
                             name: '',
                             value: '',
                         };
-                        localStorage.removeItem(
-                            `${props.name}-query-${props.type}`,
-                        );
                     } else {
                         query.splice(i, 1);
-                        localStorage.setItem(
-                            `${props.name}-query-${props.type}`,
-                            JSON.stringify(query),
-                        );
                     }
+                    isHTTP
+                        ? (httpTabItem.value[props.index].query = query)
+                        : (wsTabItem.value[props.index].query = query);
                 }
             }
             break;
@@ -525,25 +522,23 @@ function setCorrectType(s: string) {
     }
 }
 function sendHeader() {
-    localStorage.setItem(
-        `${props.name}-headers-${props.type}`,
-        JSON.stringify(headers),
-    );
+    isHTTP
+        ? (httpTabItem.value[props.index].headers = headers)
+        : (wsTabItem.value[props.index].headers = headers);
     emit('headers', headers);
 }
 function sendQuery() {
-    localStorage.setItem(
-        `${props.name}-query-${props.type}`,
-        JSON.stringify(query),
-    );
+    isHTTP
+        ? (httpTabItem.value[props.index].query = query)
+        : (wsTabItem.value[props.index].query = query);
     emit('query', query);
 }
 function sendBody() {
-    localStorage.setItem(`${props.name}-body`, body.value);
+    httpTabItem.value[props.index].body = body.value;
     emit('body', body.value);
 }
 function sendMessage() {
-    localStorage.setItem(`${props.name}-message`, message.value);
+    wsTabItem.value[props.index].message = message.value;
     emit('message', message.value);
 }
 </script>

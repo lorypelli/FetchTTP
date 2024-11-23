@@ -6,24 +6,8 @@ import 'primevue/resources/themes/aura-light-green/theme.css';
 import { onMounted, ref } from 'vue';
 import CURL from '../components/CURL.vue';
 import HTTP from '../components/HTTP.vue';
-import {
-    httpTabHandle as HTTPTab,
-    wsTabHandle as WSTab,
-} from '../components/Tabs.vue';
-import Updater from '../components/Updater.vue';
 import WS from '../components/WS.vue';
 import { checkUpdates } from '../functions/checkUpdates';
-defineOptions({
-    name: 'App',
-    components: {
-        ElTabPane,
-        ElTabs,
-        HTTP,
-        WS,
-        CURL,
-        Updater,
-    },
-});
 const selectedTab = ref('HTTP');
 onMounted(() => import.meta.env.PROD && checkUpdates('load'));
 function onContextMenu(e: MouseEvent) {
@@ -33,29 +17,6 @@ function onContextMenu(e: MouseEvent) {
         y: e.y,
         theme: 'dark',
         items: [
-            {
-                label: 'New',
-                children: [
-                    {
-                        label: 'HTTP',
-                        onClick: () => {
-                            selectedTab.value = 'HTTP';
-                            HTTPTab(undefined, 'add');
-                        },
-                    },
-                    {
-                        label: 'WS',
-                        onClick: () => {
-                            selectedTab.value = 'WS';
-                            WSTab(undefined, 'add');
-                        },
-                    },
-                    {
-                        label: 'CURL',
-                        onClick: () => (selectedTab.value = 'CURL'),
-                    },
-                ],
-            },
             {
                 label: 'Check for Updates',
                 onClick: () => checkUpdates('menu'),

@@ -3,6 +3,7 @@
         <SplitterPanel :min-size="25">
             <Request
                 :name="props.name"
+                :index="props.index"
                 :type="props.type"
                 @headers="handleHeaders"
                 @query="handleQuery"
@@ -25,11 +26,13 @@
 import Splitter from 'primevue/splitter';
 import SplitterPanel from 'primevue/splitterpanel';
 import { onBeforeUnmount, onMounted, ref } from 'vue';
+import { httpTabItem, wsTabItem } from '../functions/useStorage';
 import type { GenericHeader, Header, Query } from '../types';
 import Request from './Request.vue';
 import Response from './Response.vue';
 const props = defineProps<{
     name: string;
+    index: number;
     url?: string;
     status: string;
     header?: GenericHeader;
@@ -44,16 +47,16 @@ const emit = defineEmits<{
 }>();
 const width = ref(0);
 onMounted(() => {
-    const headers = localStorage.getItem(`${props.name}-headers-${props.type}`);
+    const headers = httpTabItem.value[props.index]?.headers || [];
     if (headers) {
-        handleHeaders(JSON.parse(headers));
+        handleHeaders(headers);
     }
-    const query = localStorage.getItem(`${props.name}-query-${props.type}`);
+    const query = httpTabItem.value[props.index]?.query || [];
     if (query) {
-        handleQuery(JSON.parse(query));
+        handleQuery(query);
     }
-    handleBody(localStorage.getItem(`${props.name}-body`) || '');
-    handleMessage(localStorage.getItem(`${props.name}-message`) || '');
+    handleBody(httpTabItem.value[props.index]?.body || '');
+    handleMessage(wsTabItem.value[props.index]?.message || '');
     update();
     window.addEventListener('resize', update);
 });

@@ -1,11 +1,11 @@
 <template>
     <Tabs type="http">
-        <template #default="{ item }">
+        <template #default="{ item, index }">
             <div class="flex p-1 space-x-1">
                 <ElSelect
                     v-model="item.select"
                     class="w-32"
-                    @change="handleSelect(item)"
+                    @change="handleSelect(item, index)"
                 >
                     <ElOption value="GET" />
                     <ElOption value="HEAD" />
@@ -20,7 +20,7 @@
                 <ElInput
                     v-model="item.input"
                     placeholder="echo.zuplo.io"
-                    @input="handleInput(item)"
+                    @input="handleInput(item, index)"
                     @keydown.enter="
                         () => {
                             previousRequestTime = Date.now();
@@ -54,6 +54,7 @@
             </div>
             <Split
                 :name="item.name"
+                :index="index"
                 :url="url"
                 :status="status"
                 :headers="responseHeaders"
@@ -77,6 +78,7 @@ import {
 } from 'element-plus';
 import { reactive, ref } from 'vue';
 import { HTTP } from '../../wailsjs/go/main/App.js';
+import { httpTabItem } from '../functions/useStorage';
 import type {
     CompleteItem,
     GenericHeader,
@@ -104,11 +106,11 @@ const requestTime = ref(Date.now());
 function getRequest() {
     return previousRequestTime.value - requestTime.value;
 }
-function handleSelect(item: CompleteItem) {
-    localStorage.setItem(`${item.name}-select`, item.select);
+function handleSelect(item: CompleteItem, key: number) {
+    httpTabItem.value[key].select = item.select;
 }
-function handleInput(item: CompleteItem) {
-    localStorage.setItem(`${item.name}-input-http`, item.input);
+function handleInput(item: CompleteItem, key: number) {
+    httpTabItem.value[key].url = item.input;
 }
 function handleHeaders(h: Header[]) {
     headers = h;
@@ -147,9 +149,10 @@ function sendRequest(item: CompleteItem) {
             update(res);
             requestTime.value = Date.now();
         });
-    } catch {
+    } catch (err: any) {
         ElNotification({
             title: 'Something went wrong!',
+            message: err,
             type: 'error',
             position: 'bottom-right',
         });

@@ -24,7 +24,7 @@
             <table v-if="Object.keys(props.header).length > 0 && readable">
                 <tr
                     v-for="(item, index) in Object.keys(props.header)"
-                    :key="index"
+                    :index="index"
                 >
                     <td class="break-all w-1/2 pl-5">
                         <ElText>{{ item }}</ElText>

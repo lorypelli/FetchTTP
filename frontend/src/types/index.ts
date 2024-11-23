@@ -31,16 +31,16 @@ export interface CompleteItem {
 }
 
 export interface GenericItem {
-    headers: Header[];
-    query: Query[];
-    url: string;
+    headers?: Header[];
+    query?: Query[];
+    url?: string;
 }
 
 export interface HTTPItem extends GenericItem {
-    body: string;
-    select: string;
+    body?: string;
+    select?: string;
 }
 
 export interface WSItem extends GenericItem {
-    message: string;
+    message?: string;
 }

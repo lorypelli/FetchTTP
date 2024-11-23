@@ -1,6 +1,6 @@
 <template>
     <Tabs type="ws">
-        <template #default="{ item }">
+        <template #default="{ item, index }">
             <div class="flex p-1 space-x-1">
                 <ElInput
                     v-model="item.input"
@@ -19,6 +19,7 @@
             </div>
             <Split
                 :name="item.name"
+                :index="index"
                 :status="status"
                 :headers="responseHeaders"
                 :response="response"
@@ -98,10 +99,11 @@ async function sendWebsocket(item: CompleteItem) {
         } else {
             EventsOff('websocket');
         }
-    } catch {
+    } catch (err: any) {
         item.connected = false;
         ElNotification({
             title: 'Something went wrong!',
+            message: err,
             type: 'error',
             position: 'bottom-right',
         });
