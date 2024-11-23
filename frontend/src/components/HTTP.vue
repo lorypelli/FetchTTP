@@ -57,7 +57,7 @@
                 :index="index"
                 :url="url"
                 :status="status"
-                :headers="responseHeaders"
+                :header="responseHeader"
                 :response="response"
                 type="http"
                 @headers="handleHeaders"
@@ -79,13 +79,7 @@ import {
 import { reactive, ref } from 'vue';
 import { HTTP } from '../../wailsjs/go/main/App.js';
 import { httpTabItem } from '../functions/useStorage';
-import type {
-    CompleteItem,
-    GenericHeader,
-    Header,
-    Query,
-    Response,
-} from '../types';
+import type { CompleteItem, Header, Query, Response } from '../types';
 import Split from './Split.vue';
 import Tabs from './Tabs.vue';
 let headers: Header[] = reactive([
@@ -96,7 +90,7 @@ let headers: Header[] = reactive([
     },
 ]);
 const status = ref('');
-let responseHeaders: GenericHeader[] = reactive([]);
+let responseHeader = reactive({});
 const response = ref('');
 const url = ref('');
 let query: Query[] = reactive([]);
@@ -129,7 +123,7 @@ function handleBody(b: string) {
 }
 function update(res: Response) {
     status.value = res.Status;
-    responseHeaders = res.Header;
+    responseHeader = res.Header;
     response.value = res.Body;
     url.value = res.URL;
 }
