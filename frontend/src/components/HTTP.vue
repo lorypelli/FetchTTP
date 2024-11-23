@@ -136,7 +136,7 @@ function sendRequest(item: CompleteItem) {
         item.input = 'https://echo.zuplo.io';
     }
     try {
-        HTTP(item.select, item.input, headers, query, body).then((res: any) => {
+        HTTP(item.select, item.input, headers, query, body.value).then((res: any) => {
             if (res.Error) {
                 ElNotification({
                     title: 'Something went wrong!',
