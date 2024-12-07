@@ -2,7 +2,6 @@
 import ContextMenu from '@imengyu/vue3-context-menu';
 import { ElNotification, ElTabPane, ElTabs } from 'element-plus';
 import 'element-plus/dist/index.css';
-import 'primevue/resources/themes/aura-light-green/theme.css';
 import { onMounted, ref } from 'vue';
 import CURL from '../components/CURL.vue';
 import HTTP from '../components/HTTP.vue';

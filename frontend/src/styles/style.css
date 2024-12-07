@@ -3,6 +3,7 @@
 @tailwind utilities;
 
 * {
+    --p-splitter-gutter-background: #414243;
     @apply select-none font-custom;
 }
 
