@@ -24,18 +24,14 @@ import (
 
 const APP_VERSION = "1.5.3"
 
-// App struct
 type App struct {
 	ctx context.Context
 }
 
-// NewApp creates a new App application struct
 func NewApp() *App {
 	return &App{}
 }
 
-// startup is called when the app starts. The context is saved
-// so we can call the runtime methods
 func (a *App) startup(ctx context.Context) {
 	bin, err := os.Executable()
 	if err != nil {
