@@ -136,6 +136,7 @@ function sendRequest(item: CompleteItem) {
         item.input = 'https://echo.zuplo.io';
     }
     try {
+        // @ts-ignore Types aren't correct!
         HTTP(item.select, item.input, headers, query, body.value).then(
             (res: any) => {
                 if (res.Error) {

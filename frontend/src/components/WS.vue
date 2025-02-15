@@ -21,10 +21,10 @@
                 :name="item.name"
                 :index="index"
                 :status="status"
-                :headers="responseHeaders"
+                :header="responseHeader"
                 :response="response"
                 type="ws"
-                @headers="handleHeader"
+                @headers="handleHeaders"
                 @query="handleQuery"
             />
         </template>
@@ -37,13 +37,7 @@ import { reactive, ref } from 'vue';
 import { WS } from '../../wailsjs/go/main/App';
 import { EventsEmit, EventsOff, EventsOn } from '../../wailsjs/runtime/runtime';
 import { wsTabItem } from '../functions/useStorage';
-import type {
-    CompleteItem,
-    GenericHeader,
-    Header,
-    Query,
-    Response,
-} from '../types';
+import type { CompleteItem, Header, Query, Response } from '../types';
 import Split from './Split.vue';
 import Tabs from './Tabs.vue';
 let headers: Header[] = reactive([
@@ -54,7 +48,7 @@ let headers: Header[] = reactive([
     },
 ]);
 let status = ref('');
-let responseHeaders: GenericHeader[] = reactive([]);
+let responseHeader = reactive({});
 let response = ref('');
 let query: Query[] = reactive([]);
 function handleInput(item: CompleteItem, key: number) {
@@ -63,7 +57,7 @@ function handleInput(item: CompleteItem, key: number) {
     }
     wsTabItem.value[key].url = item.input;
 }
-function handleHeader(h: Header[]) {
+function handleHeaders(h: Header[]) {
     headers = h;
 }
 function handleQuery(q: Query[]) {
@@ -71,7 +65,7 @@ function handleQuery(q: Query[]) {
 }
 function update(res: Response) {
     status.value = res.Status;
-    responseHeaders = res.Header;
+    responseHeader = res.Header;
     response.value += res.Message + '\n';
 }
 async function sendWebsocket(item: CompleteItem) {
@@ -85,6 +79,7 @@ async function sendWebsocket(item: CompleteItem) {
     item.connected = !item.connected;
     try {
         EventsEmit('connected', item.connected);
+        // @ts-ignore Types aren't correct!
         let error = await WS(item.input, headers, query, item.connected);
         if (error) {
             item.connected = false;

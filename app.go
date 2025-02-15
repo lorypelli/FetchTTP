@@ -252,22 +252,15 @@ func Connect(res *http.Response, ws *websocket.Conn, connected bool, a *App) {
 			ws.WriteMessage(websocket.TextMessage, []byte(d))
 		}
 	})
-	for {
-		if connected {
-			_, msg, err := ws.ReadMessage()
-			if err == nil {
-				runtime.EventsEmit(a.ctx, "websocket", WSResponse{
-					ws, res.Status, res.Header, string(msg),
-				})
-			} else {
-				ws.Close()
-				connected = false
-				break
-			}
+	for connected {
+		_, msg, err := ws.ReadMessage()
+		if err == nil {
+			runtime.EventsEmit(a.ctx, "websocket", WSResponse{
+				ws, res.Status, res.Header, string(msg),
+			})
 		} else {
 			ws.Close()
 			connected = false
-			break
 		}
 		time.Sleep(1 * time.Second)
 	}
