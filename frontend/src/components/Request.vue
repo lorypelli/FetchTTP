@@ -551,12 +551,6 @@ function sendMessage() {
 
 <style>
 .editor {
-    height: 20vh !important;
-}
-
-@media (min-width: 1024px) {
-    .editor {
-        height: 70vh !important;
-    }
+    @apply !h-[20vh] lg:!h-[70vh];
 }
 </style>
