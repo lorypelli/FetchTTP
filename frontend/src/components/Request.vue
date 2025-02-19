@@ -2,9 +2,7 @@
     <ElTabs class="pr-2">
         <ElTabPane
             :label="`Headers (${
-                headers.filter((h) => {
-                    return h.enabled;
-                }).length
+                headers.filter((h) => h.enabled).length
             })`"
         >
             <div
@@ -56,9 +54,7 @@
         </ElTabPane>
         <ElTabPane
             :label="`Query (${
-                query.filter((q) => {
-                    return q.enabled;
-                }).length
+                query.filter((q) => q.enabled).length
             })`"
         >
             <div
