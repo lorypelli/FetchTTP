@@ -1,6 +1,6 @@
 module FetchTTP
 
-go 1.23.0
+go 1.24.0
 
 require (
 	github.com/474420502/gcurl v0.11.0
