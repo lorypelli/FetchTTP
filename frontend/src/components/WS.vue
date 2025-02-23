@@ -50,9 +50,9 @@ export default {
             item.connected = !item.connected;
             try {
                 EventsEmit('connected', item.connected);
-                // @ts-ignore Types aren't correct!
                 let error = await WS(
                     item.input,
+                    // @ts-ignore Types aren't correct!
                     headers,
                     query,
                     item.connected,

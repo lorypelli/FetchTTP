@@ -560,8 +560,8 @@ export default {
         <ElTabPane v-if="props.type == 'ws'" label="Message">
             <div class="flex flex-col space-y-1">
                 <VueMonacoEditor
+                    class="editor"
                     v-model:value="message"
-                    style="height: 70vh"
                     :options="{
                         automaticLayout: true,
                         minimap: { enabled: false },
@@ -586,12 +586,6 @@ export default {
 
 <style>
 .editor {
-    height: 70vh !important;
-}
-
-@media only screen and (max-width: 1024px) {
-    .editor {
-        height: 20vh !important;
-    }
+    @apply !h-[20vh] lg:!h-[70vh];
 }
 </style>
