@@ -7,30 +7,14 @@ import {
     ElForm,
     ElFormItem,
     ElInput,
+    ElMessageBox,
     ElOption,
     ElSelect,
     ElTabPane,
     ElTabs,
-    ElMessageBox
 } from 'element-plus';
-import { h, ref, reactive } from 'vue';
+import { h, reactive, ref } from 'vue';
 import { EventsEmit } from '../../wailsjs/runtime/runtime';
-defineOptions({
-    name: 'Request',
-    components: {
-        ElButton,
-        ElCheckbox,
-        ElInput,
-        ElTabPane,
-        ElTabs,
-        ElForm,
-        ElFormItem,
-        ElDatePicker,
-        ElSelect,
-        ElOption,
-        VueMonacoEditor,
-    },
-});
 const props = defineProps<{
     name: string;
     type: 'http' | 'ws';

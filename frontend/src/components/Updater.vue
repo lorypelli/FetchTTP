@@ -1,13 +1,6 @@
 <script setup lang="ts">
-import { ElInput, ElText } from 'element-plus';
+import { ElInput } from 'element-plus';
 import { ref } from 'vue';
-defineOptions({
-    name: 'Updater',
-    components: {
-        ElText,
-        ElInput,
-    },
-});
 const props = defineProps<{
     version: string;
     description: string;

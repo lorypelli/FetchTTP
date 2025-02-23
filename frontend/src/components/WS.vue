@@ -1,26 +1,10 @@
 <script setup lang="ts">
-import {
-    ElButton,
-    ElInput,
-    ElNotification,
-    ElTabPane,
-    ElTabs,
-} from 'element-plus';
+import { ElButton, ElInput, ElNotification } from 'element-plus';
 import { WS } from '../../wailsjs/go/main/App';
 import { EventsEmit, EventsOff, EventsOn } from '../../wailsjs/runtime/runtime';
 import type { Header, Query, Response } from '../types';
 import Split from './Split.vue';
 import Tabs, { CompleteItem } from './Tabs.vue';
-defineOptions({
-    name: 'WS',
-    components: {
-        ElButton,
-        ElInput,
-        Split,
-        ElTabs,
-        ElTabPane,
-    },
-});
 </script>
 
 <script lang="ts">
@@ -57,7 +41,7 @@ export default {
         },
         async sendWebsocket(item: CompleteItem) {
             if (item.input) {
-                if (!/ws?s/.test(item.input)) {
+                if (!/wss?/.test(item.input)) {
                     item.input = 'wss://' + item.input;
                 }
             } else {
@@ -66,6 +50,7 @@ export default {
             item.connected = !item.connected;
             try {
                 EventsEmit('connected', item.connected);
+                // @ts-ignore Types aren't correct!
                 let error = await WS(
                     item.input,
                     headers,

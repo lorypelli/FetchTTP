@@ -1,13 +1,6 @@
 <script setup lang="ts">
 import { ElTabPane, ElTabs, TabPaneName } from 'element-plus';
 import { ref } from 'vue';
-defineOptions({
-    name: 'Tabs',
-    components: {
-        ElTabs,
-        ElTabPane,
-    },
-});
 const props = defineProps<{
     type: 'http' | 'ws';
 }>();

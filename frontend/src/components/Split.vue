@@ -4,15 +4,6 @@ import SplitterPanel from 'primevue/splitterpanel';
 import type { GenericHeader as Header, Query } from '../types';
 import Request from './Request.vue';
 import Response from './Response.vue';
-defineOptions({
-    name: 'Split',
-    components: {
-        Splitter,
-        SplitterPanel,
-        Request,
-        Response,
-    },
-});
 const props = defineProps<{
     name: string;
     url?: string;
@@ -37,7 +28,9 @@ export default {
         };
     },
     mounted() {
-        const headers = localStorage.getItem(`${this.name}-headers-${this.type}`);
+        const headers = localStorage.getItem(
+            `${this.name}-headers-${this.type}`,
+        );
         if (headers) {
             this.handleHeader(JSON.parse(headers));
         }

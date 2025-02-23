@@ -10,17 +10,6 @@ import { HTTP } from '../../wailsjs/go/main/App.js';
 import type { Header, Query, Response } from '../types';
 import Split from './Split.vue';
 import Tabs, { CompleteItem } from './Tabs.vue';
-defineOptions({
-    name: 'HTTP',
-    components: {
-        ElButton,
-        ElInput,
-        ElOption,
-        ElSelect,
-        Split,
-        Tabs,
-    },
-});
 </script>
 
 <script lang="ts">
@@ -71,13 +60,14 @@ export default {
         },
         sendRequest(item: CompleteItem) {
             if (item.input) {
-                if (!/http?s/.test(item.input)) {
+                if (!/https?/.test(item.input)) {
                     item.input = 'https://' + item.input;
                 }
             } else {
                 item.input = 'https://echo.zuplo.io';
             }
             try {
+                // @ts-ignore Types aren't correct!
                 HTTP(item.select, item.input, headers, query, body).then(
                     (res: any) => {
                         if (res.Error) {

@@ -3,17 +3,6 @@ import { VueMonacoEditor } from '@guolao/vue-monaco-editor';
 import { ElEmpty, ElSwitch, ElTabPane, ElTabs, ElText } from 'element-plus';
 import { ref } from 'vue';
 import type { GenericHeader as Header } from '../types';
-defineOptions({
-    name: 'Response',
-    components: {
-        ElTabPane,
-        ElTabs,
-        ElEmpty,
-        ElText,
-        ElSwitch,
-        VueMonacoEditor,
-    },
-});
 const props = defineProps<{
     url?: string;
     status: string;

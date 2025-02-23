@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ElNotification, ElTabPane, ElTabs } from 'element-plus';
 import 'element-plus/dist/index.css';
-import 'primevue/resources/themes/aura-light-green/theme.css';
 import { ref } from 'vue';
 import CURL from '../components/CURL.vue';
 import HTTP from '../components/HTTP.vue';
@@ -9,20 +8,8 @@ import {
     httpTabHandle as HTTPTab,
     wsTabHandle as WSTab,
 } from '../components/Tabs.vue';
-import Updater from '../components/Updater.vue';
 import WS from '../components/WS.vue';
 import { checkUpdates } from '../functions/checkUpdates';
-defineOptions({
-    name: 'App',
-    components: {
-        ElTabPane,
-        ElTabs,
-        HTTP,
-        WS,
-        CURL,
-        Updater,
-    },
-});
 </script>
 
 <script lang="ts">
